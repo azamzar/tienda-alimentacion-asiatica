@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  backend-tienda-alimentacion:
+    container_name: backend-tienda-alimentacion
+    build:
+      context: ../../backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../../backend:/app
+    networks:
+      - tienda-net
+    depends_on:
+      - db-tienda-alimentacion
+    environment:
+      - DATABASE_URL=postgresql://user:password@db-tienda-alimentacion:5432/mydatabase
+
+  db-tienda-alimentacion:
+    container_name: db-tienda-alimentacion
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - tienda-net
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mydatabase
+
+volumes:
+  postgres_data:
+
+networks:
+  tienda-net:
+    name: tienda-net
+    driver: bridge

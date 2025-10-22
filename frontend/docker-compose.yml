@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  frontend-tienda-alimentacion:
+    container_name: frontend-tienda-alimentacion
+    build:
+      context: ../../frontend
+    ports:
+      - "3000:80"
+    networks:
+      - tienda-net
+
+networks:
+  tienda-net:
+    external: true
