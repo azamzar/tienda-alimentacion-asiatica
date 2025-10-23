@@ -1,0 +1,29 @@
+{
+  "sqltools.connections": [
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "tienda_asiatica",
+      "database": "tienda_asiatica",
+      "username": "tienda_user"
+    }
+  ],
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/venv/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/backend",
+    "${workspaceFolder}/backend/app"
+  ],
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/backend",
+    "${workspaceFolder}/backend/app"
+  ],
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.diagnosticMode": "workspace",
+  "python.languageServer": "Pylance",
+  "[python]": {
+    "editor.formatOnSave": false
+  }
+}

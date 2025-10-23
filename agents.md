@@ -2,6 +2,28 @@
 
 This document provides all the necessary context for an AI agent to understand and contribute to the "tienda-alimentacion-asiatica" project.
 
+## 🚨 IMPORTANT: Required Reading
+
+**Before starting any work, you MUST read the following files to understand the current state of the project:**
+
+1. **`backend/README.md`** - Complete backend documentation including:
+   - Architecture and layer structure
+   - All implemented models, services, repositories
+   - Complete API endpoints documentation
+   - Authentication and authorization system
+   - How to run and test the backend
+
+2. **`frontend/README.md`** - Complete frontend documentation including:
+   - Current implementation status
+   - All services, stores, and utilities
+   - Component structure
+   - Dependencies and their purpose
+   - Next steps and pending work
+
+3. **`agents.md`** (this file) - Project overview and AI agent guidelines
+
+**Always start your work session by reading these three files to get the most up-to-date context.**
+
 ## 1. Project Overview
 
 This is a web application for an Asian food store. The goal is to create a fully functional e-commerce platform where users can browse products, add them to a shopping cart, and eventually place orders.

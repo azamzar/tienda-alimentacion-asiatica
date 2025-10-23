@@ -234,7 +234,32 @@ class Settings(BaseSettings):
    docker-compose -f docker-compose.dev.yml exec backend-tienda-alimentacion python scripts/init_db.py
    ```
 
-5. **Acceder a la API**
+5. **Crear usuario administrador** (Importante)
+
+   **Modo interactivo** (recomendado):
+   ```bash
+   docker-compose -f docker-compose.dev.yml exec backend-tienda-alimentacion python scripts/create_admin.py
+   ```
+
+   El script te pedirá:
+   - Email del administrador
+   - Nombre completo (opcional)
+   - Contraseña (mínimo 8 caracteres)
+   - Confirmación de contraseña
+
+   **Modo no interactivo** (para scripts/automatización):
+   ```bash
+   docker-compose -f docker-compose.dev.yml exec backend-tienda-alimentacion python scripts/create_admin.py admin@example.com MySecurePass123 "Admin Name"
+   ```
+
+   **Ejemplo de admin creado**:
+   ```
+   Email: admin@tienda.com
+   Password: AdminPass123
+   Role: admin
+   ```
+
+6. **Acceder a la API**
    - API: http://localhost:8000
    - Documentación Swagger: http://localhost:8000/docs
    - ReDoc: http://localhost:8000/redoc
@@ -686,7 +711,7 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
   - Tests de integración para endpoints
   - Tests de autenticación y autorización
 - [ ] Implementar logging estructurado
-- [ ] Crear primer usuario admin (script de inicialización)
+- [x] Crear primer usuario admin (script de inicialización) ✅
 - [ ] Subida de imágenes para productos
 - [ ] Paginación mejorada con cursores
 - [ ] Cache con Redis
