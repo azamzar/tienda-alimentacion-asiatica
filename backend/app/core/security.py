@@ -24,9 +24,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         True si coinciden, False en caso contrario
     """
-    # Truncate password to 72 bytes for bcrypt compatibility
-    password_bytes = plain_password.encode('utf-8')[:72]
-    return pwd_context.verify(password_bytes, hashed_password)
+    # Truncate password to 72 characters for bcrypt compatibility
+    # bcrypt has a limit of 72 bytes, so we truncate to be safe
+    password_truncated = plain_password[:72] if len(plain_password) > 72 else plain_password
+    return pwd_context.verify(password_truncated, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
@@ -39,9 +40,10 @@ def get_password_hash(password: str) -> str:
     Returns:
         Hash de la contraseña
     """
-    # Truncate password to 72 bytes for bcrypt compatibility
-    password_bytes = plain_password.encode('utf-8')[:72]
-    return pwd_context.hash(password_bytes)
+    # Truncate password to 72 characters for bcrypt compatibility
+    # bcrypt has a limit of 72 bytes, so we truncate to be safe
+    password_truncated = password[:72] if len(password) > 72 else password
+    return pwd_context.hash(password_truncated)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
