@@ -2,88 +2,93 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db
+from app.api.deps import get_db, get_current_user
 from app.services.cart_service import CartService
 from app.schemas.cart import CartResponse, AddToCartRequest, UpdateCartItemRequest
+from app.models.user import User
 
 
 router = APIRouter()
 
 
-@router.get("/{user_id}", response_model=CartResponse, status_code=status.HTTP_200_OK)
+@router.get("/me", response_model=CartResponse, status_code=status.HTTP_200_OK)
 def get_cart(
-    user_id: str,
-    db: Annotated[Session, Depends(get_db)]
+    db: Annotated[Session, Depends(get_db)],
+    current_user: User = Depends(get_current_user)
 ):
     """
-    Obtiene el carrito de un usuario
+    Obtiene el carrito del usuario autenticado
 
-    - **user_id**: ID del usuario (puede ser un UUID temporal o ID de usuario autenticado)
+    **Requires authentication** - El user_id se obtiene del token JWT
     """
     service = CartService(db)
-    return service.get_cart(user_id)
+    # Usar el ID del usuario autenticado como string
+    return service.get_cart(str(current_user.id))
 
 
-@router.post("/{user_id}/items", response_model=CartResponse, status_code=status.HTTP_200_OK)
+@router.post("/me/items", response_model=CartResponse, status_code=status.HTTP_200_OK)
 def add_to_cart(
-    user_id: str,
     request: AddToCartRequest,
-    db: Annotated[Session, Depends(get_db)]
+    db: Annotated[Session, Depends(get_db)],
+    current_user: User = Depends(get_current_user)
 ):
     """
-    Agrega un producto al carrito
+    Agrega un producto al carrito del usuario autenticado
 
-    - **user_id**: ID del usuario
+    **Requires authentication**
+
     - **product_id**: ID del producto a agregar
     - **quantity**: Cantidad a agregar (default: 1)
     """
     service = CartService(db)
-    return service.add_to_cart(user_id, request)
+    return service.add_to_cart(str(current_user.id), request)
 
 
-@router.put("/{user_id}/items/{product_id}", response_model=CartResponse, status_code=status.HTTP_200_OK)
+@router.put("/me/items/{product_id}", response_model=CartResponse, status_code=status.HTTP_200_OK)
 def update_cart_item(
-    user_id: str,
     product_id: int,
     request: UpdateCartItemRequest,
-    db: Annotated[Session, Depends(get_db)]
+    db: Annotated[Session, Depends(get_db)],
+    current_user: User = Depends(get_current_user)
 ):
     """
-    Actualiza la cantidad de un producto en el carrito
+    Actualiza la cantidad de un producto en el carrito del usuario autenticado
 
-    - **user_id**: ID del usuario
+    **Requires authentication**
+
     - **product_id**: ID del producto a actualizar
     - **quantity**: Nueva cantidad
     """
     service = CartService(db)
-    return service.update_cart_item(user_id, product_id, request)
+    return service.update_cart_item(str(current_user.id), product_id, request)
 
 
-@router.delete("/{user_id}/items/{product_id}", response_model=CartResponse, status_code=status.HTTP_200_OK)
+@router.delete("/me/items/{product_id}", response_model=CartResponse, status_code=status.HTTP_200_OK)
 def remove_from_cart(
-    user_id: str,
     product_id: int,
-    db: Annotated[Session, Depends(get_db)]
+    db: Annotated[Session, Depends(get_db)],
+    current_user: User = Depends(get_current_user)
 ):
     """
-    Elimina un producto del carrito
+    Elimina un producto del carrito del usuario autenticado
 
-    - **user_id**: ID del usuario
+    **Requires authentication**
+
     - **product_id**: ID del producto a eliminar
     """
     service = CartService(db)
-    return service.remove_from_cart(user_id, product_id)
+    return service.remove_from_cart(str(current_user.id), product_id)
 
 
-@router.delete("/{user_id}", status_code=status.HTTP_200_OK)
+@router.delete("/me", status_code=status.HTTP_200_OK)
 def clear_cart(
-    user_id: str,
-    db: Annotated[Session, Depends(get_db)]
+    db: Annotated[Session, Depends(get_db)],
+    current_user: User = Depends(get_current_user)
 ):
     """
-    Vacía el carrito del usuario
+    Vacía el carrito del usuario autenticado
 
-    - **user_id**: ID del usuario
+    **Requires authentication**
     """
     service = CartService(db)
-    return service.clear_cart(user_id)
+    return service.clear_cart(str(current_user.id))

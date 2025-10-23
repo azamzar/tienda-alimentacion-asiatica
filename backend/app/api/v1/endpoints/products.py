@@ -2,9 +2,10 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db
+from app.api.deps import get_db, get_current_admin
 from app.schemas.product import Product, ProductCreate, ProductUpdate
 from app.services.product_service import ProductService
+from app.models.user import User
 
 router = APIRouter()
 
@@ -63,9 +64,15 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=Product, status_code=status.HTTP_201_CREATED)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+def create_product(
+    product: ProductCreate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
     """
     Create a new product.
+
+    **Requires admin role**
     """
     service = ProductService(db)
     return service.create_product(product)
@@ -75,19 +82,28 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
 def update_product(
     product_id: int,
     product: ProductUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
 ):
     """
     Update a product.
+
+    **Requires admin role**
     """
     service = ProductService(db)
     return service.update_product(product_id, product)
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_product(product_id: int, db: Session = Depends(get_db)):
+def delete_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
     """
     Delete a product by ID.
+
+    **Requires admin role**
     """
     service = ProductService(db)
     service.delete_product(product_id)
