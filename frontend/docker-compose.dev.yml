@@ -3,12 +3,12 @@ version: '3.8'
 services:
   frontend-tienda-alimentacion:
     build:
-      context: ../../frontend
+      context: .
       dockerfile: Dockerfile
       target: build-stage
     command: npm run dev -- --host 0.0.0.0
     volumes:
-      - ../../frontend:/app
+      - .:/app
       - /app/node_modules
     ports:
       - "5173:5173"

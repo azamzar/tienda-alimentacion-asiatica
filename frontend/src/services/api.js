@@ -12,14 +12,14 @@ const api = axios.create({
   timeout: 10000, // 10 segundos timeout
 });
 
-// Interceptor para requests - podemos agregar auth tokens aquí
+// Interceptor para requests - agregar token de autenticación
 api.interceptors.request.use(
   (config) => {
-    // Si hay un token de autenticación, agregarlo aquí
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // Obtener token del localStorage
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

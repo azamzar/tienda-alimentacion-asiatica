@@ -24,6 +24,8 @@ API REST desarrollada con FastAPI para una tienda de alimentación asiática. Im
 - **Alembic** - Migraciones de base de datos
 - **Docker & Docker Compose** - Containerización
 - **Uvicorn** - Servidor ASGI
+- **JWT (python-jose)** - Autenticación con JSON Web Tokens
+- **Passlib + Bcrypt** - Hashing seguro de contraseñas
 
 ## Arquitectura
 
@@ -86,40 +88,56 @@ backend/
 │   │
 │   ├── core/
 │   │   ├── __init__.py
-│   │   └── exceptions.py            # Excepciones personalizadas
+│   │   ├── exceptions.py            # Excepciones personalizadas
+│   │   └── security.py              # JWT y password hashing
 │   │
 │   ├── api/
 │   │   ├── __init__.py
-│   │   ├── deps.py                  # Dependencias compartidas (get_db)
+│   │   ├── deps.py                  # Dependencias (get_db, get_current_user, get_current_admin)
 │   │   └── v1/
 │   │       ├── __init__.py
 │   │       ├── router.py            # Router principal API v1
 │   │       └── endpoints/
 │   │           ├── __init__.py
+│   │           ├── auth.py          # Endpoints de autenticación
 │   │           ├── categories.py    # Endpoints de categorías
-│   │           └── products.py      # Endpoints de productos
+│   │           ├── products.py      # Endpoints de productos
+│   │           ├── carts.py         # Endpoints de carritos
+│   │           └── orders.py        # Endpoints de pedidos
 │   │
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── base.py                  # Base declarativa de SQLAlchemy
+│   │   ├── user.py                  # Modelo User (autenticación)
 │   │   ├── category.py              # Modelo Category
-│   │   └── product.py               # Modelo Product
+│   │   ├── product.py               # Modelo Product
+│   │   ├── cart.py                  # Modelos Cart y CartItem
+│   │   └── order.py                 # Modelos Order y OrderItem
 │   │
 │   ├── schemas/
 │   │   ├── __init__.py
+│   │   ├── user.py                  # Schemas Pydantic para User
 │   │   ├── category.py              # Schemas Pydantic para Category
-│   │   └── product.py               # Schemas Pydantic para Product
+│   │   ├── product.py               # Schemas Pydantic para Product
+│   │   ├── cart.py                  # Schemas Pydantic para Cart
+│   │   └── order.py                 # Schemas Pydantic para Order
 │   │
 │   ├── services/
 │   │   ├── __init__.py
+│   │   ├── auth_service.py          # Lógica de autenticación y usuarios
 │   │   ├── category_service.py      # Lógica de negocio de categorías
-│   │   └── product_service.py       # Lógica de negocio de productos
+│   │   ├── product_service.py       # Lógica de negocio de productos
+│   │   ├── cart_service.py          # Lógica de negocio de carritos
+│   │   └── order_service.py         # Lógica de negocio de pedidos
 │   │
 │   ├── repositories/
 │   │   ├── __init__.py
 │   │   ├── base.py                  # Repository base con CRUD genérico
+│   │   ├── user_repository.py       # Repository de usuarios
 │   │   ├── category_repository.py   # Repository de categorías
-│   │   └── product_repository.py    # Repository de productos
+│   │   ├── product_repository.py    # Repository de productos
+│   │   ├── cart_repository.py       # Repository de carritos
+│   │   └── order_repository.py      # Repository de pedidos
 │   │
 │   └── utils/
 │       └── __init__.py
@@ -193,13 +211,16 @@ class Settings(BaseSettings):
 
 ### Opción 1: Docker Compose (Recomendado)
 
-1. **Clonar el repositorio**
+1. **Crear la red Docker compartida (solo primera vez)**
    ```bash
-   cd backend
+   docker network create tienda-net
    ```
+
+   Esta red permite la comunicación entre backend y frontend como servicios independientes.
 
 2. **Configurar variables de entorno**
    ```bash
+   cd backend
    # El archivo .env ya existe con la configuración
    ```
 
@@ -217,6 +238,11 @@ class Settings(BaseSettings):
    - API: http://localhost:8000
    - Documentación Swagger: http://localhost:8000/docs
    - ReDoc: http://localhost:8000/redoc
+
+**Nota:** El backend está conectado a la red `tienda-net` para comunicarse con el frontend. Los servicios se comunican usando nombres de contenedor:
+- Backend: `backend-tienda-alimentacion:8000`
+- Frontend: `frontend-tienda-alimentacion:5173`
+- Database: `db:5432`
 
 ### Opción 2: Instalación Local
 
@@ -251,28 +277,96 @@ GET /                    # Información de la API
 GET /health              # Health check
 ```
 
+#### Autenticación
+```
+POST   /api/v1/auth/register         # Registrar nuevo usuario (role: customer)
+POST   /api/v1/auth/login            # Login (retorna JWT token)
+GET    /api/v1/auth/me               # Obtener información del usuario actual (🔒 requiere auth)
+POST   /api/v1/auth/logout           # Logout (client-side)
+```
+
 #### Categorías
 ```
-GET    /api/v1/categories/           # Listar todas las categorías
-GET    /api/v1/categories/{id}       # Obtener categoría por ID
-POST   /api/v1/categories/           # Crear nueva categoría
-DELETE /api/v1/categories/{id}       # Eliminar categoría
+GET    /api/v1/categories/           # Listar todas las categorías (público)
+GET    /api/v1/categories/{id}       # Obtener categoría por ID (público)
+POST   /api/v1/categories/           # Crear nueva categoría (🔒 requiere admin)
+DELETE /api/v1/categories/{id}       # Eliminar categoría (🔒 requiere admin)
 ```
 
 #### Productos
 ```
-GET    /api/v1/products/             # Listar productos (con paginación y filtros)
-GET    /api/v1/products/{id}         # Obtener producto por ID
-GET    /api/v1/products/search/      # Buscar productos por nombre
-GET    /api/v1/products/low-stock/   # Productos con stock bajo
-POST   /api/v1/products/             # Crear nuevo producto
-PUT    /api/v1/products/{id}         # Actualizar producto
-DELETE /api/v1/products/{id}         # Eliminar producto
+GET    /api/v1/products/             # Listar productos con paginación y filtros (público)
+GET    /api/v1/products/{id}         # Obtener producto por ID (público)
+GET    /api/v1/products/search/      # Buscar productos por nombre (público)
+GET    /api/v1/products/low-stock/   # Productos con stock bajo (público)
+POST   /api/v1/products/             # Crear nuevo producto (🔒 requiere admin)
+PUT    /api/v1/products/{id}         # Actualizar producto (🔒 requiere admin)
+DELETE /api/v1/products/{id}         # Eliminar producto (🔒 requiere admin)
 ```
+
+#### Carritos
+```
+GET    /api/v1/carts/me              # Obtener carrito del usuario autenticado (🔒 requiere auth)
+POST   /api/v1/carts/me/items        # Agregar producto al carrito (🔒 requiere auth)
+PUT    /api/v1/carts/me/items/{id}   # Actualizar cantidad de producto (🔒 requiere auth)
+DELETE /api/v1/carts/me/items/{id}   # Eliminar producto del carrito (🔒 requiere auth)
+DELETE /api/v1/carts/me              # Vaciar carrito (🔒 requiere auth)
+```
+
+#### Pedidos
+```
+POST   /api/v1/orders/               # Crear pedido desde carrito (🔒 requiere auth)
+GET    /api/v1/orders/               # Listar pedidos (🔒 cliente: solo suyos, admin: todos)
+GET    /api/v1/orders/{id}           # Obtener pedido por ID (🔒 cliente: solo suyos, admin: todos)
+PATCH  /api/v1/orders/{id}           # Actualizar pedido (🔒 cliente: datos básicos, admin: todo)
+POST   /api/v1/orders/{id}/cancel    # Cancelar pedido (🔒 cliente: solo suyos, admin: todos)
+```
+
+**Leyenda:**
+- 🔒 **Requiere autenticación** - Debe incluir header: `Authorization: Bearer <token>`
+- **Admin** - Solo usuarios con role `admin`
+- **Público** - No requiere autenticación
 
 ### Ejemplos de Uso
 
-#### Listar productos con filtros
+#### Autenticación
+
+**Registrar un nuevo usuario:**
+```bash
+curl -X POST "http://localhost:8000/api/v1/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "usuario@example.com",
+    "password": "password123",
+    "full_name": "Juan Pérez"
+  }'
+```
+
+**Login (obtener token JWT):**
+```bash
+curl -X POST "http://localhost:8000/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "usuario@example.com",
+    "password": "password123"
+  }'
+
+# Respuesta:
+# {
+#   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+#   "token_type": "bearer"
+# }
+```
+
+**Obtener información del usuario actual:**
+```bash
+TOKEN="tu_token_jwt_aqui"
+
+curl -X GET "http://localhost:8000/api/v1/auth/me" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+#### Listar productos con filtros (público)
 ```bash
 # Todos los productos con paginación
 curl "http://localhost:8000/api/v1/products/?skip=0&limit=10"
@@ -287,16 +381,61 @@ curl "http://localhost:8000/api/v1/products/search/?name=ramen"
 curl "http://localhost:8000/api/v1/products/low-stock/?threshold=10"
 ```
 
-#### Crear un producto
+#### Crear un producto (requiere admin)
 ```bash
+TOKEN="tu_token_jwt_de_admin_aqui"
+
 curl -X POST "http://localhost:8000/api/v1/products/" \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{
     "name": "Miso Paste",
     "description": "Pasta de miso tradicional japonesa",
     "price": 4.50,
     "stock": 30,
     "category_id": 2
+  }'
+```
+
+#### Gestión de carrito (requiere autenticación)
+```bash
+TOKEN="tu_token_jwt_aqui"
+
+# Ver mi carrito
+curl -X GET "http://localhost:8000/api/v1/carts/me" \
+  -H "Authorization: Bearer $TOKEN"
+
+# Agregar producto al carrito
+curl -X POST "http://localhost:8000/api/v1/carts/me/items" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{
+    "product_id": 1,
+    "quantity": 2
+  }'
+
+# Actualizar cantidad
+curl -X PUT "http://localhost:8000/api/v1/carts/me/items/1" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{
+    "quantity": 5
+  }'
+```
+
+#### Crear pedido (requiere autenticación)
+```bash
+TOKEN="tu_token_jwt_aqui"
+
+curl -X POST "http://localhost:8000/api/v1/orders/" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{
+    "customer_name": "Juan Pérez",
+    "customer_email": "juan@example.com",
+    "customer_phone": "+34 612 345 678",
+    "shipping_address": "Calle Mayor 123, 28013 Madrid",
+    "notes": "Llamar antes de entregar"
   }'
 ```
 
@@ -350,6 +489,21 @@ alembic downgrade -1
 
 ### Modelos de Datos
 
+#### User Model (Autenticación)
+```python
+class User(Base):
+    __tablename__ = "users"
+
+    id: int (PK)
+    email: str (unique, indexed)
+    hashed_password: str
+    full_name: str (optional)
+    role: UserRole (CUSTOMER | ADMIN, default: CUSTOMER)
+    is_active: bool (default: True)
+    created_at: datetime
+    updated_at: datetime
+```
+
 #### Category Model
 ```python
 class Category(Base):
@@ -377,6 +531,56 @@ class Product(Base):
     created_at: datetime
     updated_at: datetime
     category: Category (relationship)
+```
+
+#### Cart & CartItem Models
+```python
+class Cart(Base):
+    __tablename__ = "carts"
+
+    id: int (PK)
+    user_id: str (indexed)
+    created_at: datetime
+    updated_at: datetime
+    items: List[CartItem] (relationship)
+
+class CartItem(Base):
+    __tablename__ = "cart_items"
+
+    id: int (PK)
+    cart_id: int (FK → carts.id)
+    product_id: int (FK → products.id)
+    quantity: int
+    added_at: datetime
+```
+
+#### Order & OrderItem Models
+```python
+class Order(Base):
+    __tablename__ = "orders"
+
+    id: int (PK)
+    user_id: str (indexed)
+    status: OrderStatus (pending | confirmed | processing | shipped | delivered | cancelled)
+    total_amount: float
+    customer_name: str
+    customer_email: str
+    customer_phone: str
+    shipping_address: str
+    notes: str (optional)
+    created_at: datetime
+    updated_at: datetime
+    items: List[OrderItem] (relationship)
+
+class OrderItem(Base):
+    __tablename__ = "order_items"
+
+    id: int (PK)
+    order_id: int (FK → orders.id)
+    product_id: int (FK → products.id)
+    quantity: int
+    unit_price: float (precio al momento de la compra)
+    subtotal: float
 ```
 
 ### Agregar un Nuevo Endpoint
@@ -467,16 +671,30 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 
 ## Próximos Pasos
 
-- [ ] Implementar sistema de autenticación (JWT)
+### ✅ Completado
+
+- [x] Sistema de autenticación (JWT)
+- [x] Sistema de roles (customer/admin)
+- [x] Carrito de compras
+- [x] Sistema de órdenes/pedidos
+- [x] Endpoints protegidos con autenticación
+
+### 📋 Pendiente
+
 - [ ] Agregar tests (pytest)
+  - Tests unitarios para servicios
+  - Tests de integración para endpoints
+  - Tests de autenticación y autorización
 - [ ] Implementar logging estructurado
-- [ ] Agregar carrito de compras
-- [ ] Sistema de órdenes/pedidos
-- [ ] Panel de administración
-- [ ] Subida de imágenes
+- [ ] Crear primer usuario admin (script de inicialización)
+- [ ] Subida de imágenes para productos
 - [ ] Paginación mejorada con cursores
 - [ ] Cache con Redis
-- [ ] Rate limiting
+- [ ] Rate limiting para endpoints de autenticación
+- [ ] Refresh tokens
+- [ ] Password reset/recovery
+- [ ] Email notifications
+- [ ] Panel de administración (frontend)
 
 ## Contribuir
 

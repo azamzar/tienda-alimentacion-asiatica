@@ -185,7 +185,16 @@ The backend implements a **layered architecture (Clean Architecture)** with clea
 
 ## 6. How to Run the Project
 
-The project is fully containerized using Docker.
+The project is fully containerized using Docker with **independent services** (backend and frontend) that communicate through a **shared Docker network**. This architecture simulates production where services are deployed separately.
+
+### Initial Setup (First Time Only)
+
+**Create the shared Docker network:**
+```bash
+docker network create tienda-net
+```
+
+This network allows backend and frontend containers to communicate using service names.
 
 ### Running the Backend
 
@@ -197,6 +206,8 @@ docker-compose -f docker-compose.dev.yml up --build
 This will start:
 - PostgreSQL database on port 5432
 - FastAPI server with hot-reload on port 8000
+
+Both services are connected to the `tienda-net` network.
 
 **Initialize database with sample data:**
 ```bash
@@ -210,12 +221,29 @@ docker-compose -f docker-compose.dev.yml exec backend-tienda-alimentacion python
 
 ### Running the Frontend
 
+In a separate terminal:
+
 ```bash
 cd frontend
 docker-compose -f docker-compose.dev.yml up --build
 ```
 
 This will start the Vite development server on http://localhost:5173
+
+The frontend is also connected to the `tienda-net` network.
+
+### Service Communication
+
+**Internal Docker network (container-to-container):**
+- Backend: `http://backend-tienda-alimentacion:8000`
+- Frontend: `http://frontend-tienda-alimentacion:5173`
+- Database: `postgresql://db:5432`
+
+**External access (from your browser):**
+- Backend: `http://localhost:8000`
+- Frontend: `http://localhost:5173`
+
+**Note:** When making API calls from the browser, use `http://localhost:8000/api/v1`. The internal service names are for server-to-server communication within Docker.
 
 ## 7. API Endpoints
 
@@ -288,8 +316,9 @@ API_V1_PREFIX=/api/v1
 
 ## 10. Project Status & Roadmap
 
-### ✅ Completed (Fase 1 - Backend Refactoring)
+### ✅ Completed
 
+**Fase 1 - Backend Refactoring:**
 - [x] Backend architecture refactored to Clean Architecture
 - [x] Repository pattern implemented
 - [x] Service layer with business logic
@@ -302,35 +331,70 @@ API_V1_PREFIX=/api/v1
 - [x] Docker containerization
 - [x] API documentation (Swagger/ReDoc)
 
+**Fase 2 - Cart and Orders:**
+- [x] Shopping cart functionality (Cart & CartItem models)
+- [x] Order management system (Order & OrderItem models)
+- [x] Cart endpoints (add, update, remove, clear)
+- [x] Order endpoints (create, list, get, update, cancel)
+- [x] Stock management integration
+
+**Fase 3 - Authentication & Authorization:**
+- [x] User authentication with JWT tokens
+- [x] Password hashing with bcrypt
+- [x] User model with role-based access control (RBAC)
+- [x] Two roles: customer (default) and admin
+- [x] Auth endpoints (register, login, logout, me)
+- [x] Protected endpoints with authentication
+- [x] Role-based permissions on all endpoints:
+  - Products: POST/PUT/DELETE require admin
+  - Categories: POST/DELETE require admin
+  - Carts: All endpoints require authentication, use `/me`
+  - Orders: All require auth, customers see only theirs, admins see all
+- [x] Database migration for User model
+
+### ✅ Recently Completed
+
+**Fase 4 - Frontend Authentication:**
+- [x] Frontend authentication system with JWT
+- [x] Auth service (register, login, logout, getCurrentUser)
+- [x] Auth store with Zustand (state management)
+- [x] Login and Register pages with validation
+- [x] Protected routes component (ProtectedRoute, AdminRoute)
+- [x] API interceptors to include JWT tokens automatically
+- [x] Session persistence with localStorage
+- [x] Role-based UI rendering (customer/admin)
+
 ### 🔄 In Progress
 
-- [ ] Frontend refactoring to scalable architecture
-- [ ] Testing implementation (pytest)
-- [ ] Logging system
+- [ ] Fix backend import errors (ProductResponse schema)
+- [ ] Admin dashboard (frontend)
+- [ ] Product catalog pages
 
 ### 📋 Planned Features
 
-**Phase 2 - Backend Improvements:**
+**Phase 4 - Backend Improvements:**
 - [ ] Unit and integration testing (pytest)
 - [ ] Structured logging
-- [ ] Centralized exception handling
+- [ ] Create initial admin user script
 - [ ] API rate limiting
-
-**Phase 3 - Frontend Refactoring:**
-- [ ] Folder structure by features
-- [ ] State management (Zustand/Redux)
-- [ ] React Router implementation
-- [ ] API layer with Axios/React Query
-- [ ] Component library structure
-
-**Phase 4 - New Features:**
-- [ ] User authentication (JWT)
-- [ ] Shopping cart functionality
-- [ ] Order management system
-- [ ] Admin panel
-- [ ] Image upload system
-- [ ] Payment integration
+- [ ] Refresh tokens
+- [ ] Password reset/recovery
 - [ ] Email notifications
+
+**Phase 5 - Frontend Implementation:**
+- [ ] Auth store (Zustand)
+- [ ] Login/Register pages
+- [ ] Protected routes component
+- [ ] Admin dashboard
+- [ ] Order management UI
+- [ ] Product management UI (admin only)
+
+**Phase 6 - Additional Features:**
+- [ ] Image upload system for products
+- [ ] Payment integration (Stripe/PayPal)
+- [ ] Advanced search and filtering
+- [ ] Product reviews and ratings
+- [ ] Wishlist functionality
 
 ## 11. Common Development Tasks
 
@@ -380,6 +444,7 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 
 ## 13. Notes for AI Agents
 
+### Backend Architecture
 - The backend has been fully refactored with a scalable architecture
 - All backend code follows Clean Architecture principles
 - When adding new features, maintain the layered architecture
@@ -387,4 +452,46 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - Use repositories for all database operations
 - Follow existing patterns for consistency
 - Test endpoints using Swagger UI at http://localhost:8000/docs
-- The frontend still needs refactoring to match backend architecture quality
+
+### Authentication & Authorization
+- JWT-based authentication is implemented and working
+- All users register with role `customer` by default
+- Use `get_current_user` dependency for authenticated endpoints
+- Use `get_current_admin` dependency for admin-only endpoints
+- Passwords are hashed with bcrypt (never store plain text)
+- Tokens expire after 24 hours (configurable in `app/core/security.py`)
+- Protected endpoints must include header: `Authorization: Bearer <token>`
+
+### Security Best Practices
+- The SECRET_KEY in `app/core/security.py` is currently hardcoded - **MUST** be moved to environment variables in production
+- Never commit `.env` files with real secrets
+- Always validate user permissions in the service layer, not just in endpoints
+- Use `user_id` from JWT token, never trust user_id from request parameters
+
+### Cart and Orders
+- Cart endpoints use `/me` instead of `/{user_id}` to get user_id from token
+- Orders endpoints filter by user_id from token for customers
+- Admins can see all orders by checking `current_user.role == UserRole.ADMIN`
+- Stock is only reduced when order is created, not when added to cart
+
+### Frontend Development
+- Frontend architecture base is ready (services, stores, utilities)
+- ✅ **Authentication implemented**: auth store, login/register pages, protected routes
+- ✅ API interceptors include JWT token automatically in all requests
+- Use Zustand for state management (already set up for auth, cart, products, orders)
+- **Frontend structure**:
+  - `/pages`: LoginPage, RegisterPage, HomePage
+  - `/components`: ProtectedRoute, AdminRoute
+  - `/services`: authService
+  - `/store`: useAuthStore
+
+### Next Steps
+1. ~~Create frontend auth service and store~~ ✅ DONE
+2. ~~Implement login/register UI~~ ✅ DONE
+3. ~~Add protected routes~~ ✅ DONE
+4. ~~Update API interceptors to include JWT~~ ✅ DONE
+5. Fix backend import errors (ProductResponse in schemas)
+6. Create admin dashboard
+7. Implement product catalog pages
+8. Implement shopping cart UI
+9. Implement checkout flow UI
