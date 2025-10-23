@@ -173,7 +173,7 @@ El proyecto usa **Pydantic Settings** para gestionar la configuración. Las vari
 ```bash
 # Database Configuration
 POSTGRES_USER=tienda_user
-POSTGRES_PASSWORD=tienda_password
+POSTGRES_PASSWORD=tienda2025.
 POSTGRES_DB=tienda_asiatica
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
@@ -188,6 +188,24 @@ DEBUG=False
 
 # API Configuration
 API_V1_PREFIX=/api/v1
+```
+
+**⚠️ Importante al cambiar la contraseña de PostgreSQL:**
+
+Si cambias `POSTGRES_PASSWORD` en el `.env`, debes recrear los contenedores y volúmenes:
+
+```bash
+# Eliminar contenedores y volúmenes
+docker-compose -f docker-compose.dev.yml down -v
+
+# Levantar servicios con nueva contraseña
+docker-compose -f docker-compose.dev.yml up -d
+
+# Reinicializar base de datos
+docker-compose -f docker-compose.dev.yml exec backend-tienda-alimentacion python scripts/init_db.py
+
+# Recrear usuario admin
+docker-compose -f docker-compose.dev.yml exec backend-tienda-alimentacion python scripts/create_admin.py
 ```
 
 ### Configuración en `app/config/settings.py`
@@ -706,12 +724,12 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 
 ### 📋 Pendiente
 
+**Backend Improvements:**
 - [ ] Agregar tests (pytest)
   - Tests unitarios para servicios
   - Tests de integración para endpoints
   - Tests de autenticación y autorización
 - [ ] Implementar logging estructurado
-- [x] Crear primer usuario admin (script de inicialización) ✅
 - [ ] Subida de imágenes para productos
 - [ ] Paginación mejorada con cursores
 - [ ] Cache con Redis
@@ -719,7 +737,22 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - [ ] Refresh tokens
 - [ ] Password reset/recovery
 - [ ] Email notifications
-- [ ] Panel de administración (frontend)
+
+**Frontend Implementation:**
+- [ ] Panel de administración (admin dashboard)
+- [ ] Catálogo de productos con filtros y búsqueda
+- [ ] Página de detalle de producto
+- [ ] UI del carrito de compras
+- [ ] Flujo de checkout
+- [ ] Gestión de órdenes para clientes
+- [ ] Panel de gestión de productos (admin)
+- [ ] Panel de gestión de pedidos (admin)
+
+**DevOps:**
+- [ ] Configuración de CI/CD
+- [ ] Docker Compose para producción
+- [ ] Variables de entorno seguras (SECRET_KEY, etc.)
+- [ ] Backup automático de base de datos
 
 ## Contribuir
 

@@ -323,7 +323,7 @@ Backend environment variables (defined in `.env`):
 ```bash
 # Database
 POSTGRES_USER=tienda_user
-POSTGRES_PASSWORD=tienda_password
+POSTGRES_PASSWORD=tienda2025.
 POSTGRES_DB=tienda_asiatica
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
@@ -335,6 +335,8 @@ APP_VERSION=1.0.0
 DEBUG=False
 API_V1_PREFIX=/api/v1
 ```
+
+**Note:** If you change the PostgreSQL password, you must recreate the Docker volumes. See backend README for instructions.
 
 ## 10. Project Status & Roadmap
 
@@ -374,7 +376,7 @@ API_V1_PREFIX=/api/v1
   - Orders: All require auth, customers see only theirs, admins see all
 - [x] Database migration for User model
 
-### ✅ Recently Completed
+### ✅ Recently Completed (2025-10-23)
 
 **Fase 4 - Frontend Authentication:**
 - [x] Frontend authentication system with JWT
@@ -386,37 +388,59 @@ API_V1_PREFIX=/api/v1
 - [x] Session persistence with localStorage
 - [x] Role-based UI rendering (customer/admin)
 
+**Fase 5 - Admin User & Bug Fixes:**
+- [x] Script to create admin users (interactive & non-interactive modes)
+- [x] Fixed ProductResponse import issue
+- [x] Fixed FastAPI Query parameter issues
+- [x] Fixed bcrypt password truncation bug
+- [x] Updated bcrypt dependency to compatible version (4.x)
+- [x] Local Python virtual environment setup for backend
+- [x] VS Code configuration for Python development
+- [x] Database password change handling documented
+
+**Current Admin Credentials:**
+- Email: `admin@tienda.com`
+- Password: `AdminPass123`
+- Role: admin
+
 ### 🔄 In Progress
 
-- [ ] Fix backend import errors (ProductResponse schema)
 - [ ] Admin dashboard (frontend)
-- [ ] Product catalog pages
+- [ ] Product catalog pages (frontend)
+- [ ] Shopping cart UI (frontend)
 
 ### 📋 Planned Features
 
-**Phase 4 - Backend Improvements:**
+**Phase 6 - Frontend UI Implementation:**
+- [ ] React Router configuration with all routes
+- [ ] Layout components (Header, Footer, Navigation)
+- [ ] Common UI components (Button, Card, Input, Modal, Spinner)
+- [ ] Product catalog with filters and search
+- [ ] Product detail page
+- [ ] Shopping cart UI
+- [ ] Checkout flow
+- [ ] Order history for customers
+- [ ] Admin dashboard
+- [ ] Product management UI (admin only)
+- [ ] Order management UI (admin)
+
+**Phase 7 - Backend Improvements:**
 - [ ] Unit and integration testing (pytest)
 - [ ] Structured logging
-- [ ] Create initial admin user script
 - [ ] API rate limiting
 - [ ] Refresh tokens
 - [ ] Password reset/recovery
 - [ ] Email notifications
-
-**Phase 5 - Frontend Implementation:**
-- [ ] Auth store (Zustand)
-- [ ] Login/Register pages
-- [ ] Protected routes component
-- [ ] Admin dashboard
-- [ ] Order management UI
-- [ ] Product management UI (admin only)
-
-**Phase 6 - Additional Features:**
 - [ ] Image upload system for products
+
+**Phase 8 - Additional Features:**
 - [ ] Payment integration (Stripe/PayPal)
 - [ ] Advanced search and filtering
 - [ ] Product reviews and ratings
 - [ ] Wishlist functionality
+- [ ] Real-time notifications (WebSockets)
+- [ ] Analytics dashboard for admin
+- [ ] Export orders to CSV/PDF
 
 ## 11. Common Development Tasks
 
@@ -504,16 +528,30 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - **Frontend structure**:
   - `/pages`: LoginPage, RegisterPage, HomePage
   - `/components`: ProtectedRoute, AdminRoute
-  - `/services`: authService
-  - `/store`: useAuthStore
+  - `/services`: authService, productService, cartService, orderService, categoryService
+  - `/store`: useAuthStore, useCartStore, useProductStore, useOrderStore
+  - `/utils`: formatters, validators, constants
+
+### Development Environment Setup
+- **Backend**: Python virtual environment created in `backend/venv/`
+- **VS Code**: Configured to use local Python interpreter
+- **Docker**: Both backend and frontend run in separate containers
+- **Network**: Services communicate via `tienda-net` Docker network
+
+### Common Issues & Solutions
+1. **PostgreSQL password change**: Run `docker-compose down -v` then rebuild
+2. **Import errors in IDE**: Ensure Python interpreter is set to `backend/venv/Scripts/python.exe`
+3. **Bcrypt warnings**: These are informational only, functionality works correctly
+4. **CORS issues**: Backend is configured to accept requests from localhost:5173
 
 ### Next Steps
 1. ~~Create frontend auth service and store~~ ✅ DONE
 2. ~~Implement login/register UI~~ ✅ DONE
 3. ~~Add protected routes~~ ✅ DONE
 4. ~~Update API interceptors to include JWT~~ ✅ DONE
-5. Fix backend import errors (ProductResponse in schemas)
-6. Create admin dashboard
-7. Implement product catalog pages
-8. Implement shopping cart UI
-9. Implement checkout flow UI
+5. ~~Fix backend import errors~~ ✅ DONE
+6. ~~Create admin user script~~ ✅ DONE
+7. Create admin dashboard (frontend)
+8. Implement product catalog pages (frontend)
+9. Implement shopping cart UI (frontend)
+10. Implement checkout flow UI (frontend)
