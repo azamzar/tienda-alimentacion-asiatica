@@ -1,6 +1,7 @@
 """
 Script to initialize the database with sample data
 Run this script to populate the database with categories and products
+Pass --force flag to clear existing data and reinitialize
 """
 import sys
 from pathlib import Path
@@ -12,7 +13,7 @@ from app.config.database import SessionLocal, engine
 from app.models import Base, Category, Product, Cart, CartItem, Order, OrderItem, OrderStatus
 
 
-def init_database():
+def init_database(force=False):
     # Create all tables
     Base.metadata.create_all(bind=engine)
 
@@ -22,17 +23,29 @@ def init_database():
         # Check if data already exists
         existing_categories = db.query(Category).count()
         if existing_categories > 0:
-            print("Database already has data. Skipping initialization.")
-            return
+            if not force:
+                print("Database already has data. Use --force to clear and reinitialize.")
+                return
+            else:
+                print("Clearing existing data...")
+                # Delete all data in correct order (respecting foreign keys)
+                db.query(OrderItem).delete()
+                db.query(Order).delete()
+                db.query(CartItem).delete()
+                db.query(Cart).delete()
+                db.query(Product).delete()
+                db.query(Category).delete()
+                db.commit()
+                print("Existing data cleared.")
 
-        # Create categories
+        # Create categories - Non-perishable products with anime theme focus
         categories_data = [
-            {"name": "Ramen y Fideos", "description": "Fideos instantáneos y tradicionales asiáticos"},
-            {"name": "Salsas y Condimentos", "description": "Salsas, aceites y condimentos orientales"},
-            {"name": "Snacks", "description": "Aperitivos y golosinas asiáticas"},
-            {"name": "Bebidas", "description": "Bebidas tradicionales y modernas de Asia"},
-            {"name": "Arroz y Granos", "description": "Arroz, granos y harinas asiáticas"},
-            {"name": "Congelados", "description": "Productos congelados: dim sum, gyozas, etc."},
+            {"name": "Ramen y Fideos", "description": "Fideos instantáneos japoneses y coreanos estilo anime"},
+            {"name": "Snacks Salados", "description": "Aperitivos crujientes y snacks asiáticos"},
+            {"name": "Dulces y Golosinas", "description": "Golosinas, chocolates y dulces japoneses"},
+            {"name": "Bebidas", "description": "Bebidas japonesas y asiáticas"},
+            {"name": "Salsas y Condimentos", "description": "Salsas y condimentos para cocina asiática"},
+            {"name": "Arroz y Productos Secos", "description": "Arroz premium y alimentos secos asiáticos"},
         ]
 
         categories = []
@@ -48,146 +61,314 @@ def init_database():
         for cat in categories:
             db.refresh(cat)
 
-        # Create products
+        # Create products - Non-perishable items from EMB Food catalog
         products_data = [
-            # Ramen y Fideos
+            # Ramen y Fideos (Category 0)
             {
-                "name": "Nongshim Shin Ramyun",
-                "description": "Ramen coreano picante con sabor a carne y verduras",
-                "price": 1.50,
+                "name": "Ramen Carbonara SAMYANG 5Pack",
+                "description": "Pack de 5 ramen instantáneos con sabor a carbonara - 40x130g",
+                "price": 6.50,
                 "stock": 100,
                 "category_id": categories[0].id,
                 "image_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624"
             },
             {
-                "name": "Samyang Buldak Hot Chicken Ramen",
-                "description": "Fideos súper picantes con sabor a pollo",
-                "price": 1.75,
-                "stock": 80,
+                "name": "Nongshim Shin Ramyun",
+                "description": "Ramen coreano picante con sabor a carne y verduras - El favorito de los animes",
+                "price": 1.50,
+                "stock": 150,
                 "category_id": categories[0].id,
                 "image_url": "https://images.unsplash.com/photo-1623341214825-9f4f963727da"
             },
             {
-                "name": "Indomie Mi Goreng",
-                "description": "Fideos fritos indonesios con salsa dulce y picante",
-                "price": 0.50,
-                "stock": 150,
+                "name": "Samyang Buldak Hot Chicken Ramen",
+                "description": "Fideos súper picantes con sabor a pollo - Nivel picante extremo",
+                "price": 1.85,
+                "stock": 120,
                 "category_id": categories[0].id,
                 "image_url": "https://images.unsplash.com/photo-1585032226651-759b368d7246"
             },
             {
-                "name": "Nissin Cup Noodles Seafood",
-                "description": "Fideos instantáneos en vaso con sabor a mariscos",
+                "name": "Nissin Cup Noodles Original",
+                "description": "Fideos instantáneos en vaso, listos en 3 minutos",
                 "price": 1.20,
-                "stock": 120,
+                "stock": 200,
                 "category_id": categories[0].id,
                 "image_url": "https://images.unsplash.com/photo-1617093727343-374698b1b08d"
             },
-
-            # Salsas y Condimentos
             {
-                "name": "Salsa de Soja Kikkoman",
-                "description": "Salsa de soja tradicional japonesa, 500ml",
-                "price": 3.50,
-                "stock": 60,
-                "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1594798592208-0c6d322d9132"
-            },
-            {
-                "name": "Sriracha Huy Fong",
-                "description": "Salsa picante de chile tailandesa, 482g",
-                "price": 4.20,
-                "stock": 50,
-                "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc"
-            },
-            {
-                "name": "Aceite de Sésamo Tostado",
-                "description": "Aceite aromático de sésamo para cocina asiática, 250ml",
-                "price": 5.80,
-                "stock": 40,
-                "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5"
+                "name": "Indomie Mi Goreng",
+                "description": "Fideos fritos indonesios con salsa dulce y picante",
+                "price": 0.95,
+                "stock": 180,
+                "category_id": categories[0].id,
+                "image_url": "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841"
             },
 
-            # Snacks
+            # Snacks Salados (Category 1)
+            {
+                "name": "Algas Nori Tostadas",
+                "description": "Algas tostadas y sazonadas estilo japonés - Snack saludable",
+                "price": 2.80,
+                "stock": 100,
+                "category_id": categories[1].id,
+                "image_url": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351"
+            },
+            {
+                "name": "Galletas de Arroz Senbei",
+                "description": "Galletas crujientes de arroz japonesas tradicionales",
+                "price": 3.20,
+                "stock": 80,
+                "category_id": categories[1].id,
+                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d"
+            },
+            {
+                "name": "Wasabi Peas",
+                "description": "Guisantes crujientes con wasabi - Snack picante japonés",
+                "price": 2.50,
+                "stock": 90,
+                "category_id": categories[1].id,
+                "image_url": "https://images.unsplash.com/photo-1599490659213-e2b9527bd087"
+            },
+            {
+                "name": "Pretz Palitos Salados",
+                "description": "Palitos de galleta salada estilo japonés - Varios sabores",
+                "price": 2.30,
+                "stock": 110,
+                "category_id": categories[1].id,
+                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60"
+            },
+            {
+                "name": "Chips de Camarón",
+                "description": "Crackers crujientes de camarón - Snack asiático clásico",
+                "price": 2.90,
+                "stock": 95,
+                "category_id": categories[1].id,
+                "image_url": "https://images.unsplash.com/photo-1613919120408-66f4a49ddf4d"
+            },
+
+            # Dulces y Golosinas (Category 2)
             {
                 "name": "Pocky Chocolate",
-                "description": "Palitos de galleta cubiertos de chocolate",
-                "price": 2.30,
-                "stock": 90,
+                "description": "Palitos de galleta cubiertos de chocolate - Icónico snack de anime",
+                "price": 2.40,
+                "stock": 150,
                 "category_id": categories[2].id,
                 "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60"
             },
             {
-                "name": "Galletas de Arroz Mochi",
-                "description": "Galletas crujientes de arroz japonesas",
-                "price": 3.00,
+                "name": "Pocky Fresa",
+                "description": "Palitos de galleta con cobertura de fresa",
+                "price": 2.40,
+                "stock": 140,
+                "category_id": categories[2].id,
+                "image_url": "https://images.unsplash.com/photo-1581798459219-c0f6b53b81d8"
+            },
+            {
+                "name": "Pocky Matcha",
+                "description": "Palitos de galleta con té verde matcha - Sabor premium",
+                "price": 2.80,
+                "stock": 100,
+                "category_id": categories[2].id,
+                "image_url": "https://images.unsplash.com/photo-1582450871972-ab5ca641643d"
+            },
+            {
+                "name": "Kit Kat Japonés Matcha",
+                "description": "Kit Kat de té verde matcha - Edición japonesa exclusiva",
+                "price": 4.50,
+                "stock": 80,
+                "category_id": categories[2].id,
+                "image_url": "https://images.unsplash.com/photo-1606312619070-d48b4863db88"
+            },
+            {
+                "name": "Kit Kat Japonés Sakura",
+                "description": "Kit Kat sabor flor de cerezo - Edición limitada",
+                "price": 4.80,
+                "stock": 60,
+                "category_id": categories[2].id,
+                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+            },
+            {
+                "name": "Hi-Chew Surtido",
+                "description": "Caramelos masticables japoneses - Sabores de frutas variadas",
+                "price": 3.20,
+                "stock": 120,
+                "category_id": categories[2].id,
+                "image_url": "https://images.unsplash.com/photo-1582735689155-184926d293d0"
+            },
+            {
+                "name": "Mochi Daifuku Mix",
+                "description": "Mochi relleno de pasta de judía dulce - Variedad de sabores",
+                "price": 5.50,
                 "stock": 70,
                 "category_id": categories[2].id,
                 "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d"
             },
             {
-                "name": "Algas Nori Snack",
-                "description": "Algas tostadas y sazonadas listas para comer",
-                "price": 2.80,
-                "stock": 65,
+                "name": "Yan Yan Chocolate",
+                "description": "Palitos de galleta para mojar en crema de chocolate",
+                "price": 2.20,
+                "stock": 130,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351"
+                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60"
+            },
+            {
+                "name": "Galletas Panda Hello Panda",
+                "description": "Galletas rellenas de chocolate con diseños de panda",
+                "price": 2.50,
+                "stock": 110,
+                "category_id": categories[2].id,
+                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+            },
+            {
+                "name": "Koala March Chocolate",
+                "description": "Galletas con forma de koala rellenas de chocolate",
+                "price": 2.60,
+                "stock": 100,
+                "category_id": categories[2].id,
+                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4"
             },
 
-            # Bebidas
+            # Bebidas (Category 3)
             {
                 "name": "Ramune Original",
-                "description": "Bebida gaseosa japonesa con bola de cristal, 200ml",
+                "description": "Refresco japonés con bola de cristal - Bebida icónica de anime",
                 "price": 2.50,
-                "stock": 100,
+                "stock": 150,
                 "category_id": categories[3].id,
                 "image_url": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137"
             },
             {
-                "name": "Té Verde Matcha Premium",
-                "description": "Té verde matcha en polvo japonés, 100g",
-                "price": 12.00,
-                "stock": 30,
+                "name": "Ramune Fresa",
+                "description": "Refresco Ramune sabor fresa con bola de cristal",
+                "price": 2.50,
+                "stock": 140,
+                "category_id": categories[3].id,
+                "image_url": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3"
+            },
+            {
+                "name": "Ramune Melón",
+                "description": "Refresco Ramune sabor melón con bola de cristal",
+                "price": 2.50,
+                "stock": 130,
+                "category_id": categories[3].id,
+                "image_url": "https://images.unsplash.com/photo-1625772299872-6ab2b8f97f00"
+            },
+            {
+                "name": "Calpico Original",
+                "description": "Bebida láctea fermentada japonesa - Sabor refrescante único",
+                "price": 3.20,
+                "stock": 100,
+                "category_id": categories[3].id,
+                "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f"
+            },
+            {
+                "name": "Té Verde Matcha Premium Lata",
+                "description": "Té verde matcha japonés sin azúcar - Listo para beber",
+                "price": 2.80,
+                "stock": 120,
                 "category_id": categories[3].id,
                 "image_url": "https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9"
             },
-
-            # Arroz y Granos
             {
-                "name": "Arroz para Sushi Nishiki",
-                "description": "Arroz de grano corto premium para sushi, 2kg",
+                "name": "Pocari Sweat",
+                "description": "Bebida isotónica japonesa - Popular en anime deportivo",
+                "price": 2.90,
+                "stock": 110,
+                "category_id": categories[3].id,
+                "image_url": "https://images.unsplash.com/photo-1624517452488-04869289c4ca"
+            },
+
+            # Salsas y Condimentos (Category 4)
+            {
+                "name": "Salsa de Soja KIKKOMAN 1L",
+                "description": "Salsa de soja tradicional japonesa premium - 6x1L",
                 "price": 8.50,
-                "stock": 45,
+                "stock": 80,
                 "category_id": categories[4].id,
+                "image_url": "https://images.unsplash.com/photo-1594798592208-0c6d322d9132"
+            },
+            {
+                "name": "Salsa de Soja KIKKOMAN 500ml",
+                "description": "Salsa de soja tradicional japonesa - Tamaño estándar",
+                "price": 4.50,
+                "stock": 120,
+                "category_id": categories[4].id,
+                "image_url": "https://images.unsplash.com/photo-1594798592208-0c6d322d9132"
+            },
+            {
+                "name": "Sriracha Huy Fong",
+                "description": "Salsa picante de chile tailandesa - La original con gallo",
+                "price": 4.20,
+                "stock": 100,
+                "category_id": categories[4].id,
+                "image_url": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc"
+            },
+            {
+                "name": "Aceite de Sésamo Tostado",
+                "description": "Aceite aromático de sésamo para cocina asiática - 250ml",
+                "price": 5.80,
+                "stock": 70,
+                "category_id": categories[4].id,
+                "image_url": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5"
+            },
+            {
+                "name": "Salsa Teriyaki",
+                "description": "Salsa teriyaki para marinad y glaseado - Sabor agridulce",
+                "price": 3.90,
+                "stock": 90,
+                "category_id": categories[4].id,
+                "image_url": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8"
+            },
+            {
+                "name": "Pasta de Miso",
+                "description": "Pasta de miso para sopa y cocina japonesa - 500g",
+                "price": 6.50,
+                "stock": 60,
+                "category_id": categories[4].id,
+                "image_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+            },
+
+            # Arroz y Productos Secos (Category 5)
+            {
+                "name": "Arroz para Sushi Premium",
+                "description": "Arroz de grano corto japonés ideal para sushi - 2kg",
+                "price": 9.50,
+                "stock": 80,
+                "category_id": categories[5].id,
                 "image_url": "https://images.unsplash.com/photo-1516684732162-798a0062be99"
             },
             {
-                "name": "Arroz Jazmín Tailandés",
-                "description": "Arroz aromático de grano largo, 1kg",
-                "price": 6.00,
-                "stock": 55,
-                "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1586201375761-83865001e31c"
-            },
-
-            # Congelados
-            {
-                "name": "Gyozas de Cerdo",
-                "description": "Empanadillas japonesas rellenas de cerdo, 20 unidades",
-                "price": 5.50,
-                "stock": 40,
-                "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1496116218417-1a781b1c416c"
-            },
-            {
-                "name": "Edamame Congelado",
-                "description": "Vainas de soja verde listas para hervir, 500g",
-                "price": 3.80,
+                "name": "Arroz Japonés Koshihikari",
+                "description": "Arroz premium japonés - La variedad más apreciada - 1kg",
+                "price": 12.00,
                 "stock": 50,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1583596112122-67b8b92e5614"
+                "image_url": "https://images.unsplash.com/photo-1586201375761-83865001e31c"
+            },
+            {
+                "name": "Algas Nori para Sushi",
+                "description": "Láminas de alga nori tostada - Pack de 50 hojas",
+                "price": 7.50,
+                "stock": 70,
+                "category_id": categories[5].id,
+                "image_url": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351"
+            },
+            {
+                "name": "Fideos Soba Secos",
+                "description": "Fideos de trigo sarraceno japoneses - 300g",
+                "price": 4.20,
+                "stock": 85,
+                "category_id": categories[5].id,
+                "image_url": "https://images.unsplash.com/photo-1617093727343-374698b1b08d"
+            },
+            {
+                "name": "Fideos Udon Secos",
+                "description": "Fideos udon gruesos tradicionales - 300g",
+                "price": 3.80,
+                "stock": 90,
+                "category_id": categories[5].id,
+                "image_url": "https://images.unsplash.com/photo-1626266061368-46a8f578ddd6"
             },
         ]
 
@@ -205,15 +386,15 @@ def init_database():
             {
                 "user_id": "test-user-1",
                 "items": [
-                    {"product_id": products[0].id, "quantity": 2},  # Shin Ramyun
-                    {"product_id": products[4].id, "quantity": 1},  # Salsa de Soja
+                    {"product_id": products[1].id, "quantity": 2},  # Shin Ramyun
+                    {"product_id": products[27].id, "quantity": 1},  # Salsa de Soja KIKKOMAN
                 ]
             },
             {
                 "user_id": "test-user-2",
                 "items": [
-                    {"product_id": products[7].id, "quantity": 3},  # Pocky
-                    {"product_id": products[10].id, "quantity": 1},  # Ramune
+                    {"product_id": products[10].id, "quantity": 3},  # Pocky Chocolate
+                    {"product_id": products[20].id, "quantity": 2},  # Ramune Original
                 ]
             }
         ]
@@ -246,9 +427,9 @@ def init_database():
                 "shipping_address": "Calle Mayor 123, 28013 Madrid, España",
                 "notes": "Por favor, llamar antes de entregar",
                 "items": [
-                    {"product_id": products[0].id, "quantity": 5, "unit_price": products[0].price},
-                    {"product_id": products[1].id, "quantity": 3, "unit_price": products[1].price},
-                    {"product_id": products[4].id, "quantity": 2, "unit_price": products[4].price},
+                    {"product_id": products[0].id, "quantity": 2, "unit_price": products[0].price},  # Ramen Carbonara SAMYANG
+                    {"product_id": products[1].id, "quantity": 5, "unit_price": products[1].price},  # Shin Ramyun
+                    {"product_id": products[10].id, "quantity": 4, "unit_price": products[10].price},  # Pocky Chocolate
                 ]
             },
             {
@@ -260,8 +441,9 @@ def init_database():
                 "shipping_address": "Avenida de la Constitución 45, 41001 Sevilla, España",
                 "notes": None,
                 "items": [
-                    {"product_id": products[12].id, "quantity": 2, "unit_price": products[12].price},
-                    {"product_id": products[14].id, "quantity": 1, "unit_price": products[14].price},
+                    {"product_id": products[20].id, "quantity": 6, "unit_price": products[20].price},  # Ramune Original
+                    {"product_id": products[15].id, "quantity": 3, "unit_price": products[15].price},  # Hi-Chew
+                    {"product_id": products[33].id, "quantity": 1, "unit_price": products[33].price},  # Arroz para Sushi
                 ]
             }
         ]
@@ -309,5 +491,8 @@ def init_database():
 
 
 if __name__ == "__main__":
+    force = "--force" in sys.argv
+    if force:
+        print("Force mode enabled: will clear existing data")
     print("Initializing database...")
-    init_database()
+    init_database(force=force)
