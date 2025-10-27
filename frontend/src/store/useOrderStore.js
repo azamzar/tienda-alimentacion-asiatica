@@ -88,4 +88,5 @@ const useOrderStore = create((set, get) => ({
   clearError: () => set({ error: null })
 }));
 
+export { useOrderStore };
 export default useOrderStore;

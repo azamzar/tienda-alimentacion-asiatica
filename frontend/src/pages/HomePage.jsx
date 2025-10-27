@@ -1,115 +1,117 @@
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store';
+import React from 'react';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useProductStore } from '../store/useProductStore';
+import { formatPrice } from '../utils/formatters';
+import Button from '../components/common/Button';
+import Card from '../components/common/Card';
+import Spinner from '../components/common/Spinner';
+import './HomePage.css';
 
 /**
- * Página principal (Home)
+ * Home page with featured products
  */
 function HomePage() {
-  const navigate = useNavigate();
-  const { user, logout, isAdmin } = useAuthStore();
+  const { products, loading, fetchProducts } = useProductStore();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  useEffect(() => {
+    if (products.length === 0) {
+      fetchProducts({ limit: 6 });
+    }
+  }, []);
+
+  const featuredProducts = products.slice(0, 6);
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>Tienda de Alimentación Asiática</h1>
-        <div style={styles.userInfo}>
-          <p style={styles.welcome}>
-            Bienvenido, <strong>{user?.full_name || user?.email}</strong>
+    <div className="home-page">
+      {/* Hero section */}
+      <section className="home-hero">
+        <div className="home-hero-content">
+          <h1 className="home-hero-title">Bienvenido a Asia Market</h1>
+          <p className="home-hero-description">
+            Descubre los mejores productos asiáticos. Auténticos, frescos y de la mejor calidad.
           </p>
-          <p style={styles.role}>
-            Rol: <span style={styles.badge}>{isAdmin() ? 'Administrador' : 'Cliente'}</span>
-          </p>
-          <button onClick={handleLogout} style={styles.logoutButton}>
-            Cerrar Sesión
-          </button>
+          <Link to="/products">
+            <Button variant="primary" size="large">
+              Ver productos
+            </Button>
+          </Link>
         </div>
-      </div>
+      </section>
 
-      <div style={styles.content}>
-        <h2>Contenido de la aplicación</h2>
-        <p>Aquí irá el catálogo de productos, carrito, etc.</p>
-
-        {isAdmin() && (
-          <div style={styles.adminSection}>
-            <h3>Panel de Administrador</h3>
-            <p>Como administrador, puedes gestionar productos y categorías.</p>
+      {/* Featured products */}
+      <section className="home-featured">
+        <div className="home-featured-container">
+          <div className="home-featured-header">
+            <h2 className="home-featured-title">Productos Destacados</h2>
+            <Link to="/products" className="home-featured-link">
+              Ver todos →
+            </Link>
           </div>
-        )}
-      </div>
+
+          {loading ? (
+            <div className="home-featured-loading">
+              <Spinner size="large" centered text="Cargando productos..." />
+            </div>
+          ) : (
+            <div className="home-featured-grid">
+              {featuredProducts.map((product) => (
+                <Link
+                  key={product.id}
+                  to={`/products/${product.id}`}
+                  className="home-product-link"
+                >
+                  <Card hoverable className="home-product-card">
+                    <div className="home-product-image-wrapper">
+                      <img
+                        src={product.image_url || '/placeholder-product.png'}
+                        alt={product.name}
+                        className="home-product-image"
+                        onError={(e) => {
+                          e.target.src = '/placeholder-product.png';
+                        }}
+                      />
+                    </div>
+                    <div className="home-product-content">
+                      <h3 className="home-product-name">{product.name}</h3>
+                      <p className="home-product-price">{formatPrice(product.price)}</p>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Features section */}
+      <section className="home-features">
+        <div className="home-features-container">
+          <div className="home-feature">
+            <div className="home-feature-icon">🚚</div>
+            <h3 className="home-feature-title">Envío Rápido</h3>
+            <p className="home-feature-description">
+              Entrega en 24-48h en toda España
+            </p>
+          </div>
+          <div className="home-feature">
+            <div className="home-feature-icon">✨</div>
+            <h3 className="home-feature-title">Productos Auténticos</h3>
+            <p className="home-feature-description">
+              Importados directamente desde Asia
+            </p>
+          </div>
+          <div className="home-feature">
+            <div className="home-feature-icon">💳</div>
+            <h3 className="home-feature-title">Pago Seguro</h3>
+            <p className="home-feature-description">
+              Transacciones 100% seguras
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    backgroundColor: '#f5f5f5'
-  },
-  header: {
-    backgroundColor: 'white',
-    padding: '20px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    marginBottom: '20px'
-  },
-  title: {
-    margin: '0 0 20px 0',
-    fontSize: '28px',
-    color: '#333'
-  },
-  userInfo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '20px',
-    flexWrap: 'wrap'
-  },
-  welcome: {
-    margin: 0,
-    fontSize: '16px',
-    color: '#666'
-  },
-  role: {
-    margin: 0,
-    fontSize: '14px',
-    color: '#666'
-  },
-  badge: {
-    padding: '4px 8px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    borderRadius: '4px',
-    fontSize: '12px',
-    fontWeight: 'bold'
-  },
-  logoutButton: {
-    padding: '8px 16px',
-    fontSize: '14px',
-    color: 'white',
-    backgroundColor: '#dc3545',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    marginLeft: 'auto'
-  },
-  content: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '20px',
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-  },
-  adminSection: {
-    marginTop: '30px',
-    padding: '20px',
-    backgroundColor: '#e7f3ff',
-    borderLeft: '4px solid #007bff',
-    borderRadius: '4px'
-  }
-};
 
 export default HomePage;

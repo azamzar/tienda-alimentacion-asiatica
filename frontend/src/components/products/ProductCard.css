@@ -1,0 +1,146 @@
+/* Product card */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  cursor: pointer;
+}
+
+.product-card .card-body {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Image */
+.product-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 75%; /* 4:3 aspect ratio */
+  overflow: hidden;
+  background-color: #f3f4f6;
+}
+
+.product-card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+.product-card:hover .product-card-image {
+  transform: scale(1.05);
+}
+
+/* Badge */
+.product-card-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  z-index: 10;
+}
+
+.product-card-badge-out {
+  background-color: #ef4444;
+  color: white;
+}
+
+.product-card-badge-low {
+  background-color: #f59e0b;
+  color: white;
+}
+
+/* Content */
+.product-card-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+/* Category */
+.product-card-category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #3b82f6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Name */
+.product-card-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Description */
+.product-card-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer */
+.product-card-footer {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.product-card-price-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.product-card-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.product-card-stock {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.product-card-btn {
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .product-card-name {
+    font-size: 0.9375rem;
+  }
+
+  .product-card-price {
+    font-size: 1.125rem;
+  }
+}

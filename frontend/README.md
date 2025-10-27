@@ -743,23 +743,28 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] Interceptores de Axios para incluir JWT automáticamente
 - [x] Dependencias instaladas
 
-### 🔄 Fase 2: En Progreso (UI Implementation)
-- [ ] Configurar React Router con todas las rutas
-- [ ] Crear componentes de layout (Header, Footer, Navigation)
-- [ ] Crear componentes comunes (Button, Card, Input, Modal, Spinner)
-- [ ] Crear componentes de productos (ProductCard, ProductGrid, ProductFilter)
+### ✅ Fase 2: Completada (UI Implementation)
+- [x] Configurar React Router con todas las rutas
+- [x] Crear componentes de layout (Header, Footer)
+- [x] Crear componentes comunes (Button, Card, Input, Modal, Spinner)
+- [x] Crear componentes de productos (ProductCard, ProductGrid con filtros)
+- [x] Implementar página Home con hero y productos destacados
+- [x] Implementar página Products con filtros y búsqueda
+- [x] Implementar página ProductDetail completa
+- [x] Agregar estilos CSS responsive y globales mejorados
+- [x] Fix: Agregado import React a todos los componentes JSX
+- [x] Fix: Configurado CORS en backend para múltiples puertos (5173-5176)
+- [x] Fix: Corregidas rutas de imports (ProtectedRoute, useAuthStore)
+
+### 🔄 Fase 3: En Progreso (Funcionalidades Avanzadas)
+- [ ] Implementar página Cart con UI completa
 - [ ] Crear componentes de carrito (CartItem, CartSummary, CartDrawer)
-- [ ] Implementar página Home
-- [ ] Implementar página Products con filtros y búsqueda
-- [ ] Implementar página ProductDetail
-- [ ] Implementar página Cart
-- [ ] Implementar página Checkout con formulario
+- [ ] Implementar página Checkout con formulario de pedido
 - [ ] Implementar página Orders (historial de pedidos)
-- [ ] Implementar página OrderDetail
+- [ ] Implementar página OrderDetail con tracking
 - [ ] Panel de administración (admin dashboard)
-- [ ] Gestión de productos (admin)
+- [ ] Gestión de productos (CRUD admin)
 - [ ] Gestión de pedidos (admin)
-- [ ] Agregar estilos CSS responsive
 
 ### 📋 Fase 3: Futuras Mejoras
 - [ ] Agregar tests unitarios (Vitest)
@@ -848,6 +853,38 @@ touch src/pages/OrderDetail.jsx
 - Implementar componentes UI
 - Crear páginas y rutas
 - Agregar estilos
+
+## Notas Importantes para Desarrollo
+
+### React Imports
+**IMPORTANTE**: Todos los archivos `.jsx` deben incluir `import React from 'react'` al inicio, incluso si no se usa explícitamente. Esto es necesario para que JSX funcione correctamente.
+
+```jsx
+import React from 'react';
+import { useState } from 'react';
+// ... resto de imports
+```
+
+### Named Exports en Stores
+Los stores de Zustand tienen tanto default export como named export:
+```javascript
+export { useAuthStore };
+export default useAuthStore;
+```
+
+Esto permite importarlos de ambas formas:
+```javascript
+import { useAuthStore } from './store/useAuthStore';  // Named import
+import useAuthStore from './store/useAuthStore';      // Default import
+```
+
+### Estructura de Rutas
+- Archivos de autenticación en: `src/pages/LoginPage.jsx` y `src/pages/RegisterPage.jsx`
+- Componente ProtectedRoute en: `src/components/auth/ProtectedRoute.jsx`
+- Todos los imports de stores deben ser relativos desde su ubicación
+
+### Servidor de Desarrollo
+El servidor Vite puede correr en diferentes puertos (5173-5176) si otros están ocupados. El backend tiene CORS configurado para todos estos puertos.
 
 ## Licencia
 

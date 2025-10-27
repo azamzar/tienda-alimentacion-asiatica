@@ -721,6 +721,7 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - [x] Carrito de compras
 - [x] Sistema de órdenes/pedidos
 - [x] Endpoints protegidos con autenticación
+- [x] CORS configurado para puertos 5173-5176 (desarrollo frontend)
 
 ### 📋 Pendiente
 

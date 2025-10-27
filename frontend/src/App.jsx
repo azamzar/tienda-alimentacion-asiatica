@@ -1,67 +1,47 @@
-import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store';
-
-// Pages
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-
-// Components
-import ProtectedRoute from './components/ProtectedRoute';
-
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { useAuthStore } from './store/useAuthStore';
+import { useCartStore } from './store/useCartStore';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+import AppRouter from './routes/AppRouter';
+import Spinner from './components/common/Spinner';
 import './App.css';
 
+/**
+ * Main App component
+ * Sets up routing, layout, and initializes stores
+ */
 function App() {
   const { checkAuth, isLoading } = useAuthStore();
+  const { initializeUserId } = useCartStore();
 
-  // Verificar autenticación al cargar la app
+  // Check authentication and initialize cart on app load
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    initializeUserId();
+  }, []);
 
-  // Mostrar loading mientras se verifica la autenticación
+  // Show loading while checking authentication
   if (isLoading) {
     return (
-      <div style={styles.loading}>
-        <p>Cargando...</p>
+      <div className="app-loading">
+        <Spinner size="large" centered text="Cargando aplicación..." />
       </div>
     );
   }
 
   return (
     <Router>
-      <Routes>
-        {/* Rutas públicas */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-
-        {/* Rutas protegidas (requieren autenticación) */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Ruta por defecto - redirigir al home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <div className="app">
+        <Header />
+        <main className="app-main">
+          <AppRouter />
+        </main>
+        <Footer />
+      </div>
     </Router>
   );
 }
-
-const styles = {
-  loading: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-    fontSize: '18px',
-    color: '#666'
-  }
-};
 
 export default App;

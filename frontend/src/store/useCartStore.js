@@ -172,4 +172,5 @@ const useCartStore = create((set, get) => ({
   clearError: () => set({ error: null })
 }));
 
+export { useCartStore };
 export default useCartStore;
