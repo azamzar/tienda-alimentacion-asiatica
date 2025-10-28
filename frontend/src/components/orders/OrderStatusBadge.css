@@ -1,0 +1,33 @@
+.order-status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  text-transform: capitalize;
+}
+
+.order-status-badge-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.order-status-badge-processing {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.order-status-badge-shipped {
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+
+.order-status-badge-delivered {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.order-status-badge-cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}

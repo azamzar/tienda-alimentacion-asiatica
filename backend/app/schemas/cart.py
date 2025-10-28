@@ -29,6 +29,7 @@ class CartItemResponse(CartItemBase):
     cart_id: int
     added_at: datetime
     product: ProductResponse  # Información completa del producto
+    subtotal: float = Field(default=0.0, description="Subtotal del item (quantity * product.price)")
 
     model_config = ConfigDict(from_attributes=True)
 

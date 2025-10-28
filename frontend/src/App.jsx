@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { useAuthStore } from './store/useAuthStore';
-import { useCartStore } from './store/useCartStore';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import AppRouter from './routes/AppRouter';
@@ -14,12 +13,10 @@ import './App.css';
  */
 function App() {
   const { checkAuth, isLoading } = useAuthStore();
-  const { initializeUserId } = useCartStore();
 
-  // Check authentication and initialize cart on app load
+  // Check authentication on app load
   useEffect(() => {
     checkAuth();
-    initializeUserId();
   }, []);
 
   // Show loading while checking authentication

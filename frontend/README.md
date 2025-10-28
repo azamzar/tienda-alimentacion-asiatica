@@ -756,17 +756,31 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] Fix: Configurado CORS en backend para múltiples puertos (5173-5176)
 - [x] Fix: Corregidas rutas de imports (ProtectedRoute, useAuthStore)
 
-### 🔄 Fase 3: En Progreso (Funcionalidades Avanzadas)
-- [ ] Implementar página Cart con UI completa
-- [ ] Crear componentes de carrito (CartItem, CartSummary, CartDrawer)
-- [ ] Implementar página Checkout con formulario de pedido
-- [ ] Implementar página Orders (historial de pedidos)
-- [ ] Implementar página OrderDetail con tracking
+### ✅ Fase 3: Completada (Carrito y Checkout)
+- [x] Implementar página Cart con UI completa
+- [x] Crear componentes de carrito (CartItem, CartSummary)
+- [x] Implementar página Checkout con formulario de pedido
+- [x] Validación completa de formulario checkout
+- [x] Integración carrito → checkout → orden
+- [x] Página de confirmación con animación
+- [x] Actualización de servicios para JWT (cartService, orderService)
+
+### ✅ Fase 4: Completada (Gestión de Órdenes)
+- [x] Implementar página Orders (historial de pedidos con filtros por estado)
+- [x] Implementar página OrderDetail con información completa
+- [x] Componente OrderStatusBadge con estados visuales
+- [x] Banner de éxito animado tras crear pedido
+- [x] Flujo optimizado de checkout sin pantallas intermedias
+- [x] Fix: Backend vacía carrito automáticamente al crear pedido
+- [x] Fix: Campo subtotal agregado en CartItemResponse
+
+### 📋 Fase 5: Pendiente (Panel de Administración)
 - [ ] Panel de administración (admin dashboard)
 - [ ] Gestión de productos (CRUD admin)
 - [ ] Gestión de pedidos (admin)
+- [ ] Estadísticas y métricas de ventas
 
-### 📋 Fase 3: Futuras Mejoras
+### 📋 Fase 6: Futuras Mejoras
 - [ ] Agregar tests unitarios (Vitest)
 - [ ] Implementar lazy loading de imágenes
 - [ ] Agregar paginación infinita en productos

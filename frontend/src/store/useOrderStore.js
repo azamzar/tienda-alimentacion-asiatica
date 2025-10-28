@@ -3,6 +3,7 @@ import { orderService } from '../services/orderService';
 
 /**
  * Store de Zustand para gestionar pedidos
+ * NOTA: Requiere que el usuario esté autenticado
  */
 const useOrderStore = create((set, get) => ({
   // Estado
@@ -11,11 +12,11 @@ const useOrderStore = create((set, get) => ({
   loading: false,
   error: null,
 
-  // Crear un pedido desde el carrito
-  createOrder: async (userId, orderData) => {
+  // Crear un pedido desde el carrito (requiere autenticación)
+  createOrder: async (orderData) => {
     set({ loading: true, error: null });
     try {
-      const order = await orderService.createOrder(userId, orderData);
+      const order = await orderService.createOrder(orderData);
       set({
         currentOrder: order,
         loading: false
@@ -30,11 +31,11 @@ const useOrderStore = create((set, get) => ({
     }
   },
 
-  // Obtener todos los pedidos del usuario
-  fetchOrders: async (userId) => {
+  // Obtener todos los pedidos del usuario autenticado
+  fetchOrders: async (filters = {}) => {
     set({ loading: true, error: null });
     try {
-      const orders = await orderService.getOrders({ user_id: userId });
+      const orders = await orderService.getOrders(filters);
       set({ orders, loading: false });
     } catch (error) {
       set({
@@ -45,10 +46,10 @@ const useOrderStore = create((set, get) => ({
   },
 
   // Obtener un pedido específico
-  fetchOrderById: async (orderId, userId = null) => {
+  fetchOrderById: async (orderId) => {
     set({ loading: true, error: null });
     try {
-      const order = await orderService.getOrderById(orderId, userId);
+      const order = await orderService.getOrderById(orderId);
       set({ currentOrder: order, loading: false });
     } catch (error) {
       set({
@@ -59,10 +60,10 @@ const useOrderStore = create((set, get) => ({
   },
 
   // Cancelar un pedido
-  cancelOrder: async (orderId, userId = null) => {
+  cancelOrder: async (orderId) => {
     set({ loading: true, error: null });
     try {
-      const order = await orderService.cancelOrder(orderId, userId);
+      const order = await orderService.cancelOrder(orderId);
       // Actualizar el pedido en la lista
       set((state) => ({
         orders: state.orders.map((o) =>

@@ -44,9 +44,17 @@ function ProductDetailPage() {
     setIsAdding(true);
     try {
       await addItem(product.id, quantity);
-      // Optional: Show success message
+      // Success - could show a toast notification here
+      alert(`${quantity} ${quantity === 1 ? 'producto agregado' : 'productos agregados'} al carrito`);
     } catch (error) {
       console.error('Error adding to cart:', error);
+      // If not authenticated, redirect to login
+      if (error.response?.status === 401) {
+        alert('Debes iniciar sesión para agregar productos al carrito');
+        navigate('/login');
+      } else {
+        alert(error.response?.data?.detail || 'Error al agregar al carrito');
+      }
     } finally {
       setIsAdding(false);
     }
@@ -113,11 +121,14 @@ function ProductDetailPage() {
           {/* Image */}
           <div className="product-detail-image-wrapper">
             <img
-              src={product.image_url || '/placeholder-product.png'}
+              src={product.image_url || 'https://placehold.co/600x450/f0f0f0/666?text=Producto'}
               alt={product.name}
               className="product-detail-image"
               onError={(e) => {
-                e.target.src = '/placeholder-product.png';
+                // Prevent infinite loop by checking if we've already set the placeholder
+                if (!e.target.src.includes('placehold.co')) {
+                  e.target.src = 'https://placehold.co/600x450/f0f0f0/666?text=Producto';
+                }
               }}
             />
             {isOutOfStock && (

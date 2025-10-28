@@ -251,12 +251,26 @@ class CartService:
         total_items = sum(item.quantity for item in cart.items)
         total_amount = sum(item.quantity * item.product.price for item in cart.items)
 
+        # Construir items con subtotales calculados
+        items_with_subtotal = []
+        for item in cart.items:
+            item_dict = {
+                "id": item.id,
+                "cart_id": item.cart_id,
+                "product_id": item.product_id,
+                "quantity": item.quantity,
+                "added_at": item.added_at,
+                "product": item.product,
+                "subtotal": round(item.quantity * item.product.price, 2)
+            }
+            items_with_subtotal.append(item_dict)
+
         cart_dict = {
             "id": cart.id,
             "user_id": cart.user_id,
             "created_at": cart.created_at,
             "updated_at": cart.updated_at,
-            "items": cart.items,
+            "items": items_with_subtotal,
             "total_items": total_items,
             "total_amount": round(total_amount, 2)
         }

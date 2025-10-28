@@ -64,6 +64,7 @@ def init_database(force=False):
             db.refresh(cat)
 
         # Create products - Anime-themed candies and Japanese snacks catalog
+        # NOTE: For production, replace these placeholder images with actual product photos
         products_data = [
             # Ramen y Fideos (Category 0)
             {
@@ -72,7 +73,7 @@ def init_database(force=False):
                 "price": 6.50,
                 "stock": 100,
                 "category_id": categories[0].id,
-                "image_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624"
+                "image_url": "https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=400"
             },
             {
                 "name": "Nongshim Shin Ramyun",
@@ -80,7 +81,7 @@ def init_database(force=False):
                 "price": 1.50,
                 "stock": 150,
                 "category_id": categories[0].id,
-                "image_url": "https://images.unsplash.com/photo-1623341214825-9f4f963727da"
+                "image_url": "https://images.unsplash.com/photo-1623341214825-9f4f963727da?w=400"
             },
             {
                 "name": "Samyang Buldak Hot Chicken Ramen",
@@ -88,7 +89,7 @@ def init_database(force=False):
                 "price": 1.85,
                 "stock": 120,
                 "category_id": categories[0].id,
-                "image_url": "https://images.unsplash.com/photo-1585032226651-759b368d7246"
+                "image_url": "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400"
             },
             {
                 "name": "Nissin Cup Noodles Original",
@@ -96,7 +97,7 @@ def init_database(force=False):
                 "price": 1.20,
                 "stock": 200,
                 "category_id": categories[0].id,
-                "image_url": "https://images.unsplash.com/photo-1617093727343-374698b1b08d"
+                "image_url": "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400"
             },
             {
                 "name": "Maruchan Ramen Tonkotsu",
@@ -104,7 +105,7 @@ def init_database(force=False):
                 "price": 1.30,
                 "stock": 180,
                 "category_id": categories[0].id,
-                "image_url": "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841"
+                "image_url": "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400"
             },
             {
                 "name": "Sapporo Ichiban Miso Ramen",
@@ -112,7 +113,7 @@ def init_database(force=False):
                 "price": 1.40,
                 "stock": 160,
                 "category_id": categories[0].id,
-                "image_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624"
+                "image_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400"
             },
 
             # Dulces Japoneses (Category 1)
@@ -122,7 +123,7 @@ def init_database(force=False):
                 "price": 3.20,
                 "stock": 200,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1582735689155-184926d293d0"
+                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f?w=400"
             },
             {
                 "name": "Hi-Chew Mango",
@@ -130,7 +131,7 @@ def init_database(force=False):
                 "price": 2.80,
                 "stock": 180,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1582735689369-4fe2e9a5f1b6"
+                "image_url": "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?w=400"
             },
             {
                 "name": "Hi-Chew Fresa Premium",
@@ -138,7 +139,7 @@ def init_database(force=False):
                 "price": 2.80,
                 "stock": 180,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f"
+                "image_url": "https://images.unsplash.com/photo-1548848979-47519fe1b5d4?w=400"
             },
             {
                 "name": "Kasugai Gummy Mix",
@@ -146,7 +147,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 150,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1582037928769-181f2644ecb7"
+                "image_url": "https://images.unsplash.com/photo-1582037928769-181f2644ecb7?w=400"
             },
             {
                 "name": "Kasugai Gummy Uva",
@@ -154,7 +155,7 @@ def init_database(force=False):
                 "price": 2.30,
                 "stock": 140,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1599683560574-c55276007e64"
+                "image_url": "https://images.unsplash.com/photo-1599683560574-c55276007e64?w=400"
             },
             {
                 "name": "Kasugai Gummy Melocotón",
@@ -162,7 +163,7 @@ def init_database(force=False):
                 "price": 2.30,
                 "stock": 140,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1587248720327-f5b2c9eeb0fe"
+                "image_url": "https://images.unsplash.com/photo-1587248720327-f5b2c9eeb0fe?w=400"
             },
             {
                 "name": "Morinaga Ramune Candy",
@@ -170,7 +171,7 @@ def init_database(force=False):
                 "price": 2.10,
                 "stock": 170,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137"
+                "image_url": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=400"
             },
             {
                 "name": "Fujiya Milky Candy",
@@ -178,7 +179,7 @@ def init_database(force=False):
                 "price": 2.99,
                 "stock": 160,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f"
+                "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f?w=400"
             },
             {
                 "name": "Meiji Yogurt Candy",
@@ -186,7 +187,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 150,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1571212515416-26f6a41ed75e"
+                "image_url": "https://images.unsplash.com/photo-1571212515416-26f6a41ed75e?w=400"
             },
             {
                 "name": "Konpeito Azucarillos",
@@ -194,7 +195,7 @@ def init_database(force=False):
                 "price": 3.50,
                 "stock": 100,
                 "category_id": categories[1].id,
-                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f"
+                "image_url": "https://images.unsplash.com/photo-1582735689155-184926d293d0?w=400"
             },
 
             # Chocolates y Galletas (Category 2)
@@ -204,7 +205,7 @@ def init_database(force=False):
                 "price": 2.40,
                 "stock": 250,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60"
+                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400"
             },
             {
                 "name": "Pocky Fresa",
@@ -212,7 +213,7 @@ def init_database(force=False):
                 "price": 2.40,
                 "stock": 240,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1581798459219-c0f6b53b81d8"
+                "image_url": "https://images.unsplash.com/photo-1581798459219-c0f6b53b81d8?w=400"
             },
             {
                 "name": "Pocky Matcha Green Tea",
@@ -220,7 +221,7 @@ def init_database(force=False):
                 "price": 2.80,
                 "stock": 200,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1582450871972-ab5ca641643d"
+                "image_url": "https://images.unsplash.com/photo-1582450871972-ab5ca641643d?w=400"
             },
             {
                 "name": "Pocky Cookies & Cream",
@@ -228,7 +229,7 @@ def init_database(force=False):
                 "price": 2.60,
                 "stock": 180,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e"
+                "image_url": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400"
             },
             {
                 "name": "Pocky Almond Crush",
@@ -236,7 +237,7 @@ def init_database(force=False):
                 "price": 2.90,
                 "stock": 170,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1606312619070-d48b4863db88"
+                "image_url": "https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?w=400"
             },
             {
                 "name": "Kit Kat Matcha Japonés",
@@ -244,7 +245,7 @@ def init_database(force=False):
                 "price": 4.50,
                 "stock": 150,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1606312619070-d48b4863db88"
+                "image_url": "https://images.unsplash.com/photo-1582450871972-ab5ca641643d?w=400"
             },
             {
                 "name": "Kit Kat Sakura Flor de Cerezo",
@@ -252,7 +253,7 @@ def init_database(force=False):
                 "price": 4.80,
                 "stock": 100,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6?w=400"
             },
             {
                 "name": "Kit Kat Sake Japonés",
@@ -260,7 +261,7 @@ def init_database(force=False):
                 "price": 5.20,
                 "stock": 80,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1606312619070-d48b4863db88"
+                "image_url": "https://images.unsplash.com/photo-1606312619070-d48b4863db88?w=400"
             },
             {
                 "name": "Kit Kat Wasabi",
@@ -268,7 +269,7 @@ def init_database(force=False):
                 "price": 4.90,
                 "stock": 90,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1606312619070-d48b4863db88"
+                "image_url": "https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9?w=400"
             },
             {
                 "name": "Yan Yan Chocolate",
@@ -276,7 +277,7 @@ def init_database(force=False):
                 "price": 2.20,
                 "stock": 200,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60"
+                "image_url": "https://images.unsplash.com/photo-1607920591413-4ec007e70023?w=400"
             },
             {
                 "name": "Yan Yan Fresa",
@@ -284,7 +285,7 @@ def init_database(force=False):
                 "price": 2.20,
                 "stock": 190,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60"
+                "image_url": "https://images.unsplash.com/photo-1563085176-3688bb9e3d16?w=400"
             },
             {
                 "name": "Hello Panda Chocolate",
@@ -292,7 +293,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 180,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400"
             },
             {
                 "name": "Hello Panda Fresa",
@@ -300,7 +301,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 180,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+                "image_url": "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400"
             },
             {
                 "name": "Koala March Chocolate",
@@ -308,7 +309,7 @@ def init_database(force=False):
                 "price": 2.60,
                 "stock": 170,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4"
+                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4?w=400"
             },
             {
                 "name": "Koala March Fresa",
@@ -316,7 +317,7 @@ def init_database(force=False):
                 "price": 2.60,
                 "stock": 170,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4"
+                "image_url": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400"
             },
             {
                 "name": "Toppo Chocolate Sticks",
@@ -324,7 +325,7 @@ def init_database(force=False):
                 "price": 2.70,
                 "stock": 160,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60"
+                "image_url": "https://images.unsplash.com/photo-1511018556340-d16986a1c194?w=400"
             },
             {
                 "name": "Apollo Chocolate Fresa",
@@ -332,7 +333,7 @@ def init_database(force=False):
                 "price": 2.40,
                 "stock": 150,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1481391243133-f96216dcb5d2?w=400"
             },
             {
                 "name": "Chocorooms Meiji",
@@ -340,7 +341,7 @@ def init_database(force=False):
                 "price": 3.20,
                 "stock": 140,
                 "category_id": categories[2].id,
-                "image_url": "https://images.unsplash.com/photo-1606312619070-d48b4863db88"
+                "image_url": "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=400"
             },
 
             # Productos Anime (Category 3)
@@ -351,7 +352,7 @@ def init_database(force=False):
                 "price": 12.99,
                 "stock": 80,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1613975679558-45e4564b5a53"
+                "image_url": "https://images.unsplash.com/photo-1613975679558-45e4564b5a53?w=400"
             },
             {
                 "name": "Caja Sorpresa Hello Kitty",
@@ -359,7 +360,7 @@ def init_database(force=False):
                 "price": 11.99,
                 "stock": 90,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1582735689369-4fe2e9a5f1b6"
+                "image_url": "https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=400"
             },
             {
                 "name": "Caja Sorpresa My Melody",
@@ -367,7 +368,7 @@ def init_database(force=False):
                 "price": 11.99,
                 "stock": 85,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f"
+                "image_url": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400"
             },
 
             # Productos individuales Pokémon (para cajas o venta individual)
@@ -377,7 +378,7 @@ def init_database(force=False):
                 "price": 3.50,
                 "stock": 150,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+                "image_url": "https://images.unsplash.com/photo-1464207687429-7505649dae38?w=400"
             },
             {
                 "name": "Gominolas Pokémon Mix",
@@ -385,7 +386,7 @@ def init_database(force=False):
                 "price": 2.99,
                 "stock": 180,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1582037928769-181f2644ecb7"
+                "image_url": "https://images.unsplash.com/photo-1499195333224-3ce974eecb47?w=400"
             },
             {
                 "name": "Chocolates Pokémon Ball",
@@ -393,7 +394,7 @@ def init_database(force=False):
                 "price": 3.80,
                 "stock": 140,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1511381939415-e44015466834?w=400"
             },
             {
                 "name": "Caramelos Pokémon Surtidos",
@@ -401,7 +402,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 160,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f"
+                "image_url": "https://images.unsplash.com/photo-1495134929207-3317dc31e3bb?w=400"
             },
             {
                 "name": "Pocky Pokémon Edición",
@@ -409,7 +410,7 @@ def init_database(force=False):
                 "price": 2.90,
                 "stock": 130,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60"
+                "image_url": "https://images.unsplash.com/photo-1582660383610-a564cb8c3e05?w=400"
             },
 
             # Productos individuales Hello Kitty / Sanrio
@@ -419,7 +420,7 @@ def init_database(force=False):
                 "price": 3.50,
                 "stock": 160,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400"
             },
             {
                 "name": "Chocolates Hello Kitty",
@@ -427,7 +428,7 @@ def init_database(force=False):
                 "price": 3.80,
                 "stock": 140,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6?w=400"
             },
             {
                 "name": "Caramelos Hello Kitty Fresa",
@@ -435,7 +436,7 @@ def init_database(force=False):
                 "price": 2.60,
                 "stock": 170,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f"
+                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f?w=400"
             },
             {
                 "name": "Marshmallows Hello Kitty",
@@ -443,7 +444,7 @@ def init_database(force=False):
                 "price": 3.20,
                 "stock": 120,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1582735689155-184926d293d0"
+                "image_url": "https://images.unsplash.com/photo-1582735689155-184926d293d0?w=400"
             },
             {
                 "name": "Galletas My Melody",
@@ -451,7 +452,7 @@ def init_database(force=False):
                 "price": 3.50,
                 "stock": 140,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400"
             },
             {
                 "name": "Chocolates My Melody",
@@ -459,7 +460,7 @@ def init_database(force=False):
                 "price": 3.70,
                 "stock": 130,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6?w=400"
             },
             {
                 "name": "Galletas Kuromi",
@@ -467,7 +468,7 @@ def init_database(force=False):
                 "price": 3.50,
                 "stock": 120,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400"
             },
             {
                 "name": "Caramelos Cinnamoroll",
@@ -475,7 +476,7 @@ def init_database(force=False):
                 "price": 2.80,
                 "stock": 130,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f"
+                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f?w=400"
             },
 
             # Productos individuales Rilakkuma
@@ -485,7 +486,7 @@ def init_database(force=False):
                 "price": 3.80,
                 "stock": 120,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4"
+                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4?w=400"
             },
             {
                 "name": "Chocolates Rilakkuma",
@@ -493,7 +494,7 @@ def init_database(force=False):
                 "price": 4.20,
                 "stock": 110,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6?w=400"
             },
 
             # Productos individuales Studio Ghibli
@@ -503,7 +504,7 @@ def init_database(force=False):
                 "price": 3.90,
                 "stock": 110,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4"
+                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4?w=400"
             },
             {
                 "name": "Chocolates Studio Ghibli Mix",
@@ -511,7 +512,7 @@ def init_database(force=False):
                 "price": 5.50,
                 "stock": 100,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6?w=400"
             },
             {
                 "name": "Caramelos Spirited Away",
@@ -519,7 +520,7 @@ def init_database(force=False):
                 "price": 3.20,
                 "stock": 90,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f"
+                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f?w=400"
             },
 
             # Productos individuales Doraemon
@@ -529,7 +530,7 @@ def init_database(force=False):
                 "price": 3.50,
                 "stock": 130,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400"
             },
             {
                 "name": "Chocolates Doraemon",
@@ -537,7 +538,7 @@ def init_database(force=False):
                 "price": 3.80,
                 "stock": 120,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6?w=400"
             },
             {
                 "name": "Ramune Candy Doraemon",
@@ -545,7 +546,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 140,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137"
+                "image_url": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=400"
             },
             {
                 "name": "Gominolas Doraemon",
@@ -553,7 +554,7 @@ def init_database(force=False):
                 "price": 2.90,
                 "stock": 130,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1582037928769-181f2644ecb7"
+                "image_url": "https://images.unsplash.com/photo-1582037928769-181f2644ecb7?w=400"
             },
 
             # Productos individuales otros anime populares
@@ -563,7 +564,7 @@ def init_database(force=False):
                 "price": 4.20,
                 "stock": 110,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d"
+                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d?w=400"
             },
             {
                 "name": "Galletas Naruto",
@@ -571,7 +572,7 @@ def init_database(force=False):
                 "price": 3.60,
                 "stock": 100,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400"
             },
             {
                 "name": "Snacks Ramen Naruto",
@@ -579,7 +580,7 @@ def init_database(force=False):
                 "price": 2.80,
                 "stock": 120,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1613919120408-66f4a49ddf4d"
+                "image_url": "https://images.unsplash.com/photo-1613919120408-66f4a49ddf4d?w=400"
             },
             {
                 "name": "Chocolates Naruto",
@@ -587,7 +588,7 @@ def init_database(force=False):
                 "price": 4.50,
                 "stock": 90,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6?w=400"
             },
             {
                 "name": "Galletas One Piece",
@@ -595,7 +596,7 @@ def init_database(force=False):
                 "price": 3.70,
                 "stock": 100,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35"
+                "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400"
             },
             {
                 "name": "Gominolas One Piece",
@@ -603,7 +604,7 @@ def init_database(force=False):
                 "price": 3.20,
                 "stock": 110,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1582037928769-181f2644ecb7"
+                "image_url": "https://images.unsplash.com/photo-1582037928769-181f2644ecb7?w=400"
             },
             {
                 "name": "Chocolates One Piece",
@@ -611,7 +612,7 @@ def init_database(force=False):
                 "price": 4.80,
                 "stock": 85,
                 "category_id": categories[3].id,
-                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6"
+                "image_url": "https://images.unsplash.com/photo-1606890737921-86d1d9a3a7b6?w=400"
             },
 
             # DIY y Especiales (Category 4)
@@ -621,7 +622,7 @@ def init_database(force=False):
                 "price": 5.99,
                 "stock": 100,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351"
+                "image_url": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400"
             },
             {
                 "name": "Popin Cookin Donuts DIY",
@@ -629,7 +630,7 @@ def init_database(force=False):
                 "price": 5.99,
                 "stock": 95,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f"
+                "image_url": "https://images.unsplash.com/photo-1514517521153-1be72277b32f?w=400"
             },
             {
                 "name": "Popin Cookin Ramen DIY",
@@ -637,7 +638,7 @@ def init_database(force=False):
                 "price": 6.50,
                 "stock": 90,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624"
+                "image_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400"
             },
             {
                 "name": "Kracie Happy Kitchen Hamburguesa",
@@ -645,7 +646,7 @@ def init_database(force=False):
                 "price": 5.50,
                 "stock": 85,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e"
+                "image_url": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400"
             },
             {
                 "name": "Kracie Happy Kitchen Bento",
@@ -653,7 +654,7 @@ def init_database(force=False):
                 "price": 6.20,
                 "stock": 80,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1580822184713-fc5400e7fe10"
+                "image_url": "https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=400"
             },
             {
                 "name": "Mochi Daifuku Mix",
@@ -661,7 +662,7 @@ def init_database(force=False):
                 "price": 5.50,
                 "stock": 120,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d"
+                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d?w=400"
             },
             {
                 "name": "Mochi Ice Cream Mix",
@@ -669,7 +670,7 @@ def init_database(force=False):
                 "price": 6.80,
                 "stock": 90,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d"
+                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d?w=400"
             },
             {
                 "name": "Taiyaki de Chocolate",
@@ -677,7 +678,7 @@ def init_database(force=False):
                 "price": 3.90,
                 "stock": 110,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4"
+                "image_url": "https://images.unsplash.com/photo-1590080876876-25bd2eaa34c4?w=400"
             },
             {
                 "name": "Dango Hanami Especial",
@@ -685,7 +686,7 @@ def init_database(force=False):
                 "price": 4.50,
                 "stock": 100,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d"
+                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d?w=400"
             },
             {
                 "name": "Castella Cake Mix",
@@ -693,7 +694,7 @@ def init_database(force=False):
                 "price": 7.50,
                 "stock": 70,
                 "category_id": categories[4].id,
-                "image_url": "https://images.unsplash.com/photo-1578985545062-69928b1d9587"
+                "image_url": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"
             },
 
             # Snacks Salados (Category 5)
@@ -703,7 +704,7 @@ def init_database(force=False):
                 "price": 2.80,
                 "stock": 150,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351"
+                "image_url": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400"
             },
             {
                 "name": "Galletas de Arroz Senbei",
@@ -711,7 +712,7 @@ def init_database(force=False):
                 "price": 3.20,
                 "stock": 140,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d"
+                "image_url": "https://images.unsplash.com/photo-1582716401301-b2407dc7563d?w=400"
             },
             {
                 "name": "Wasabi Peas",
@@ -719,7 +720,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 130,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1599490659213-e2b9527bd087"
+                "image_url": "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=400"
             },
             {
                 "name": "Pretz Palitos Salados",
@@ -727,7 +728,7 @@ def init_database(force=False):
                 "price": 2.30,
                 "stock": 160,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60"
+                "image_url": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400"
             },
             {
                 "name": "Chips de Camarón Krupuk",
@@ -735,7 +736,7 @@ def init_database(force=False):
                 "price": 2.90,
                 "stock": 140,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1613919120408-66f4a49ddf4d"
+                "image_url": "https://images.unsplash.com/photo-1613919120408-66f4a49ddf4d?w=400"
             },
             {
                 "name": "Calbee Pizza Potato Chips",
@@ -743,7 +744,7 @@ def init_database(force=False):
                 "price": 3.50,
                 "stock": 120,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1566478989037-eec170784d0b"
+                "image_url": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400"
             },
             {
                 "name": "Jagarico Potato Sticks",
@@ -751,7 +752,7 @@ def init_database(force=False):
                 "price": 2.80,
                 "stock": 150,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1621447504864-d8686e12698c"
+                "image_url": "https://images.unsplash.com/photo-1621447504864-d8686e12698c?w=400"
             },
             {
                 "name": "Umaibo Corn Puffs Mix",
@@ -759,7 +760,7 @@ def init_database(force=False):
                 "price": 1.50,
                 "stock": 200,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1613919120408-66f4a49ddf4d"
+                "image_url": "https://images.unsplash.com/photo-1613919120408-66f4a49ddf4d?w=400"
             },
             {
                 "name": "Baby Star Ramen Snack",
@@ -767,7 +768,7 @@ def init_database(force=False):
                 "price": 1.80,
                 "stock": 180,
                 "category_id": categories[5].id,
-                "image_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624"
+                "image_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400"
             },
 
             # Bebidas (Category 6)
@@ -777,7 +778,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 200,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137"
+                "image_url": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=400"
             },
             {
                 "name": "Ramune Fresa",
@@ -785,7 +786,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 190,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3"
+                "image_url": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400"
             },
             {
                 "name": "Ramune Melón",
@@ -793,7 +794,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 180,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1625772299872-6ab2b8f97f00"
+                "image_url": "https://images.unsplash.com/photo-1625772299872-6ab2b8f97f00?w=400"
             },
             {
                 "name": "Ramune Lichi",
@@ -801,7 +802,7 @@ def init_database(force=False):
                 "price": 2.50,
                 "stock": 170,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137"
+                "image_url": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=400"
             },
             {
                 "name": "Calpico Original",
@@ -809,7 +810,7 @@ def init_database(force=False):
                 "price": 3.20,
                 "stock": 150,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f"
+                "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f?w=400"
             },
             {
                 "name": "Calpico Fresa",
@@ -817,7 +818,7 @@ def init_database(force=False):
                 "price": 3.20,
                 "stock": 140,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f"
+                "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f?w=400"
             },
             {
                 "name": "Té Verde Matcha Premium Lata",
@@ -825,7 +826,7 @@ def init_database(force=False):
                 "price": 2.80,
                 "stock": 160,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9"
+                "image_url": "https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9?w=400"
             },
             {
                 "name": "Pocari Sweat",
@@ -833,7 +834,7 @@ def init_database(force=False):
                 "price": 2.90,
                 "stock": 150,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1624517452488-04869289c4ca"
+                "image_url": "https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=400"
             },
             {
                 "name": "Milkis Bebida Coreana",
@@ -841,7 +842,7 @@ def init_database(force=False):
                 "price": 2.60,
                 "stock": 140,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f"
+                "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7685e80f?w=400"
             },
             {
                 "name": "Fanta Melocotón Japón",
@@ -849,7 +850,7 @@ def init_database(force=False):
                 "price": 2.70,
                 "stock": 130,
                 "category_id": categories[6].id,
-                "image_url": "https://images.unsplash.com/photo-1624517452488-04869289c4ca"
+                "image_url": "https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=400"
             },
 
             # Salsas y Condimentos (Category 7)
@@ -859,7 +860,7 @@ def init_database(force=False):
                 "price": 4.50,
                 "stock": 100,
                 "category_id": categories[7].id,
-                "image_url": "https://images.unsplash.com/photo-1594798592208-0c6d322d9132"
+                "image_url": "https://images.unsplash.com/photo-1594798592208-0c6d322d9132?w=400"
             },
             {
                 "name": "Sriracha Huy Fong",
@@ -867,7 +868,7 @@ def init_database(force=False):
                 "price": 4.20,
                 "stock": 90,
                 "category_id": categories[7].id,
-                "image_url": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc"
+                "image_url": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400"
             },
             {
                 "name": "Salsa Teriyaki",
@@ -875,7 +876,7 @@ def init_database(force=False):
                 "price": 3.90,
                 "stock": 85,
                 "category_id": categories[7].id,
-                "image_url": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8"
+                "image_url": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400"
             },
             {
                 "name": "Pasta de Miso",
@@ -883,7 +884,7 @@ def init_database(force=False):
                 "price": 6.50,
                 "stock": 70,
                 "category_id": categories[7].id,
-                "image_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+                "image_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"
             },
             {
                 "name": "Furikake Mix",
@@ -891,7 +892,7 @@ def init_database(force=False):
                 "price": 3.80,
                 "stock": 80,
                 "category_id": categories[7].id,
-                "image_url": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351"
+                "image_url": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400"
             },
         ]
 

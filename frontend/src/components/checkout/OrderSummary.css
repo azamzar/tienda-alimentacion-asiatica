@@ -1,0 +1,246 @@
+.order-summary {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid var(--border-color, #e0e0e0);
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.order-summary__title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-dark, #2c3e50);
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color, #e0e0e0);
+}
+
+/* Items list */
+.order-summary__items {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+  padding-right: 0.5rem;
+}
+
+/* Scrollbar styling */
+.order-summary__items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.order-summary__items::-webkit-scrollbar-track {
+  background: var(--light-bg, #f5f5f5);
+  border-radius: 3px;
+}
+
+.order-summary__items::-webkit-scrollbar-thumb {
+  background: var(--border-color, #e0e0e0);
+  border-radius: 3px;
+}
+
+.order-summary__items::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+.order-summary__item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  background: var(--light-bg, #f9fafb);
+}
+
+.order-summary__item:last-child {
+  margin-bottom: 0;
+}
+
+.order-summary__item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-summary__item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-summary__item-placeholder {
+  font-size: 1.5rem;
+}
+
+.order-summary__item-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.order-summary__item-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dark, #2c3e50);
+  margin: 0 0 0.25rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-summary__item-quantity {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #6c757d);
+  margin: 0;
+}
+
+.order-summary__item-price {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark, #2c3e50);
+  flex-shrink: 0;
+}
+
+.order-summary__empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-secondary, #6c757d);
+  font-style: italic;
+}
+
+/* Totals */
+.order-summary__totals {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.order-summary__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.order-summary__label {
+  font-size: 0.95rem;
+  color: var(--text-secondary, #6c757d);
+}
+
+.order-summary__value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark, #2c3e50);
+}
+
+.order-summary__free {
+  color: var(--success-color, #27ae60);
+  font-weight: 700;
+}
+
+.order-summary__shipping-note {
+  background: #e8f5e9;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.order-summary__shipping-note small {
+  color: #2e7d32;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.order-summary__divider {
+  height: 1px;
+  background: var(--border-color, #e0e0e0);
+  margin: 1.5rem 0;
+}
+
+.order-summary__row--total {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--border-color, #e0e0e0);
+}
+
+.order-summary__row--total .order-summary__label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark, #2c3e50);
+}
+
+.order-summary__value--total {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-color, #e74c3c);
+}
+
+/* Info badges */
+.order-summary__info {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  margin-top: 1.5rem;
+}
+
+.order-summary__info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #6c757d);
+}
+
+.order-summary__info-item:last-child {
+  margin-bottom: 0;
+}
+
+.order-summary__info-icon {
+  color: var(--success-color, #27ae60);
+  font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .order-summary {
+    position: static;
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .order-summary {
+    padding: 1.5rem;
+  }
+
+  .order-summary__title {
+    font-size: 1.3rem;
+  }
+
+  .order-summary__value--total {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-summary {
+    padding: 1rem;
+  }
+
+  .order-summary__item {
+    flex-wrap: wrap;
+  }
+
+  .order-summary__item-price {
+    width: 100%;
+    text-align: right;
+    margin-top: 0.5rem;
+  }
+}

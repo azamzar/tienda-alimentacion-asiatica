@@ -1,0 +1,119 @@
+.checkout-form {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid var(--border-color, #e0e0e0);
+}
+
+.checkout-form__section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.checkout-form__section:last-of-type {
+  border-bottom: none;
+}
+
+.checkout-form__section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-dark, #2c3e50);
+  margin: 0 0 1.5rem 0;
+}
+
+.checkout-form__field {
+  margin-bottom: 1.5rem;
+}
+
+.checkout-form__field:last-child {
+  margin-bottom: 0;
+}
+
+.checkout-form__label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-dark, #2c3e50);
+  margin-bottom: 0.5rem;
+}
+
+.checkout-form__textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-dark, #2c3e50);
+  background: white;
+  transition: all 0.2s ease;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.checkout-form__textarea:focus {
+  outline: none;
+  border-color: var(--primary-color, #e74c3c);
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.checkout-form__textarea:disabled {
+  background: var(--light-bg, #f5f5f5);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.checkout-form__textarea--error {
+  border-color: var(--danger-color, #e74c3c);
+}
+
+.checkout-form__error {
+  display: block;
+  color: var(--danger-color, #e74c3c);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.checkout-form__actions {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border-color, #e0e0e0);
+}
+
+.checkout-form__note {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6c757d);
+  margin: 1rem 0 0 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .checkout-form {
+    padding: 1.5rem;
+  }
+
+  .checkout-form__section-title {
+    font-size: 1.1rem;
+  }
+
+  .checkout-form__actions {
+    padding-top: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-form {
+    padding: 1rem;
+  }
+
+  .checkout-form__section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .checkout-form__field {
+    margin-bottom: 1rem;
+  }
+}

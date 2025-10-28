@@ -24,8 +24,16 @@ function ProductCard({ product }) {
     setIsAdding(true);
     try {
       await addItem(product.id, 1);
+      // Success - could show a toast notification here
     } catch (error) {
       console.error('Error adding to cart:', error);
+      // If not authenticated, redirect to login
+      if (error.response?.status === 401) {
+        alert('Debes iniciar sesión para agregar productos al carrito');
+        navigate('/login');
+      } else {
+        alert(error.response?.data?.detail || 'Error al agregar al carrito');
+      }
     } finally {
       setIsAdding(false);
     }
@@ -47,11 +55,14 @@ function ProductCard({ product }) {
           <div className="product-card-badge product-card-badge-low">¡Últimas unidades!</div>
         )}
         <img
-          src={product.image_url || '/placeholder-product.png'}
+          src={product.image_url || 'https://placehold.co/400x300/f0f0f0/666?text=Producto'}
           alt={product.name}
           className="product-card-image"
           onError={(e) => {
-            e.target.src = '/placeholder-product.png';
+            // Prevent infinite loop by checking if we've already set the placeholder
+            if (!e.target.src.includes('placehold.co')) {
+              e.target.src = 'https://placehold.co/400x300/f0f0f0/666?text=Producto';
+            }
           }}
         />
       </div>

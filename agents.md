@@ -410,6 +410,39 @@ API_V1_PREFIX=/api/v1
 - [x] Fixed import paths (ProtectedRoute, stores)
 - [x] Added named exports to all Zustand stores
 
+**Fase 7 - Shopping Cart & Checkout (Completed 2025-10-27):**
+- [x] Shopping cart UI implementation (CartItem, CartSummary)
+- [x] CartPage with empty state, loading, and error handling
+- [x] Checkout page with complete order form
+- [x] CheckoutForm with real-time validation
+- [x] OrderSummary component for checkout
+- [x] Order creation from cart
+- [x] Automatic cart clearing after order
+- [x] Success page with animation
+- [x] Updated cartService to use JWT authentication (/carts/me endpoints)
+- [x] Updated orderService to use JWT authentication
+- [x] Updated useCartStore and useOrderStore
+- [x] Cart route protected (requires authentication)
+- [x] Fully responsive design for cart and checkout
+- [x] Shipping cost calculation (free over €50)
+
+**Fase 8 - Orders Management Pages (Completed 2025-10-28):**
+- [x] OrderStatusBadge component with 5 states (pending, processing, shipped, delivered, cancelled)
+- [x] OrdersPage with order list and status filters
+- [x] OrderDetailPage with complete order information
+- [x] Customer information display (name, email, phone)
+- [x] Shipping address and notes display
+- [x] Order items list with product images and prices
+- [x] Order summary with subtotal, shipping, and total
+- [x] Cancel order functionality (for pending orders only)
+- [x] Success banner animation when order is created
+- [x] Optimized checkout flow (direct navigation without flash)
+- [x] Backend: Added subtotal field to CartItemResponse schema
+- [x] Backend: Cart service now calculates subtotal for each item
+- [x] Frontend: Fixed order and cart item price display
+- [x] Routes properly protected (requires authentication)
+- [x] Fully responsive design for all order pages
+
 **Current Admin Credentials:**
 - Email: `admin@tienda.com`
 - Password: `AdminPass123`
@@ -417,9 +450,8 @@ API_V1_PREFIX=/api/v1
 
 ### 🔄 In Progress
 
-- [ ] Shopping cart UI implementation (CartItem, CartSummary, CartDrawer)
-- [ ] Checkout page with order form
-- [ ] Orders management pages (list and detail)
+- [ ] Admin dashboard
+- [ ] Product management UI (admin CRUD)
 
 ### 📋 Planned Features
 
@@ -566,9 +598,11 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 7. ~~Implement product catalog with filters~~ ✅ DONE
 8. ~~Create layout components (Header, Footer)~~ ✅ DONE
 9. ~~Build common UI components~~ ✅ DONE
-10. Implement shopping cart UI (frontend)
-11. Create checkout flow UI (frontend)
-12. Build admin dashboard (frontend)
+10. ~~Implement shopping cart UI (frontend)~~ ✅ DONE
+11. ~~Create checkout flow UI (frontend)~~ ✅ DONE
+12. ~~Implement orders pages (list and detail)~~ ✅ DONE
+13. Build admin dashboard (frontend)
+14. Implement product management (admin CRUD)
 
 ### Important Notes for AI Assistants
 
@@ -594,5 +628,9 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 
 **Current Status:**
 - ✅ Frontend: Product catalog fully functional
+- ✅ Frontend: Shopping cart fully functional
+- ✅ Frontend: Checkout flow complete with optimized UX
+- ✅ Frontend: Order management pages complete (list and detail)
 - ✅ Backend: All endpoints working with auth
-- ⏳ Pending: Cart UI, Checkout, Orders pages, Admin panel
+- ✅ Backend: Cart items include subtotal field
+- ⏳ Pending: Admin panel, Product management
