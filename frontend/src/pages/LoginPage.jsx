@@ -8,12 +8,24 @@ import { useAuthStore } from '../store';
  */
 function LoginPage() {
   const navigate = useNavigate();
-  const { login, isLoading, error, clearError } = useAuthStore();
+  const { login, isLoading, error, clearError, user, isAuthenticated } = useAuthStore();
 
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+
+  // Redirigir automáticamente cuando el usuario se autentica
+  React.useEffect(() => {
+    if (isAuthenticated && user) {
+      // Redirigir según el rol del usuario
+      if (user.role === 'admin') {
+        navigate('/admin/products', { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,8 +42,7 @@ function LoginPage() {
 
     try {
       await login(formData);
-      // Redirigir al home después del login exitoso
-      navigate('/');
+      // La redirección se maneja en el useEffect
     } catch (err) {
       // El error ya está manejado en el store
       console.error('Error al iniciar sesión:', err);

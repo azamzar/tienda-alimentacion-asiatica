@@ -740,13 +740,13 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - [ ] Email notifications
 
 **Frontend Implementation:**
-- [ ] Panel de administración (admin dashboard)
-- [ ] Catálogo de productos con filtros y búsqueda
-- [ ] Página de detalle de producto
-- [ ] UI del carrito de compras
-- [ ] Flujo de checkout
-- [ ] Gestión de órdenes para clientes
-- [ ] Panel de gestión de productos (admin)
+- [x] Catálogo de productos con filtros y búsqueda
+- [x] Página de detalle de producto
+- [x] UI del carrito de compras
+- [x] Flujo de checkout
+- [x] Gestión de órdenes para clientes
+- [x] Panel de gestión de productos (admin CRUD)
+- [ ] Panel de administración (admin dashboard con estadísticas)
 - [ ] Panel de gestión de pedidos (admin)
 
 **DevOps:**

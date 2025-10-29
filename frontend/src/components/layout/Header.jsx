@@ -94,9 +94,15 @@ function Header() {
                   Mis Pedidos
                 </Link>
                 {user?.role === 'admin' && (
-                  <Link to="/admin" className="header-dropdown-item">
-                    Panel Admin
-                  </Link>
+                  <>
+                    <hr className="header-dropdown-divider" />
+                    <Link to="/admin" className="header-dropdown-item">
+                      Panel Admin
+                    </Link>
+                    <Link to="/admin/products" className="header-dropdown-item">
+                      Gestión de Productos
+                    </Link>
+                  </>
                 )}
                 <hr className="header-dropdown-divider" />
                 <button onClick={handleLogout} className="header-dropdown-item header-dropdown-logout">

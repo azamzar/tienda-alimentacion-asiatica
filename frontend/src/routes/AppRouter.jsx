@@ -13,6 +13,7 @@ import CheckoutPage from '../pages/CheckoutPage';
 import OrdersPage from '../pages/OrdersPage';
 import OrderDetailPage from '../pages/OrderDetailPage';
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
+import AdminProductsPage from '../pages/admin/AdminProductsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 /**
@@ -69,6 +70,14 @@ function AppRouter() {
         element={
           <AdminRoute>
             <AdminDashboardPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/products"
+        element={
+          <AdminRoute>
+            <AdminProductsPage />
           </AdminRoute>
         }
       />

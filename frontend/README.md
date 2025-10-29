@@ -11,13 +11,18 @@ Frontend de la aplicación de tienda de alimentación asiática, desarrollado co
 - [x] Funciones utilitarias
 - [x] Dependencias instaladas
 
-🔄 **Fase 2: Componentes y Páginas (En progreso)**
-- [ ] React Router configurado
-- [ ] Componentes UI reutilizables
-- [ ] Páginas principales implementadas
+✅ **Fase 2: Componentes y Páginas (Completado)**
+- [x] React Router configurado
+- [x] Componentes UI reutilizables
+- [x] Páginas principales implementadas
+- [x] Sistema de autenticación completo
+- [x] Carrito de compras y checkout
+- [x] Gestión de pedidos para clientes
+- [x] Panel de administración de productos
 
-📋 **Fase 3: Funcionalidades (Pendiente)**
-- [ ] Estilos y diseño responsive
+🔄 **Fase 3: Funcionalidades Avanzadas (En progreso)**
+- [x] Estilos y diseño responsive
+- [ ] Dashboard de administración con estadísticas
 - [ ] Optimizaciones de rendimiento
 - [ ] Tests
 
@@ -80,19 +85,28 @@ El frontend sigue una arquitectura modular y escalable:
 frontend/
 ├── src/
 │   ├── components/           # Componentes reutilizables
-│   │   ├── common/          # Componentes genéricos (Button, Input, Card)
-│   │   ├── layout/          # Layout components (Header, Footer, Sidebar)
-│   │   ├── products/        # Componentes relacionados con productos
-│   │   ├── cart/            # Componentes del carrito
-│   │   └── orders/          # Componentes de pedidos
+│   │   ├── common/          # Componentes genéricos (Button, Input, Card, Modal, Spinner)
+│   │   ├── layout/          # Layout components (Header, Footer)
+│   │   ├── auth/            # Componentes de autenticación (ProtectedRoute)
+│   │   ├── products/        # Componentes relacionados con productos (ProductCard, ProductGrid)
+│   │   ├── cart/            # Componentes del carrito (CartItem, CartSummary)
+│   │   ├── orders/          # Componentes de pedidos (OrderStatusBadge)
+│   │   └── admin/           # Componentes de administración (ProductTable, ProductFormModal)
 │   │
 │   ├── pages/               # Páginas/Vistas principales
-│   │   ├── Home.jsx         # Página principal
-│   │   ├── Products.jsx     # Listado de productos
-│   │   ├── ProductDetail.jsx # Detalle de producto
-│   │   ├── Cart.jsx         # Carrito de compras
-│   │   ├── Checkout.jsx     # Proceso de checkout
-│   │   └── Orders.jsx       # Historial de pedidos
+│   │   ├── HomePage.jsx     # Página principal con hero y productos destacados
+│   │   ├── ProductsPage.jsx # Listado de productos con filtros
+│   │   ├── ProductDetailPage.jsx # Detalle de producto
+│   │   ├── CartPage.jsx     # Carrito de compras
+│   │   ├── CheckoutPage.jsx # Proceso de checkout
+│   │   ├── OrdersPage.jsx   # Historial de pedidos
+│   │   ├── OrderDetailPage.jsx # Detalle de un pedido
+│   │   ├── LoginPage.jsx    # Página de inicio de sesión
+│   │   ├── RegisterPage.jsx # Página de registro
+│   │   ├── admin/
+│   │   │   ├── AdminDashboardPage.jsx # Dashboard de admin
+│   │   │   └── AdminProductsPage.jsx  # Gestión de productos (CRUD)
+│   │   └── NotFoundPage.jsx # Página 404
 │   │
 │   ├── services/            # Capa de servicios API
 │   │   ├── api.js           # Configuración base de Axios
@@ -488,15 +502,19 @@ frontend/src/
 
 ## Páginas y Rutas
 
-| Ruta | Componente | Descripción |
-|------|-----------|-------------|
-| `/` | Home | Página principal con destacados |
-| `/products` | Products | Listado de productos con filtros |
-| `/products/:id` | ProductDetail | Detalle de un producto |
-| `/cart` | Cart | Carrito de compras |
-| `/checkout` | Checkout | Formulario de checkout |
-| `/orders` | Orders | Historial de pedidos del usuario |
-| `/orders/:id` | OrderDetail | Detalle de un pedido específico |
+| Ruta | Componente | Descripción | Acceso |
+|------|-----------|-------------|--------|
+| `/` | HomePage | Página principal con hero y productos destacados | Público |
+| `/login` | LoginPage | Inicio de sesión | Público |
+| `/register` | RegisterPage | Registro de nuevos usuarios | Público |
+| `/products` | ProductsPage | Listado de productos con filtros | Público |
+| `/products/:id` | ProductDetailPage | Detalle de un producto | Público |
+| `/cart` | CartPage | Carrito de compras | 🔒 Autenticado |
+| `/checkout` | CheckoutPage | Formulario de checkout | 🔒 Autenticado |
+| `/orders` | OrdersPage | Historial de pedidos del usuario | 🔒 Autenticado |
+| `/orders/:id` | OrderDetailPage | Detalle de un pedido específico | 🔒 Autenticado |
+| `/admin` | AdminDashboardPage | Dashboard de administración | 🔐 Admin |
+| `/admin/products` | AdminProductsPage | Gestión de productos (CRUD) | 🔐 Admin |
 
 ## Gestión de Estado
 
@@ -590,29 +608,42 @@ cancelOrder(orderId, userId)      // POST /api/v1/orders/{order_id}/cancel
 
 ### Layout Components
 
-- **Header**: Navegación, logo, carrito badge
-- **Footer**: Información de contacto, links
-- **Sidebar**: Filtros de categorías
+- **Header**: Navegación principal con logo, enlaces, carrito badge y menú de usuario
+- **Footer**: Información de contacto y links útiles
+
+### Auth Components
+
+- **ProtectedRoute**: Wrapper para rutas que requieren autenticación
+- **AdminRoute**: Wrapper para rutas que requieren rol de admin
 
 ### Product Components
 
-- **ProductCard**: Tarjeta de producto con imagen, precio, botón
-- **ProductGrid**: Grid de productos
-- **ProductFilter**: Filtros de búsqueda y categoría
+- **ProductCard**: Tarjeta de producto con imagen, precio, stock y botón de agregar al carrito
+- **ProductGrid**: Grid responsive de productos con filtros y búsqueda
 
 ### Cart Components
 
-- **CartItem**: Item individual en el carrito
-- **CartSummary**: Resumen de totales
-- **CartDrawer**: Panel lateral del carrito
+- **CartItem**: Item individual en el carrito con control de cantidad
+- **CartSummary**: Resumen de totales y subtotales del carrito
+
+### Order Components
+
+- **OrderStatusBadge**: Badge visual con código de colores según estado del pedido
+- **CheckoutForm**: Formulario completo de checkout con validación
+
+### Admin Components
+
+- **ProductTable**: Tabla de productos con acciones de editar y eliminar
+- **ProductFormModal**: Modal para crear y editar productos con validación
+- **DeleteConfirmationModal**: Modal de confirmación para eliminar productos
 
 ### Common Components
 
-- **Button**: Botón reutilizable
-- **Input**: Input de formulario
-- **Card**: Contenedor genérico
-- **Modal**: Modal genérico
-- **Spinner**: Indicador de carga
+- **Button**: Botón reutilizable con variantes (primary, secondary, ghost, danger)
+- **Input**: Input de formulario con validación y estados de error
+- **Card**: Contenedor genérico con estilos consistentes
+- **Modal**: Modal genérico con overlay y animaciones
+- **Spinner**: Indicador de carga centrado
 
 ## Desarrollo
 
@@ -774,13 +805,25 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] Fix: Backend vacía carrito automáticamente al crear pedido
 - [x] Fix: Campo subtotal agregado en CartItemResponse
 
-### 📋 Fase 5: Pendiente (Panel de Administración)
-- [ ] Panel de administración (admin dashboard)
-- [ ] Gestión de productos (CRUD admin)
-- [ ] Gestión de pedidos (admin)
-- [ ] Estadísticas y métricas de ventas
+### ✅ Fase 5: Completada (Panel de Administración - Productos) - 2025-10-29
+- [x] AdminProductsPage con búsqueda y filtros por categoría
+- [x] Componente ProductTable con acciones de editar/eliminar
+- [x] Componente ProductFormModal para crear/editar productos
+- [x] Badges de estado de stock (disponible/bajo/agotado)
+- [x] Modal de confirmación para eliminar productos
+- [x] Validación completa de formulario de productos
+- [x] Rutas protegidas para admin (AdminRoute)
+- [x] Navegación actualizada en Header con enlaces de admin
+- [x] Fix: Redirección automática tras login según rol de usuario
+- [x] Diseño responsive para todas las páginas de admin
 
-### 📋 Fase 6: Futuras Mejoras
+### 📋 Fase 6: Pendiente (Dashboard y Gestión de Pedidos)
+- [ ] Panel de administración (admin dashboard con estadísticas)
+- [ ] Gestión de pedidos para admin (ver todos, cambiar estado)
+- [ ] Estadísticas y métricas de ventas
+- [ ] Gestión de categorías para admin
+
+### 📋 Fase 7: Futuras Mejoras
 - [ ] Agregar tests unitarios (Vitest)
 - [ ] Implementar lazy loading de imágenes
 - [ ] Agregar paginación infinita en productos
@@ -849,24 +892,61 @@ touch src/pages/OrderDetail.jsx
 - Separación clara de responsabilidades
 
 ✅ **Capa de Servicios**
-- 4 servicios completos (products, categories, cart, orders)
-- Configuración de axios con interceptores
+- 5 servicios completos (auth, products, categories, cart, orders)
+- Configuración de axios con interceptores para JWT
 - Manejo centralizado de errores
 
 ✅ **Gestión de Estado**
-- 3 stores de Zustand (cart, products, orders)
-- Estado global reactivo
+- 4 stores de Zustand (auth, cart, products, orders)
+- Estado global reactivo con persistencia
 - Acciones asíncronas para API
+
+✅ **Autenticación y Autorización**
+- Sistema completo de login/register con JWT
+- Rutas protegidas (ProtectedRoute, AdminRoute)
+- Redirección automática según rol de usuario
+- Persistencia de sesión con localStorage
+
+✅ **UI Completa para Clientes**
+- Catálogo de productos con filtros y búsqueda
+- Páginas de detalle de producto
+- Carrito de compras interactivo
+- Flujo completo de checkout
+- Historial de pedidos con filtros por estado
+- Detalle de pedidos con toda la información
+
+✅ **UI Completa para Administradores**
+- Panel de gestión de productos (CRUD completo)
+- Búsqueda y filtros de productos
+- Creación y edición de productos con validación
+- Eliminación de productos con confirmación
+- Badges visuales de stock (disponible/bajo/agotado)
+
+✅ **Componentes Reutilizables**
+- Layout: Header con navegación responsive, Footer
+- Common: Button, Input, Card, Modal, Spinner
+- Auth: ProtectedRoute, AdminRoute
+- Products: ProductCard, ProductGrid
+- Cart: CartItem, CartSummary
+- Orders: OrderStatusBadge, CheckoutForm
+- Admin: ProductTable, ProductFormModal
 
 ✅ **Utilidades**
 - Formateadores (precios, fechas, texto)
 - Constantes (estados, rutas, configuración)
 - Validadores (email, teléfono, formularios)
 
+✅ **Estilos y UX**
+- Diseño responsive para todos los dispositivos
+- Estilos CSS modulares y consistentes
+- Animaciones suaves y transiciones
+- Estados de loading y error bien manejados
+- Feedback visual en todas las acciones
+
 🔄 **Pendiente**
-- Implementar componentes UI
-- Crear páginas y rutas
-- Agregar estilos
+- Dashboard de administración con estadísticas
+- Gestión de pedidos para admin
+- Tests unitarios y de integración
 
 ## Notas Importantes para Desarrollo
 

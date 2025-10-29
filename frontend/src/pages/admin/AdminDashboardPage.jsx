@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
  * Admin dashboard page - placeholder
  */
