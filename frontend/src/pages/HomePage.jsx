@@ -1,7 +1,9 @@
 import React from 'react';
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useProductStore } from '../store/useProductStore';
+import { useCartStore } from '../store/useCartStore';
+import { useAuthStore } from '../store/useAuthStore';
 import { formatPrice } from '../utils/formatters';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
@@ -12,7 +14,11 @@ import './HomePage.css';
  * Home page with featured products
  */
 function HomePage() {
+  const navigate = useNavigate();
   const { products, loading, fetchProducts } = useProductStore();
+  const { addItem, loading: cartLoading } = useCartStore();
+  const { isAuthenticated } = useAuthStore();
+  const [addingProductId, setAddingProductId] = useState(null);
 
   useEffect(() => {
     if (products.length === 0) {
@@ -21,6 +27,26 @@ function HomePage() {
   }, []);
 
   const featuredProducts = products.slice(0, 6);
+
+  const handleAddToCart = async (e, product) => {
+    e.preventDefault(); // Prevenir navegación del Link
+    e.stopPropagation();
+
+    // Si no está autenticado, redirigir a login
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      setAddingProductId(product.id);
+      await addItem(product.id, 1);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    } finally {
+      setAddingProductId(null);
+    }
+  };
 
   return (
     <div className="home-page">
@@ -56,12 +82,11 @@ function HomePage() {
           ) : (
             <div className="home-featured-grid">
               {featuredProducts.map((product) => (
-                <Link
-                  key={product.id}
-                  to={`/products/${product.id}`}
-                  className="home-product-link"
-                >
-                  <Card hoverable className="home-product-card">
+                <Card key={product.id} hoverable className="home-product-card">
+                  <Link
+                    to={`/products/${product.id}`}
+                    className="home-product-link"
+                  >
                     <div className="home-product-image-wrapper">
                       <img
                         src={product.image_url || '/placeholder-product.png'}
@@ -75,9 +100,24 @@ function HomePage() {
                     <div className="home-product-content">
                       <h3 className="home-product-name">{product.name}</h3>
                       <p className="home-product-price">{formatPrice(product.price)}</p>
+                      {product.stock === 0 && (
+                        <span className="home-product-stock-badge out-of-stock">
+                          Sin stock
+                        </span>
+                      )}
                     </div>
-                  </Card>
-                </Link>
+                  </Link>
+                  <div className="home-product-actions">
+                    <Button
+                      variant="primary"
+                      fullWidth
+                      onClick={(e) => handleAddToCart(e, product)}
+                      disabled={product.stock === 0 || addingProductId === product.id}
+                    >
+                      {addingProductId === product.id ? '...' : '🛒 Añadir al carrito'}
+                    </Button>
+                  </div>
+                </Card>
               ))}
             </div>
           )}

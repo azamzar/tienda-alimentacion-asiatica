@@ -99,10 +99,15 @@
 
 .home-product-card {
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .home-product-card .card-body {
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .home-product-image-wrapper {
@@ -129,13 +134,17 @@
 
 .home-product-content {
   padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .home-product-name {
   font-size: 1rem;
   font-weight: 600;
   color: #111827;
-  margin: 0 0 0.5rem 0;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -147,6 +156,26 @@
   font-weight: 700;
   color: #3b82f6;
   margin: 0;
+}
+
+.home-product-stock-badge {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.home-product-stock-badge.out-of-stock {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.home-product-actions {
+  padding: 0 1.25rem 1.25rem;
+  margin-top: auto;
 }
 
 /* Features section */

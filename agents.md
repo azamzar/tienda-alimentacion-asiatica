@@ -463,9 +463,23 @@ API_V1_PREFIX=/api/v1
 - [x] Admin users redirect to `/admin/products` after login
 - [x] Fully responsive design for all admin pages
 
+**Fase 10 - Admin Dashboard & Home Page Improvements:**
+- [x] AdminDashboardPage with complete statistics
+- [x] StatCard component with icons and color variants
+- [x] Backend endpoint `/api/v1/admin/dashboard/stats` (optimized single call)
+- [x] Dashboard displays: total products, orders, revenue, pending orders, low stock
+- [x] Order breakdown by all 6 states (pending, confirmed, processing, shipped, delivered, cancelled)
+- [x] Recent orders table (last 5)
+- [x] Low stock products list (top 10)
+- [x] Real-time refresh button
+- [x] Fully responsive dashboard design
+- [x] HomePage: Added "Add to cart" button on featured products
+- [x] HomePage: Direct add to cart without entering product detail
+- [x] HomePage: Auto-redirect to login if not authenticated
+
 ### 🔄 In Progress
 
-- [ ] Admin dashboard with statistics
+- None currently
 
 ### 📋 Planned Features
 
@@ -616,7 +630,10 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 11. ~~Create checkout flow UI (frontend)~~ ✅ DONE
 12. ~~Implement orders pages (list and detail)~~ ✅ DONE
 13. ~~Implement product management UI (admin CRUD)~~ ✅ DONE
-14. Build admin dashboard with statistics (frontend)
+14. ~~Build admin dashboard with statistics~~ ✅ DONE
+15. Admin order management (view all orders, change status)
+16. Payment integration
+17. Testing and deployment
 
 ### Important Notes for AI Assistants
 

@@ -7,4 +7,5 @@ export { productService } from './productService';
 export { categoryService } from './categoryService';
 export { cartService } from './cartService';
 export { orderService } from './orderService';
+export { dashboardService } from './dashboardService';
 export { default as api } from './api';

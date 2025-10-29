@@ -817,13 +817,27 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] Fix: Redirección automática tras login según rol de usuario
 - [x] Diseño responsive para todas las páginas de admin
 
-### 📋 Fase 6: Pendiente (Dashboard y Gestión de Pedidos)
-- [ ] Panel de administración (admin dashboard con estadísticas)
+### ✅ Fase 6: Completada (Admin Dashboard & HomePage Improvements) - 2025-10-29
+- [x] AdminDashboardPage con estadísticas completas
+- [x] Componente StatCard con iconos y variantes de color
+- [x] Servicio dashboardService para obtener estadísticas
+- [x] Endpoint backend optimizado `/api/v1/admin/dashboard/stats`
+- [x] Dashboard muestra: total productos, pedidos, ventas, pendientes, stock bajo
+- [x] Desglose de pedidos por los 6 estados
+- [x] Tabla de pedidos recientes (últimos 5)
+- [x] Lista de productos con stock bajo (top 10)
+- [x] Botón de actualización en tiempo real
+- [x] Diseño responsive completo
+- [x] HomePage: Botón "Añadir al carrito" en productos destacados
+- [x] HomePage: Añadir producto sin entrar en detalle
+- [x] HomePage: Redirección automática a login si no está autenticado
+
+### 📋 Fase 7: Pendiente (Gestión de Pedidos Admin)
 - [ ] Gestión de pedidos para admin (ver todos, cambiar estado)
-- [ ] Estadísticas y métricas de ventas
+- [ ] Filtros avanzados de pedidos
 - [ ] Gestión de categorías para admin
 
-### 📋 Fase 7: Futuras Mejoras
+### 📋 Fase 8: Futuras Mejoras
 - [ ] Agregar tests unitarios (Vitest)
 - [ ] Implementar lazy loading de imágenes
 - [ ] Agregar paginación infinita en productos

@@ -365,6 +365,11 @@ PATCH  /api/v1/orders/{id}           # Actualizar pedido (🔒 cliente: datos b�
 POST   /api/v1/orders/{id}/cancel    # Cancelar pedido (🔒 cliente: solo suyos, admin: todos)
 ```
 
+#### Admin
+```
+GET    /api/v1/admin/dashboard/stats # Obtener estadísticas del dashboard (🔒 requiere admin)
+```
+
 **Leyenda:**
 - 🔒 **Requiere autenticación** - Debe incluir header: `Authorization: Bearer <token>`
 - **Admin** - Solo usuarios con role `admin`
@@ -722,6 +727,7 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - [x] Sistema de órdenes/pedidos
 - [x] Endpoints protegidos con autenticación
 - [x] CORS configurado para puertos 5173-5176 (desarrollo frontend)
+- [x] Endpoint admin dashboard statistics (`/api/v1/admin/dashboard/stats`)
 
 ### 📋 Pendiente
 
@@ -746,8 +752,9 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - [x] Flujo de checkout
 - [x] Gestión de órdenes para clientes
 - [x] Panel de gestión de productos (admin CRUD)
-- [ ] Panel de administración (admin dashboard con estadísticas)
-- [ ] Panel de gestión de pedidos (admin)
+- [x] Panel de administración (admin dashboard con estadísticas)
+- [x] Botón "Añadir al carrito" en página principal
+- [ ] Panel de gestión de pedidos (admin - cambiar estados)
 
 **DevOps:**
 - [ ] Configuración de CI/CD
