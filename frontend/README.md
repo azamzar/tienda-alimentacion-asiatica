@@ -832,12 +832,29 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] HomePage: Añadir producto sin entrar en detalle
 - [x] HomePage: Redirección automática a login si no está autenticado
 
-### 📋 Fase 7: Pendiente (Gestión de Pedidos Admin)
-- [ ] Gestión de pedidos para admin (ver todos, cambiar estado)
-- [ ] Filtros avanzados de pedidos
-- [ ] Gestión de categorías para admin
+### ✅ Fase 7: Completada (Gestión de Pedidos Admin) - 2025-10-30
+- [x] Backend: Método `get_all()` en OrderRepository para admin
+- [x] Backend: Método `get_all_orders()` en OrderService
+- [x] Backend: Endpoint de pedidos actualizado para admin
+- [x] OrderStatusUpdateModal con validación de transiciones de estado
+- [x] AdminOrderTable con diseño responsive (tabla + tarjetas)
+- [x] AdminOrdersPage con interfaz completa de gestión
+- [x] Estadísticas de pedidos (total, pendientes, confirmados, procesando, enviados, entregados, cancelados)
+- [x] Filtrado de pedidos por estado
+- [x] Búsqueda de pedidos por ID, nombre o email
+- [x] Actualización de estado de pedidos con validación
+- [x] Reglas de transición de estados (pending → confirmed → processing → shipped → delivered)
+- [x] Header actualizado con enlace "Gestión de Pedidos"
+- [x] Ruta `/admin/orders` añadida y protegida con AdminRoute
+- [x] Diseño responsive para todas las páginas de gestión de pedidos
+- [x] Botón de actualización en tiempo real de la lista de pedidos
 
-### 📋 Fase 8: Futuras Mejoras
+### 📋 Fase 8: Pendiente (Gestión de Categorías Admin)
+- [ ] Gestión de categorías para admin (CRUD completo)
+- [ ] Filtros avanzados de categorías
+- [ ] Asignación de productos a categorías
+
+### 📋 Fase 9: Futuras Mejoras
 - [ ] Agregar tests unitarios (Vitest)
 - [ ] Implementar lazy loading de imágenes
 - [ ] Agregar paginación infinita en productos
@@ -930,11 +947,15 @@ touch src/pages/OrderDetail.jsx
 - Detalle de pedidos con toda la información
 
 ✅ **UI Completa para Administradores**
+- Dashboard con estadísticas completas
 - Panel de gestión de productos (CRUD completo)
 - Búsqueda y filtros de productos
 - Creación y edición de productos con validación
 - Eliminación de productos con confirmación
 - Badges visuales de stock (disponible/bajo/agotado)
+- Panel de gestión de pedidos (ver todos, filtrar, buscar)
+- Actualización de estado de pedidos con validación
+- Estadísticas de pedidos en tiempo real
 
 ✅ **Componentes Reutilizables**
 - Layout: Header con navegación responsive, Footer
@@ -943,7 +964,7 @@ touch src/pages/OrderDetail.jsx
 - Products: ProductCard, ProductGrid
 - Cart: CartItem, CartSummary
 - Orders: OrderStatusBadge, CheckoutForm
-- Admin: ProductTable, ProductFormModal
+- Admin: ProductTable, ProductFormModal, AdminOrderTable, OrderStatusUpdateModal
 
 ✅ **Utilidades**
 - Formateadores (precios, fechas, texto)
@@ -958,9 +979,9 @@ touch src/pages/OrderDetail.jsx
 - Feedback visual en todas las acciones
 
 🔄 **Pendiente**
-- Dashboard de administración con estadísticas
-- Gestión de pedidos para admin
+- Gestión de categorías para admin (CRUD)
 - Tests unitarios y de integración
+- Mejoras de rendimiento y optimización
 
 ## Notas Importantes para Desarrollo
 

@@ -477,24 +477,36 @@ API_V1_PREFIX=/api/v1
 - [x] HomePage: Direct add to cart without entering product detail
 - [x] HomePage: Auto-redirect to login if not authenticated
 
+### ✅ Recently Completed (2025-10-30)
+
+**Fase 11 - Admin Order Management System:**
+- [x] Backend: Added `get_all()` method in OrderRepository for admin
+- [x] Backend: Added `get_all_orders()` method in OrderService
+- [x] Backend: Updated orders endpoint to return all orders for admin
+- [x] OrderStatusUpdateModal component with state transition validation
+- [x] AdminOrderTable component with responsive design (table + cards)
+- [x] AdminOrdersPage with complete order management interface
+- [x] Order statistics dashboard (total, pending, confirmed, processing, shipped, delivered, cancelled)
+- [x] Order filtering by status
+- [x] Order search by ID, customer name, or email
+- [x] Update order status functionality with validation
+- [x] State transition rules (pending → confirmed → processing → shipped → delivered)
+- [x] Header navigation updated with "Gestión de Pedidos" link
+- [x] Route `/admin/orders` added and protected with AdminRoute
+- [x] Fully responsive design for all order management pages
+- [x] Real-time order list refresh button
+
 ### 🔄 In Progress
 
 - None currently
 
 ### 📋 Planned Features
 
-**Phase 6 - Frontend UI Implementation:**
-- [ ] React Router configuration with all routes
-- [ ] Layout components (Header, Footer, Navigation)
-- [ ] Common UI components (Button, Card, Input, Modal, Spinner)
-- [ ] Product catalog with filters and search
-- [ ] Product detail page
-- [ ] Shopping cart UI
-- [ ] Checkout flow
-- [ ] Order history for customers
-- [ ] Admin dashboard
-- [ ] Product management UI (admin only)
-- [ ] Order management UI (admin)
+**Phase 12 - Additional Admin Features:**
+- [ ] Admin category management (CRUD for categories)
+- [ ] Bulk actions for products (bulk delete, bulk update stock)
+- [ ] Export orders to CSV/Excel
+- [ ] Order details view for admin with full customer info
 
 **Phase 7 - Backend Improvements:**
 - [ ] Unit and integration testing (pytest)
@@ -631,9 +643,10 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 12. ~~Implement orders pages (list and detail)~~ ✅ DONE
 13. ~~Implement product management UI (admin CRUD)~~ ✅ DONE
 14. ~~Build admin dashboard with statistics~~ ✅ DONE
-15. Admin order management (view all orders, change status)
-16. Payment integration
-17. Testing and deployment
+15. ~~Admin order management (view all orders, change status)~~ ✅ DONE
+16. Admin category management (CRUD)
+17. Payment integration
+18. Testing and deployment
 
 ### Important Notes for AI Assistants
 
@@ -663,6 +676,9 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - ✅ Frontend: Checkout flow complete with optimized UX
 - ✅ Frontend: Order management pages complete (list and detail)
 - ✅ Frontend: Admin product management fully implemented
+- ✅ Frontend: Admin dashboard with statistics fully implemented
+- ✅ Frontend: Admin order management fully implemented
 - ✅ Backend: All endpoints working with auth
 - ✅ Backend: Cart items include subtotal field
-- ⏳ Pending: Admin dashboard with statistics
+- ✅ Backend: Admin can view and update all orders
+- ⏳ Pending: Admin category management (CRUD)

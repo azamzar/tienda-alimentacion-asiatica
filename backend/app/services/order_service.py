@@ -181,6 +181,20 @@ class OrderService:
         orders = self.order_repo.get_by_status(order_status, skip, limit)
         return [self._build_order_response(order) for order in orders]
 
+    def get_all_orders(self, skip: int = 0, limit: int = 100) -> List[OrderResponse]:
+        """
+        Obtiene todos los pedidos sin filtros (para admin)
+
+        Args:
+            skip: Número de registros a omitir
+            limit: Número máximo de registros
+
+        Returns:
+            Lista de OrderResponse
+        """
+        orders = self.order_repo.get_all(skip, limit)
+        return [self._build_order_response(order) for order in orders]
+
     def update_order(self, order_id: int, request: OrderUpdate, user_id: Optional[str] = None) -> OrderResponse:
         """
         Actualiza un pedido

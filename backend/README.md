@@ -754,7 +754,7 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - [x] Panel de gestión de productos (admin CRUD)
 - [x] Panel de administración (admin dashboard con estadísticas)
 - [x] Botón "Añadir al carrito" en página principal
-- [ ] Panel de gestión de pedidos (admin - cambiar estados)
+- [x] Panel de gestión de pedidos (admin - ver todos y cambiar estados)
 
 **DevOps:**
 - [ ] Configuración de CI/CD

@@ -90,8 +90,7 @@ def get_orders(
         if status_filter:
             return service.get_orders_by_status(status_filter, skip, limit)
         else:
-            # TODO: Implementar get_all_orders en el servicio
-            return service.get_orders_by_status(None, skip, limit) if hasattr(service, 'get_all_orders') else []
+            return service.get_all_orders(skip, limit)
     else:
         # Si es cliente, solo ve sus propios pedidos
         return service.get_user_orders(str(current_user.id), skip, limit)

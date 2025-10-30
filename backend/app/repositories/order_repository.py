@@ -81,6 +81,28 @@ class OrderRepository(BaseRepository[Order]):
             .all()
         )
 
+    def get_all(self, skip: int = 0, limit: int = 100) -> List[Order]:
+        """
+        Obtiene todos los pedidos con paginación (para admin)
+
+        Args:
+            skip: Número de registros a omitir
+            limit: Número máximo de registros a devolver
+
+        Returns:
+            Lista de Orders
+        """
+        return (
+            self.db.query(Order)
+            .options(
+                joinedload(Order.items).joinedload(OrderItem.product)
+            )
+            .order_by(desc(Order.created_at))
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
     def count_by_user(self, user_id: str) -> int:
         """
         Cuenta el número de pedidos de un usuario
