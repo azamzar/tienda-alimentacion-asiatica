@@ -496,17 +496,32 @@ API_V1_PREFIX=/api/v1
 - [x] Fully responsive design for all order management pages
 - [x] Real-time order list refresh button
 
+**Fase 12 - Admin Category Management System:**
+- [x] Backend: Added `CategoryUpdate` schema for partial updates
+- [x] Backend: Added `update_category()` method in CategoryService
+- [x] Backend: Added PUT `/api/v1/categories/{id}` endpoint
+- [x] Backend: Validate unique category names on create and update
+- [x] CategoryFormModal component for create/edit with validation
+- [x] AdminCategoryTable component with responsive design
+- [x] AdminCategoriesPage with complete CRUD interface
+- [x] Category statistics dashboard (total, with/without description)
+- [x] Delete confirmation modal with warning about orphaned products
+- [x] Header navigation updated with "Gestión de Categorías" link
+- [x] Route `/admin/categories` added and protected with AdminRoute
+- [x] Fully responsive design for all category management pages
+- [x] Complete CRUD operations tested (GET, POST, PUT, DELETE)
+
 ### 🔄 In Progress
 
 - None currently
 
 ### 📋 Planned Features
 
-**Phase 12 - Additional Admin Features:**
-- [ ] Admin category management (CRUD for categories)
+**Phase 13 - Additional Admin Features:**
 - [ ] Bulk actions for products (bulk delete, bulk update stock)
 - [ ] Export orders to CSV/Excel
-- [ ] Order details view for admin with full customer info
+- [ ] Product-category relationship management
+- [ ] Category product count display
 
 **Phase 7 - Backend Improvements:**
 - [ ] Unit and integration testing (pytest)
@@ -644,9 +659,10 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 13. ~~Implement product management UI (admin CRUD)~~ ✅ DONE
 14. ~~Build admin dashboard with statistics~~ ✅ DONE
 15. ~~Admin order management (view all orders, change status)~~ ✅ DONE
-16. Admin category management (CRUD)
-17. Payment integration
-18. Testing and deployment
+16. ~~Admin category management (CRUD)~~ ✅ DONE
+17. Bulk operations for products
+18. Payment integration
+19. Testing and deployment
 
 ### Important Notes for AI Assistants
 
@@ -678,7 +694,9 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - ✅ Frontend: Admin product management fully implemented
 - ✅ Frontend: Admin dashboard with statistics fully implemented
 - ✅ Frontend: Admin order management fully implemented
+- ✅ Frontend: Admin category management fully implemented
 - ✅ Backend: All endpoints working with auth
 - ✅ Backend: Cart items include subtotal field
 - ✅ Backend: Admin can view and update all orders
-- ⏳ Pending: Admin category management (CRUD)
+- ✅ Backend: Admin can view, create, update and delete categories
+- ⏳ Pending: Bulk operations, image upload, testing

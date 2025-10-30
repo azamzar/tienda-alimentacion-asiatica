@@ -849,10 +849,20 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] Diseño responsive para todas las páginas de gestión de pedidos
 - [x] Botón de actualización en tiempo real de la lista de pedidos
 
-### 📋 Fase 8: Pendiente (Gestión de Categorías Admin)
-- [ ] Gestión de categorías para admin (CRUD completo)
-- [ ] Filtros avanzados de categorías
-- [ ] Asignación de productos a categorías
+### ✅ Fase 8: Completada (Gestión de Categorías Admin) - 2025-10-30
+- [x] Backend: Schema CategoryUpdate para actualizaciones parciales
+- [x] Backend: Método update_category() en CategoryService
+- [x] Backend: Endpoint PUT /api/v1/categories/{id}
+- [x] Backend: Validación de nombres únicos en create y update
+- [x] CategoryFormModal con validación para crear/editar
+- [x] AdminCategoryTable con diseño responsive (tabla + tarjetas)
+- [x] AdminCategoriesPage con interfaz completa de CRUD
+- [x] Estadísticas de categorías (total, con/sin descripción)
+- [x] Modal de confirmación de eliminación con advertencia
+- [x] Header actualizado con enlace "Gestión de Categorías"
+- [x] Ruta `/admin/categories` añadida y protegida con AdminRoute
+- [x] Diseño responsive para todas las páginas de gestión
+- [x] Operaciones CRUD completas probadas (GET, POST, PUT, DELETE)
 
 ### 📋 Fase 9: Futuras Mejoras
 - [ ] Agregar tests unitarios (Vitest)
@@ -956,6 +966,9 @@ touch src/pages/OrderDetail.jsx
 - Panel de gestión de pedidos (ver todos, filtrar, buscar)
 - Actualización de estado de pedidos con validación
 - Estadísticas de pedidos en tiempo real
+- Panel de gestión de categorías (CRUD completo)
+- Creación, edición y eliminación de categorías
+- Estadísticas de categorías en tiempo real
 
 ✅ **Componentes Reutilizables**
 - Layout: Header con navegación responsive, Footer
@@ -964,7 +977,7 @@ touch src/pages/OrderDetail.jsx
 - Products: ProductCard, ProductGrid
 - Cart: CartItem, CartSummary
 - Orders: OrderStatusBadge, CheckoutForm
-- Admin: ProductTable, ProductFormModal, AdminOrderTable, OrderStatusUpdateModal
+- Admin: ProductTable, ProductFormModal, AdminOrderTable, OrderStatusUpdateModal, AdminCategoryTable, CategoryFormModal
 
 ✅ **Utilidades**
 - Formateadores (precios, fechas, texto)
@@ -979,7 +992,8 @@ touch src/pages/OrderDetail.jsx
 - Feedback visual en todas las acciones
 
 🔄 **Pendiente**
-- Gestión de categorías para admin (CRUD)
+- Bulk operations para productos y categorías
+- Sistema de subida de imágenes
 - Tests unitarios y de integración
 - Mejoras de rendimiento y optimización
 
