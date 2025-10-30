@@ -16,6 +16,7 @@ import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
 import AdminProductsPage from '../pages/admin/AdminProductsPage';
 import AdminCategoriesPage from '../pages/admin/AdminCategoriesPage';
 import AdminOrdersPage from '../pages/admin/AdminOrdersPage';
+import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 /**
@@ -96,6 +97,14 @@ function AppRouter() {
         element={
           <AdminRoute>
             <AdminOrdersPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <AdminRoute>
+            <AdminUsersPage />
           </AdminRoute>
         }
       />

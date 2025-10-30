@@ -1,0 +1,242 @@
+.admin-users-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.admin-users-page .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.admin-users-page .header-content h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  color: var(--color-gray-900);
+}
+
+.admin-users-page .subtitle {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-size: 1rem;
+}
+
+.admin-users-page .header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Estadísticas */
+.users-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-label {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Colores de estadísticas */
+.stat-card.stat-primary .stat-value {
+  color: #1d4ed8;
+}
+
+.stat-card.stat-green .stat-value {
+  color: #16a34a;
+}
+
+.stat-card.stat-red .stat-value {
+  color: #dc2626;
+}
+
+.stat-card.stat-purple .stat-value {
+  color: #7c3aed;
+}
+
+.stat-card.stat-blue .stat-value {
+  color: #2563eb;
+}
+
+/* Filtros */
+.users-filters {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filter-group label {
+  font-weight: 500;
+  color: var(--color-gray-700);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.filter-group select {
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--color-gray-900);
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  min-width: 150px;
+}
+
+.filter-group select:hover {
+  border-color: var(--color-primary);
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.filter-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--color-gray-100);
+}
+
+/* Error */
+.admin-users-page .error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #dc2626;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.admin-users-page .error-message p {
+  margin: 0 0 1rem 0;
+}
+
+/* Delete confirmation modal */
+.delete-confirmation {
+  padding: 0.5rem 0;
+}
+
+.delete-confirmation p {
+  margin: 0 0 1rem 0;
+  color: var(--color-gray-700);
+  line-height: 1.6;
+}
+
+.delete-confirmation .warning-text {
+  background: rgba(234, 179, 8, 0.1);
+  border-left: 3px solid #d97706;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #92400e;
+  margin-bottom: 1.5rem;
+}
+
+.delete-confirmation .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-users-page {
+    padding: 1rem;
+  }
+
+  .admin-users-page .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-users-page .header-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .admin-users-page .header-actions {
+    justify-content: stretch;
+  }
+
+  .admin-users-page .header-actions button {
+    flex: 1;
+  }
+
+  .users-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .users-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .filter-group select {
+    width: 100%;
+  }
+
+  .delete-confirmation .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .delete-confirmation .modal-actions button {
+    width: 100%;
+  }
+}

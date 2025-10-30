@@ -511,19 +511,40 @@ API_V1_PREFIX=/api/v1
 - [x] Fully responsive design for all category management pages
 - [x] Complete CRUD operations tested (GET, POST, PUT, DELETE)
 
+**Fase 13 - Admin User Management System:**
+- [x] Backend: Created `UserService` with CRUD methods (get_all, update, delete)
+- [x] Backend: Created `/api/v1/users` endpoints (GET, PUT, DELETE)
+- [x] Backend: User filtering by role and active status
+- [x] Backend: User statistics endpoint (total, active, inactive, admins, customers)
+- [x] Backend: Prevent deletion of admin users for security
+- [x] Backend: Soft delete implementation (set is_active to False)
+- [x] Frontend: Created `userService.js` with all CRUD methods
+- [x] AdminUserTable component with role and status badges
+- [x] UserFormModal for editing user details (email, name, active status)
+- [x] AdminUsersPage with complete user management interface
+- [x] User statistics dashboard (total, active, inactive, admins, customers)
+- [x] User filtering by role (customer/admin) and status (active/inactive)
+- [x] Deactivate user functionality with confirmation modal
+- [x] Admin users cannot be deactivated (UI and backend protection)
+- [x] Header navigation updated with "Gestión de Usuarios" link
+- [x] Route `/admin/users` added and protected with AdminRoute
+- [x] Fully responsive design for all user management pages
+- [x] Complete CRUD operations tested (GET, PUT, DELETE)
+
 ### 🔄 In Progress
 
 - None currently
 
 ### 📋 Planned Features
 
-**Phase 13 - Additional Admin Features:**
+**Phase 14 - Additional Admin Features:**
 - [ ] Bulk actions for products (bulk delete, bulk update stock)
 - [ ] Export orders to CSV/Excel
 - [ ] Product-category relationship management
 - [ ] Category product count display
+- [ ] Advanced user management (change role, reset password)
 
-**Phase 7 - Backend Improvements:**
+**Phase 15 - Backend Improvements:**
 - [ ] Unit and integration testing (pytest)
 - [ ] Structured logging
 - [ ] API rate limiting
@@ -532,7 +553,7 @@ API_V1_PREFIX=/api/v1
 - [ ] Email notifications
 - [ ] Image upload system for products
 
-**Phase 8 - Additional Features:**
+**Phase 16 - Additional Features:**
 - [ ] Payment integration (Stripe/PayPal)
 - [ ] Advanced search and filtering
 - [ ] Product reviews and ratings
@@ -660,9 +681,10 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 14. ~~Build admin dashboard with statistics~~ ✅ DONE
 15. ~~Admin order management (view all orders, change status)~~ ✅ DONE
 16. ~~Admin category management (CRUD)~~ ✅ DONE
-17. Bulk operations for products
-18. Payment integration
-19. Testing and deployment
+17. ~~Admin user management (view, edit, deactivate)~~ ✅ DONE
+18. Bulk operations for products
+19. Payment integration
+20. Testing and deployment
 
 ### Important Notes for AI Assistants
 
@@ -695,8 +717,10 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - ✅ Frontend: Admin dashboard with statistics fully implemented
 - ✅ Frontend: Admin order management fully implemented
 - ✅ Frontend: Admin category management fully implemented
+- ✅ Frontend: Admin user management fully implemented
 - ✅ Backend: All endpoints working with auth
 - ✅ Backend: Cart items include subtotal field
 - ✅ Backend: Admin can view and update all orders
 - ✅ Backend: Admin can view, create, update and delete categories
+- ✅ Backend: Admin can view, update and deactivate users
 - ⏳ Pending: Bulk operations, image upload, testing

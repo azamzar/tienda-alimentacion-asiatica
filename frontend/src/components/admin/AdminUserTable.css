@@ -1,0 +1,252 @@
+.admin-user-table-container {
+  width: 100%;
+}
+
+.admin-user-table-loading,
+.admin-user-table-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-gray-600);
+}
+
+.admin-user-table-loading .spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.admin-user-table-empty .empty-subtitle {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-gray-500);
+}
+
+/* Desktop table */
+.admin-user-table-wrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.admin-user-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.admin-user-table thead {
+  background-color: var(--color-gray-50);
+  border-bottom: 2px solid var(--color-gray-200);
+}
+
+.admin-user-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-user-table tbody tr {
+  border-bottom: 1px solid var(--color-gray-200);
+  transition: background-color 0.2s ease;
+}
+
+.admin-user-table tbody tr:hover {
+  background-color: var(--color-gray-50);
+}
+
+.admin-user-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.admin-user-table td {
+  padding: 1rem;
+  color: var(--color-gray-900);
+  font-size: 0.9rem;
+}
+
+.admin-user-table .user-id {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.admin-user-table .user-email {
+  font-weight: 500;
+}
+
+.admin-user-table .user-name {
+  color: var(--color-gray-700);
+}
+
+.admin-user-table .no-name {
+  color: var(--color-gray-400);
+  font-style: italic;
+}
+
+.admin-user-table .user-date {
+  color: var(--color-gray-600);
+  font-size: 0.875rem;
+}
+
+.admin-user-table .user-actions {
+  white-space: nowrap;
+}
+
+.admin-user-table .action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Role and Status Badges */
+.role-badge,
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.role-badge.role-admin {
+  background-color: rgba(147, 51, 234, 0.1);
+  color: #7c3aed;
+}
+
+.role-badge.role-customer {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.status-badge.status-active {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.status-badge.status-inactive {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+/* Mobile cards - hidden by default */
+.admin-user-cards {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-user-table-wrapper {
+    display: none;
+  }
+
+  .admin-user-cards {
+    display: block;
+  }
+
+  .admin-user-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .admin-user-card:last-child {
+    margin-bottom: 0;
+  }
+
+  .user-card-header {
+    padding: 1rem;
+    background-color: var(--color-gray-50);
+    border-bottom: 1px solid var(--color-gray-200);
+  }
+
+  .user-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .user-card-id {
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 0.875rem;
+  }
+
+  .user-card-email {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    word-break: break-all;
+  }
+
+  .user-card-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .user-card-body {
+    padding: 1rem;
+  }
+
+  .user-card-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-gray-100);
+    gap: 1rem;
+  }
+
+  .user-card-row:last-child {
+    border-bottom: none;
+  }
+
+  .user-card-row .label {
+    font-weight: 500;
+    color: var(--color-gray-600);
+    font-size: 0.875rem;
+    min-width: 120px;
+  }
+
+  .user-card-row .value {
+    color: var(--color-gray-900);
+    font-size: 0.875rem;
+    text-align: right;
+    flex: 1;
+  }
+
+  .user-card-row .no-name {
+    color: var(--color-gray-400);
+    font-style: italic;
+  }
+
+  .user-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: var(--color-gray-50);
+    border-top: 1px solid var(--color-gray-200);
+  }
+
+  .user-card-actions button {
+    flex: 1;
+  }
+}

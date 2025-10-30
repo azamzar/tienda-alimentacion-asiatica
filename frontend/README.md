@@ -351,6 +351,15 @@ Configuración base de axios con:
 ✅ cancelOrder(orderId, userId)      // Cancelar pedido
 ```
 
+#### **userService.js**
+```javascript
+✅ getUsers(params)                  // Obtener usuarios con filtros (admin)
+✅ getUserStats()                    // Obtener estadísticas de usuarios (admin)
+✅ getUserById(id)                   // Obtener usuario por ID (admin)
+✅ updateUser(id, data)              // Actualizar usuario (admin)
+✅ deleteUser(id)                    // Desactivar usuario (admin)
+```
+
 ### ✅ Stores de Zustand Implementados
 
 Todos los stores están en `src/store/`:
@@ -515,6 +524,9 @@ frontend/src/
 | `/orders/:id` | OrderDetailPage | Detalle de un pedido específico | 🔒 Autenticado |
 | `/admin` | AdminDashboardPage | Dashboard de administración | 🔐 Admin |
 | `/admin/products` | AdminProductsPage | Gestión de productos (CRUD) | 🔐 Admin |
+| `/admin/categories` | AdminCategoriesPage | Gestión de categorías (CRUD) | 🔐 Admin |
+| `/admin/orders` | AdminOrdersPage | Gestión de pedidos (view, update status) | 🔐 Admin |
+| `/admin/users` | AdminUsersPage | Gestión de usuarios (view, edit, deactivate) | 🔐 Admin |
 
 ## Gestión de Estado
 
@@ -633,9 +645,15 @@ cancelOrder(orderId, userId)      // POST /api/v1/orders/{order_id}/cancel
 
 ### Admin Components
 
+- **StatCard**: Tarjeta de estadística con icono y valor (usado en dashboard)
 - **ProductTable**: Tabla de productos con acciones de editar y eliminar
 - **ProductFormModal**: Modal para crear y editar productos con validación
-- **DeleteConfirmationModal**: Modal de confirmación para eliminar productos
+- **AdminCategoryTable**: Tabla responsive de categorías con CRUD
+- **CategoryFormModal**: Modal para crear y editar categorías
+- **AdminOrderTable**: Tabla responsive de pedidos con filtros y búsqueda
+- **OrderStatusUpdateModal**: Modal para actualizar estado de pedidos
+- **AdminUserTable**: Tabla responsive de usuarios con filtros por rol y estado
+- **UserFormModal**: Modal para editar información de usuarios
 
 ### Common Components
 
@@ -864,7 +882,27 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] Diseño responsive para todas las páginas de gestión
 - [x] Operaciones CRUD completas probadas (GET, POST, PUT, DELETE)
 
-### 📋 Fase 9: Futuras Mejoras
+### ✅ Fase 9: Completada (Gestión de Usuarios Admin) - 2025-10-30
+- [x] Backend: UserService creado con métodos CRUD (get_all_users, update_user, delete_user)
+- [x] Backend: Endpoints /api/v1/users creados (GET, PUT, DELETE)
+- [x] Backend: Filtrado de usuarios por rol (customer/admin) y estado (activo/inactivo)
+- [x] Backend: Endpoint de estadísticas de usuarios (total, activos, inactivos, admins, customers)
+- [x] Backend: Soft delete de usuarios (is_active = False)
+- [x] Backend: Protección contra eliminación de usuarios admin
+- [x] userService.js creado con métodos completos (getUsers, getUserStats, updateUser, deleteUser)
+- [x] AdminUserTable con badges de rol y estado, diseño responsive (tabla + tarjetas)
+- [x] UserFormModal para editar información de usuarios (email, nombre, estado activo)
+- [x] AdminUsersPage con interfaz completa de gestión
+- [x] Estadísticas de usuarios (total, activos, inactivos, admins, customers)
+- [x] Filtros por rol (customer/admin) y estado (activo/inactivo)
+- [x] Modal de confirmación para desactivar usuarios
+- [x] Protección UI: los admin no pueden ser desactivados
+- [x] Header actualizado con enlace "Gestión de Usuarios"
+- [x] Ruta `/admin/users` añadida y protegida con AdminRoute
+- [x] Diseño responsive para todas las páginas de gestión
+- [x] Operaciones CRUD completas probadas (GET, PUT, DELETE)
+
+### 📋 Fase 10: Futuras Mejoras
 - [ ] Agregar tests unitarios (Vitest)
 - [ ] Implementar lazy loading de imágenes
 - [ ] Agregar paginación infinita en productos
@@ -933,7 +971,7 @@ touch src/pages/OrderDetail.jsx
 - Separación clara de responsabilidades
 
 ✅ **Capa de Servicios**
-- 5 servicios completos (auth, products, categories, cart, orders)
+- 6 servicios completos (auth, products, categories, cart, orders, users)
 - Configuración de axios con interceptores para JWT
 - Manejo centralizado de errores
 
@@ -969,6 +1007,10 @@ touch src/pages/OrderDetail.jsx
 - Panel de gestión de categorías (CRUD completo)
 - Creación, edición y eliminación de categorías
 - Estadísticas de categorías en tiempo real
+- Panel de gestión de usuarios (view, edit, deactivate)
+- Filtros por rol y estado de usuarios
+- Estadísticas de usuarios en tiempo real
+- Protección contra desactivar usuarios admin
 
 ✅ **Componentes Reutilizables**
 - Layout: Header con navegación responsive, Footer
@@ -977,7 +1019,7 @@ touch src/pages/OrderDetail.jsx
 - Products: ProductCard, ProductGrid
 - Cart: CartItem, CartSummary
 - Orders: OrderStatusBadge, CheckoutForm
-- Admin: ProductTable, ProductFormModal, AdminOrderTable, OrderStatusUpdateModal, AdminCategoryTable, CategoryFormModal
+- Admin: StatCard, ProductTable, ProductFormModal, AdminOrderTable, OrderStatusUpdateModal, AdminCategoryTable, CategoryFormModal, AdminUserTable, UserFormModal
 
 ✅ **Utilidades**
 - Formateadores (precios, fechas, texto)

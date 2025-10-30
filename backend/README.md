@@ -370,6 +370,21 @@ POST   /api/v1/orders/{id}/cancel    # Cancelar pedido (🔒 cliente: solo suyos
 GET    /api/v1/admin/dashboard/stats # Obtener estadísticas del dashboard (🔒 requiere admin)
 ```
 
+#### Usuarios (Admin)
+```
+GET    /api/v1/users/                # Listar usuarios con filtros (🔒 requiere admin)
+GET    /api/v1/users/stats           # Obtener estadísticas de usuarios (🔒 requiere admin)
+GET    /api/v1/users/{id}            # Obtener usuario por ID (🔒 requiere admin)
+PUT    /api/v1/users/{id}            # Actualizar usuario (🔒 requiere admin)
+DELETE /api/v1/users/{id}            # Desactivar usuario (soft delete) (🔒 requiere admin)
+```
+
+**Filtros disponibles en GET /api/v1/users/:**
+- `skip` - Número de registros a saltar (paginación)
+- `limit` - Límite de registros (max 100)
+- `role` - Filtrar por rol (customer/admin)
+- `is_active` - Filtrar por estado activo (true/false)
+
 **Leyenda:**
 - 🔒 **Requiere autenticación** - Debe incluir header: `Authorization: Bearer <token>`
 - **Admin** - Solo usuarios con role `admin`
