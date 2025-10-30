@@ -14,6 +14,7 @@ import OrdersPage from '../pages/OrdersPage';
 import OrderDetailPage from '../pages/OrderDetailPage';
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
 import AdminProductsPage from '../pages/admin/AdminProductsPage';
+import AdminCategoriesPage from '../pages/admin/AdminCategoriesPage';
 import AdminOrdersPage from '../pages/admin/AdminOrdersPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
@@ -79,6 +80,14 @@ function AppRouter() {
         element={
           <AdminRoute>
             <AdminProductsPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/categories"
+        element={
+          <AdminRoute>
+            <AdminCategoriesPage />
           </AdminRoute>
         }
       />

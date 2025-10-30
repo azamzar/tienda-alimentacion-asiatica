@@ -1,0 +1,63 @@
+.category-form {
+  padding: 0.5rem 0;
+}
+
+.category-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.category-form .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+  font-size: 0.95rem;
+}
+
+.category-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.category-form textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.category-form textarea.error {
+  border-color: #dc2626;
+}
+
+.category-form .error-text {
+  display: block;
+  margin-top: 0.5rem;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+.category-form .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .category-form .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .category-form .modal-actions button {
+    width: 100%;
+  }
+}

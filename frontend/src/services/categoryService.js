@@ -34,6 +34,17 @@ export const categoryService = {
   },
 
   /**
+   * Actualizar una categoría (solo admin)
+   * @param {number} id - ID de la categoría
+   * @param {Object} categoryData - Datos actualizados
+   * @returns {Promise<Object>} Categoría actualizada
+   */
+  updateCategory: async (id, categoryData) => {
+    const { data } = await api.put(`/categories/${id}`, categoryData);
+    return data;
+  },
+
+  /**
    * Eliminar una categoría (solo admin)
    * @param {number} id - ID de la categoría
    * @returns {Promise<void>}

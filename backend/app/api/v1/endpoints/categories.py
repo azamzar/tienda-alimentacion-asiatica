@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, get_current_admin
-from app.schemas.category import Category, CategoryCreate
+from app.schemas.category import Category, CategoryCreate, CategoryUpdate
 from app.services.category_service import CategoryService
 from app.models.user import User
 
@@ -45,6 +45,22 @@ def create_category(
     """
     service = CategoryService(db)
     return service.create_category(category)
+
+
+@router.put("/{category_id}", response_model=Category)
+def update_category(
+    category_id: int,
+    category: CategoryUpdate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Update a category by ID.
+
+    **Requires admin role**
+    """
+    service = CategoryService(db)
+    return service.update_category(category_id, category)
 
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)

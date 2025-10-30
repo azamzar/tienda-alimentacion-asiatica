@@ -14,6 +14,12 @@ class CategoryCreate(CategoryBase):
     pass
 
 
+class CategoryUpdate(BaseModel):
+    """Schema for updating a category"""
+    name: Optional[str] = Field(None, min_length=1, max_length=100, description="Category name")
+    description: Optional[str] = Field(None, description="Category description")
+
+
 class Category(CategoryBase):
     """Schema for Category response"""
     id: int

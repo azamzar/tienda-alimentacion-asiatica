@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models.category import Category
-from app.schemas.category import CategoryCreate
+from app.schemas.category import CategoryCreate, CategoryUpdate
 from app.repositories.category_repository import CategoryRepository
 
 
@@ -38,6 +38,23 @@ class CategoryService:
 
         category_dict = category_data.model_dump()
         return self.repository.create(category_dict)
+
+    def update_category(self, category_id: int, category_data: CategoryUpdate) -> Category:
+        """Update a category by ID"""
+        # Verify category exists
+        category = self.get_category_by_id(category_id)
+
+        # If name is being changed, check if new name already exists
+        if category_data.name and category_data.name != category.name:
+            if self.repository.exists_by_name(category_data.name):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Category with name '{category_data.name}' already exists"
+                )
+
+        # Update category
+        update_dict = category_data.model_dump(exclude_unset=True)
+        return self.repository.update(category, update_dict)
 
     def delete_category(self, category_id: int) -> None:
         """Delete a category by ID"""

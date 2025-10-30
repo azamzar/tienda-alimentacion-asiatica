@@ -102,6 +102,9 @@ function Header() {
                     <Link to="/admin/products" className="header-dropdown-item">
                       Gestión de Productos
                     </Link>
+                    <Link to="/admin/categories" className="header-dropdown-item">
+                      Gestión de Categorías
+                    </Link>
                     <Link to="/admin/orders" className="header-dropdown-item">
                       Gestión de Pedidos
                     </Link>
