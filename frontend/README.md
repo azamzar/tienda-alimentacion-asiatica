@@ -323,6 +323,8 @@ Configuración base de axios con:
 ✅ createProduct(data)           // Crear producto (admin)
 ✅ updateProduct(id, data)       // Actualizar producto (admin)
 ✅ deleteProduct(id)             // Eliminar producto (admin)
+✅ uploadProductImage(id, file)  // Subir imagen de producto (admin)
+✅ deleteProductImage(id)        // Eliminar imagen de producto (admin)
 ```
 
 #### **categoryService.js**
@@ -662,6 +664,7 @@ cancelOrder(orderId, userId)      // POST /api/v1/orders/{order_id}/cancel
 - **Card**: Contenedor genérico con estilos consistentes
 - **Modal**: Modal genérico con overlay y animaciones
 - **Spinner**: Indicador de carga centrado
+- **ImageUpload**: Componente de upload de imágenes con drag & drop, preview y validación
 
 ## Desarrollo
 
@@ -902,7 +905,19 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] Diseño responsive para todas las páginas de gestión
 - [x] Operaciones CRUD completas probadas (GET, PUT, DELETE)
 
-### 📋 Fase 10: Futuras Mejoras
+### ✅ Fase 10: Completada (Sistema de Imágenes de Productos) - 2025-10-31
+- [x] Componente ImageUpload con drag & drop y preview
+- [x] Validación de archivos (tipo, tamaño máximo 5MB)
+- [x] Integración en ProductFormModal con toggle file/URL
+- [x] Servicio productService actualizado (uploadProductImage, deleteProductImage)
+- [x] Upload automático al crear/editar productos
+- [x] Preview de imagen actual en modo edición
+- [x] Botones para cambiar y eliminar imágenes
+- [x] Diseño responsive del componente ImageUpload
+- [x] Manejo de errores de validación
+- [x] Soporte para múltiples formatos (JPG, PNG, GIF, WEBP)
+
+### 📋 Fase 11: Futuras Mejoras
 - [ ] Agregar tests unitarios (Vitest)
 - [ ] Implementar lazy loading de imágenes
 - [ ] Agregar paginación infinita en productos

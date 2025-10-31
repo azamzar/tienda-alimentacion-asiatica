@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
+from pathlib import Path
 
 
 class Settings(BaseSettings):
@@ -11,6 +12,11 @@ class Settings(BaseSettings):
     APP_NAME: str = "Tienda Alimentación Asiática API"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
+
+    # File uploads
+    UPLOAD_DIR: Path = Path("uploads")
+    PRODUCTS_UPLOAD_DIR: Path = Path("uploads/products")
+    MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024  # 5MB
 
     # Database
     POSTGRES_USER: str = "tienda_user"

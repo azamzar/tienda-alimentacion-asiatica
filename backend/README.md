@@ -140,7 +140,8 @@ backend/
 │   │   └── order_repository.py      # Repository de pedidos
 │   │
 │   └── utils/
-│       └── __init__.py
+│       ├── __init__.py
+│       └── file_utils.py            # Utilidades para manejo de archivos
 │
 ├── scripts/
 │   └── init_db.py                   # Script para inicializar la DB con datos
@@ -153,6 +154,9 @@ backend/
 ├── tests/
 │   ├── unit/                        # Tests unitarios
 │   └── integration/                 # Tests de integración
+│
+├── uploads/                         # Archivos subidos (generado automáticamente)
+│   └── products/                    # Imágenes de productos
 │
 ├── main.py                          # Entry point que importa app.main
 ├── requirements.txt                 # Dependencias de producción
@@ -345,6 +349,13 @@ GET    /api/v1/products/low-stock/   # Productos con stock bajo (público)
 POST   /api/v1/products/             # Crear nuevo producto (🔒 requiere admin)
 PUT    /api/v1/products/{id}         # Actualizar producto (🔒 requiere admin)
 DELETE /api/v1/products/{id}         # Eliminar producto (🔒 requiere admin)
+POST   /api/v1/products/{id}/image   # Subir imagen de producto (🔒 requiere admin)
+DELETE /api/v1/products/{id}/image   # Eliminar imagen de producto (🔒 requiere admin)
+```
+
+**Archivos Estáticos:**
+```
+GET    /uploads/products/{filename}  # Servir imágenes de productos
 ```
 
 #### Carritos
@@ -743,6 +754,11 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - [x] Endpoints protegidos con autenticación
 - [x] CORS configurado para puertos 5173-5176 (desarrollo frontend)
 - [x] Endpoint admin dashboard statistics (`/api/v1/admin/dashboard/stats`)
+- [x] Sistema de subida de imágenes para productos
+  - Upload de archivos con validación (JPG, PNG, GIF, WEBP, max 5MB)
+  - Almacenamiento local en `/uploads/products/`
+  - Servicio de archivos estáticos
+  - Endpoints para subir y eliminar imágenes
 
 ### 📋 Pendiente
 
@@ -752,13 +768,14 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
   - Tests de integración para endpoints
   - Tests de autenticación y autorización
 - [ ] Implementar logging estructurado
-- [ ] Subida de imágenes para productos
 - [ ] Paginación mejorada con cursores
 - [ ] Cache con Redis
 - [ ] Rate limiting para endpoints de autenticación
 - [ ] Refresh tokens
 - [ ] Password reset/recovery
 - [ ] Email notifications
+- [ ] Optimización de imágenes (thumbnails, diferentes tamaños)
+- [ ] Soporte para almacenamiento en cloud (S3, Google Cloud Storage)
 
 **Frontend Implementation:**
 - [x] Catálogo de productos con filtros y búsqueda

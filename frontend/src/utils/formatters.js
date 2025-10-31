@@ -73,3 +73,22 @@ export const getInitials = (name) => {
     .toUpperCase()
     .substring(0, 2);
 };
+
+/**
+ * Obtener URL completa de imagen
+ * Convierte rutas relativas del backend en URLs absolutas
+ * @param {string} imageUrl - URL de la imagen (puede ser relativa o absoluta)
+ * @returns {string} URL completa de la imagen
+ */
+export const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return 'https://placehold.co/400x300/f0f0f0/666?text=Sin+Imagen';
+
+  // Si ya es una URL completa (http:// o https://), devolverla tal cual
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+
+  // Si es una ruta relativa del backend, agregar la base URL
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  return `${API_BASE_URL}${imageUrl}`;
+};

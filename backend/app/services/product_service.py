@@ -1,11 +1,14 @@
 from typing import List, Optional
-from fastapi import HTTPException, status
+from pathlib import Path
+from fastapi import HTTPException, status, UploadFile
 from sqlalchemy.orm import Session
 
 from app.models.product import Product
 from app.schemas.product import ProductCreate, ProductUpdate
 from app.repositories.product_repository import ProductRepository
 from app.repositories.category_repository import CategoryRepository
+from app.config.settings import settings
+from app.utils.file_utils import save_upload_file, delete_file
 
 
 class ProductService:
@@ -83,3 +86,71 @@ class ProductService:
     def get_low_stock_products(self, threshold: int = 10) -> List[Product]:
         """Get products with low stock"""
         return self.repository.get_low_stock_products(threshold)
+
+    async def upload_product_image(self, product_id: int, file: UploadFile) -> Product:
+        """
+        Upload an image for a product
+
+        Args:
+            product_id: ID of the product
+            file: Uploaded image file
+
+        Returns:
+            Updated product with image_url
+
+        Raises:
+            HTTPException: If product not found or upload fails
+        """
+        # Get existing product
+        product = self.get_product_by_id(product_id)
+
+        # Delete old image if exists
+        if product.image_url:
+            old_image_path = Path(settings.PRODUCTS_UPLOAD_DIR) / Path(product.image_url).name
+            delete_file(old_image_path)
+
+        # Save new image
+        filename = await save_upload_file(
+            file,
+            settings.PRODUCTS_UPLOAD_DIR,
+            settings.MAX_UPLOAD_SIZE
+        )
+
+        # Update product with new image URL
+        image_url = f"/uploads/products/{filename}"
+        update_data = {"image_url": image_url}
+        updated_product = self.repository.update(product, update_data)
+
+        return updated_product
+
+    def delete_product_image(self, product_id: int) -> Product:
+        """
+        Delete the image of a product
+
+        Args:
+            product_id: ID of the product
+
+        Returns:
+            Updated product without image
+
+        Raises:
+            HTTPException: If product not found
+        """
+        # Get existing product
+        product = self.get_product_by_id(product_id)
+
+        if not product.image_url:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Product has no image to delete"
+            )
+
+        # Delete image file
+        image_path = Path(settings.PRODUCTS_UPLOAD_DIR) / Path(product.image_url).name
+        delete_file(image_path)
+
+        # Update product (remove image_url)
+        update_data = {"image_url": None}
+        updated_product = self.repository.update(product, update_data)
+
+        return updated_product

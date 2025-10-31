@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { productService } from '../../services/productService';
-import { formatPrice } from '../../utils/formatters';
+import { formatPrice, getImageUrl } from '../../utils/formatters';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
 import './ProductTable.css';
@@ -86,17 +86,18 @@ function ProductTable({ products, onEdit, onRefresh }) {
               <tr key={product.id}>
                 <td className="product-id">{product.id}</td>
                 <td className="product-image">
-                  {product.image_url ? (
-                    <img
-                      src={product.image_url}
-                      alt={product.name}
-                      className="product-thumbnail"
-                    />
-                  ) : (
-                    <div className="product-thumbnail-placeholder">
-                      Sin imagen
-                    </div>
-                  )}
+                  <img
+                    src={getImageUrl(product.image_url)}
+                    alt={product.name}
+                    className="product-thumbnail"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div className="product-thumbnail-placeholder" style={{ display: 'none' }}>
+                    Sin imagen
+                  </div>
                 </td>
                 <td className="product-name">
                   <div className="product-name-cell">

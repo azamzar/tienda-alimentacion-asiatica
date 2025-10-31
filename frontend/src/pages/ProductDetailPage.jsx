@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { productService } from '../services/productService';
 import { useCartStore } from '../store/useCartStore';
-import { formatPrice } from '../utils/formatters';
+import { formatPrice, getImageUrl } from '../utils/formatters';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import Spinner from '../components/common/Spinner';
@@ -121,7 +121,7 @@ function ProductDetailPage() {
           {/* Image */}
           <div className="product-detail-image-wrapper">
             <img
-              src={product.image_url || 'https://placehold.co/600x450/f0f0f0/666?text=Producto'}
+              src={getImageUrl(product.image_url)}
               alt={product.name}
               className="product-detail-image"
               onError={(e) => {

@@ -531,6 +531,29 @@ API_V1_PREFIX=/api/v1
 - [x] Fully responsive design for all user management pages
 - [x] Complete CRUD operations tested (GET, PUT, DELETE)
 
+### ✅ Recently Completed (2025-10-31)
+
+**Fase 14 - Product Image Upload System:**
+- [x] Backend: File upload utilities (`app/utils/file_utils.py`)
+  - File validation (type, size, format)
+  - Unique filename generation with UUID
+  - Save and delete file operations
+- [x] Backend: Upload configuration in settings (upload directories, max file size)
+- [x] Backend: Static files mounting for `/uploads` directory
+- [x] Backend: Product service methods (`upload_product_image`, `delete_product_image`)
+- [x] Backend: API endpoints POST/DELETE `/api/v1/products/{id}/image`
+- [x] Backend: Automatic old image deletion when uploading new one
+- [x] Backend: Image validation (JPG, PNG, GIF, WEBP, max 5MB)
+- [x] Frontend: ImageUpload component with drag & drop functionality
+- [x] Frontend: Image preview before and after upload
+- [x] Frontend: File validation on client side
+- [x] Frontend: ProductService methods (`uploadProductImage`, `deleteProductImage`)
+- [x] Frontend: ProductFormModal integration with toggle (file upload / URL)
+- [x] Frontend: Automatic image upload on product create/edit
+- [x] Frontend: Delete image functionality with confirmation
+- [x] Fully responsive design for image upload component
+- [x] Support for external URLs (backward compatibility)
+
 ### 🔄 In Progress
 
 - None currently
@@ -551,7 +574,8 @@ API_V1_PREFIX=/api/v1
 - [ ] Refresh tokens
 - [ ] Password reset/recovery
 - [ ] Email notifications
-- [ ] Image upload system for products
+- [ ] Image optimization (thumbnails, multiple sizes)
+- [ ] Cloud storage integration (S3, Google Cloud Storage)
 
 **Phase 16 - Additional Features:**
 - [ ] Payment integration (Stripe/PayPal)

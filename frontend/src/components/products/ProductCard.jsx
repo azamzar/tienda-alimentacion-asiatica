@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../../store/useCartStore';
-import { formatPrice } from '../../utils/formatters';
+import { formatPrice, getImageUrl } from '../../utils/formatters';
 import Button from '../common/Button';
 import Card from '../common/Card';
 import './ProductCard.css';
@@ -55,7 +55,7 @@ function ProductCard({ product }) {
           <div className="product-card-badge product-card-badge-low">¡Últimas unidades!</div>
         )}
         <img
-          src={product.image_url || 'https://placehold.co/400x300/f0f0f0/666?text=Producto'}
+          src={getImageUrl(product.image_url)}
           alt={product.name}
           className="product-card-image"
           onError={(e) => {

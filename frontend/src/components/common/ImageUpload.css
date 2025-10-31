@@ -1,0 +1,115 @@
+.image-upload {
+  width: 100%;
+}
+
+.image-upload-input {
+  display: none;
+}
+
+.image-upload-dropzone {
+  border: 2px dashed var(--border-color, #ddd);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--surface-color, #fafafa);
+}
+
+.image-upload-dropzone:hover:not(.disabled) {
+  border-color: var(--primary-color, #007bff);
+  background-color: var(--surface-hover-color, #f0f8ff);
+}
+
+.image-upload-dropzone.dragging {
+  border-color: var(--primary-color, #007bff);
+  background-color: var(--surface-hover-color, #e3f2fd);
+  transform: scale(1.02);
+}
+
+.image-upload-dropzone.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--disabled-bg-color, #f5f5f5);
+}
+
+.image-upload-icon {
+  color: var(--text-light-color, #999);
+  margin-bottom: 1rem;
+}
+
+.image-upload-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color, #333);
+  margin-bottom: 0.5rem;
+}
+
+.image-upload-hint {
+  font-size: 0.875rem;
+  color: var(--text-light-color, #666);
+  margin-bottom: 0.5rem;
+}
+
+.image-upload-limit {
+  font-size: 0.75rem;
+  color: var(--text-lighter-color, #999);
+}
+
+.image-upload-preview {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--surface-color, #f9f9f9);
+  padding: 1rem;
+}
+
+.image-upload-preview-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  background-color: white;
+}
+
+.image-upload-preview-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.image-upload-error {
+  color: var(--error-color, #dc3545);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .image-upload-dropzone {
+    padding: 1.5rem;
+  }
+
+  .image-upload-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .image-upload-text {
+    font-size: 0.9375rem;
+  }
+
+  .image-upload-hint {
+    font-size: 0.8125rem;
+  }
+
+  .image-upload-limit {
+    font-size: 0.6875rem;
+  }
+
+  .image-upload-preview-img {
+    max-height: 200px;
+  }
+}

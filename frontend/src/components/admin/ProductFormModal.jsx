@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { productService } from '../../services/productService';
+import { getImageUrl } from '../../utils/formatters';
 import Modal from '../common/Modal';
 import Input from '../common/Input';
 import Button from '../common/Button';
+import ImageUpload from '../common/ImageUpload';
 import './ProductFormModal.css';
 
 /**
@@ -25,6 +27,8 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadMode, setUploadMode] = useState('file'); // 'file' or 'url'
 
   // Initialize form with product data if editing
   useEffect(() => {
@@ -80,6 +84,27 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle image upload
+  const handleImageChange = (file) => {
+    setImageFile(file);
+  };
+
+  // Handle image delete
+  const handleImageDelete = async () => {
+    if (isEditMode && product.image_url) {
+      try {
+        await productService.deleteProductImage(product.id);
+        setImageFile(null);
+        onSave(); // Refresh product data
+      } catch (error) {
+        console.error('Error deleting image:', error);
+        setSubmitError('Error al eliminar la imagen');
+      }
+    } else {
+      setImageFile(null);
+    }
+  };
+
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -99,15 +124,22 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
         category_id: parseInt(formData.category_id),
-        image_url: formData.image_url.trim() || null,
+        image_url: uploadMode === 'url' ? formData.image_url.trim() || null : null,
       };
+
+      let savedProduct;
 
       if (isEditMode) {
         // Update existing product
-        await productService.updateProduct(product.id, productData);
+        savedProduct = await productService.updateProduct(product.id, productData);
       } else {
         // Create new product
-        await productService.createProduct(productData);
+        savedProduct = await productService.createProduct(productData);
+      }
+
+      // Upload image if file selected
+      if (imageFile && uploadMode === 'file') {
+        await productService.uploadProductImage(savedProduct.id, imageFile);
       }
 
       onSave(); // Callback to parent
@@ -228,21 +260,54 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
           )}
         </div>
 
-        {/* Image URL */}
+        {/* Image Upload */}
         <div className="form-group">
-          <label htmlFor="image_url">URL de Imagen</label>
-          <Input
-            id="image_url"
-            name="image_url"
-            type="url"
-            value={formData.image_url}
-            onChange={handleChange}
-            placeholder="https://ejemplo.com/imagen.jpg"
-            disabled={isSubmitting}
-          />
-          <span className="helper-text">
-            Opcional. URL de la imagen del producto.
-          </span>
+          <label>Imagen del Producto</label>
+
+          {/* Toggle between file upload and URL */}
+          <div className="upload-mode-toggle">
+            <button
+              type="button"
+              className={`toggle-btn ${uploadMode === 'file' ? 'active' : ''}`}
+              onClick={() => setUploadMode('file')}
+              disabled={isSubmitting}
+            >
+              Subir Archivo
+            </button>
+            <button
+              type="button"
+              className={`toggle-btn ${uploadMode === 'url' ? 'active' : ''}`}
+              onClick={() => setUploadMode('url')}
+              disabled={isSubmitting}
+            >
+              URL Externa
+            </button>
+          </div>
+
+          {uploadMode === 'file' ? (
+            <ImageUpload
+              value={imageFile}
+              currentImageUrl={product?.image_url ? getImageUrl(product.image_url) : null}
+              onChange={handleImageChange}
+              onDelete={handleImageDelete}
+              disabled={isSubmitting}
+            />
+          ) : (
+            <>
+              <Input
+                id="image_url"
+                name="image_url"
+                type="url"
+                value={formData.image_url}
+                onChange={handleChange}
+                placeholder="https://ejemplo.com/imagen.jpg"
+                disabled={isSubmitting}
+              />
+              <span className="helper-text">
+                Opcional. URL de la imagen del producto.
+              </span>
+            </>
+          )}
         </div>
 
         {/* Submit Error */}

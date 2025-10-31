@@ -79,5 +79,33 @@ export const productService = {
    */
   deleteProduct: async (id) => {
     await api.delete(`/products/${id}`);
+  },
+
+  /**
+   * Subir imagen para un producto (solo admin)
+   * @param {number} id - ID del producto
+   * @param {File} file - Archivo de imagen
+   * @returns {Promise<Object>} Producto actualizado
+   */
+  uploadProductImage: async (id, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const { data } = await api.post(`/products/${id}/image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return data;
+  },
+
+  /**
+   * Eliminar imagen de un producto (solo admin)
+   * @param {number} id - ID del producto
+   * @returns {Promise<Object>} Producto actualizado
+   */
+  deleteProductImage: async (id) => {
+    const { data } = await api.delete(`/products/${id}/image`);
+    return data;
   }
 };

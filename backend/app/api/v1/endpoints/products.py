@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, status, UploadFile, File
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, get_current_admin
@@ -108,3 +108,37 @@ def delete_product(
     service = ProductService(db)
     service.delete_product(product_id)
     return None
+
+
+@router.post("/{product_id}/image", response_model=Product)
+async def upload_product_image(
+    product_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Upload an image for a product.
+
+    **Requires admin role**
+
+    - **product_id**: ID of the product
+    - **file**: Image file (JPG, PNG, GIF, WEBP, max 5MB)
+    """
+    service = ProductService(db)
+    return await service.upload_product_image(product_id, file)
+
+
+@router.delete("/{product_id}/image", response_model=Product)
+def delete_product_image(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Delete the image of a product.
+
+    **Requires admin role**
+    """
+    service = ProductService(db)
+    return service.delete_product_image(product_id)
