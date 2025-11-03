@@ -26,6 +26,14 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = "tienda_asiatica"
     DATABASE_URL: Optional[str] = None
 
+    # Redis
+    REDIS_HOST: str = "redis"
+    REDIS_PORT: int = 6379
+    REDIS_DB: int = 0
+    REDIS_PASSWORD: Optional[str] = None
+    CACHE_ENABLED: bool = True
+    CACHE_TTL: int = 300  # 5 minutes default
+
     # CORS
     CORS_ORIGINS: list = [
         "http://localhost:3000",

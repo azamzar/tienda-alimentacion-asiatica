@@ -1,0 +1,23 @@
+/* ProductGridSkeleton Component Styles */
+
+.product-grid-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+  padding: 20px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .product-grid-skeleton {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid-skeleton {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}

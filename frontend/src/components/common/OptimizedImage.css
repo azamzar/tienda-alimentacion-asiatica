@@ -1,0 +1,88 @@
+/* OptimizedImage Component Styles */
+
+.optimized-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.optimized-image__placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+.optimized-image__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.optimized-image__img.fade-in {
+  opacity: 1;
+}
+
+.optimized-image__loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Loading state with blur-up effect */
+.optimized-image.loading .optimized-image__img {
+  filter: blur(10px);
+  transform: scale(1.1);
+}
+
+.optimized-image.loaded .optimized-image__img {
+  filter: blur(0);
+  transform: scale(1);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Small spinner for image loading */
+.spinner-small {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #007bff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .optimized-image__img {
+    object-fit: contain;
+  }
+}

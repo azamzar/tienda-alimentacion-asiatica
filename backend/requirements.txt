@@ -9,3 +9,15 @@ passlib[bcrypt]
 bcrypt>=4.0.0,<5.0.0
 python-multipart
 pydantic[email]
+# Image processing and optimization
+Pillow==10.1.0
+pillow-heif==0.13.0
+# Caching with Redis
+redis==5.0.1
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+httpx==0.25.2
+faker==20.1.0

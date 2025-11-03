@@ -1,25 +1,32 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../../store/useCartStore';
-import { formatPrice, getImageUrl } from '../../utils/formatters';
+import { formatPrice } from '../../utils/formatters';
 import Button from '../common/Button';
 import Card from '../common/Card';
+import OptimizedImage from '../common/OptimizedImage';
 import './ProductCard.css';
 
 /**
- * Product card component
+ * Product card component (optimized with React.memo)
  * Displays product information with add to cart functionality
+ *
+ * Optimizations:
+ * - React.memo to prevent unnecessary re-renders
+ * - useCallback for stable function references
+ * - OptimizedImage with lazy loading
+ * - Memoized computed values
  *
  * @param {Object} props
  * @param {Object} props.product - Product data
  */
-function ProductCard({ product }) {
+const ProductCard = memo(({ product }) => {
   const navigate = useNavigate();
   const { addItem } = useCartStore();
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleAddToCart = async (e) => {
+  // Memoize handlers with useCallback to prevent re-renders
+  const handleAddToCart = useCallback(async (e) => {
     e.stopPropagation(); // Prevent card click
     setIsAdding(true);
     try {
@@ -37,33 +44,32 @@ function ProductCard({ product }) {
     } finally {
       setIsAdding(false);
     }
-  };
+  }, [addItem, product.id, navigate]);
 
-  const handleCardClick = () => {
+  const handleCardClick = useCallback(() => {
     navigate(`/products/${product.id}`);
-  };
+  }, [navigate, product.id]);
 
+  // Compute stock status
   const isOutOfStock = product.stock === 0;
   const isLowStock = product.stock > 0 && product.stock <= 10;
 
   return (
     <Card hoverable onClick={handleCardClick} className="product-card">
-      {/* Image */}
+      {/* Image with lazy loading and optimized thumbnails */}
       <div className="product-card-image-wrapper">
         {isOutOfStock && <div className="product-card-badge product-card-badge-out">Agotado</div>}
         {isLowStock && !isOutOfStock && (
           <div className="product-card-badge product-card-badge-low">¡Últimas unidades!</div>
         )}
-        <img
-          src={getImageUrl(product.image_url)}
+        <OptimizedImage
+          src={product.image_url}
+          productId={product.id}
           alt={product.name}
+          size="medium"
           className="product-card-image"
-          onError={(e) => {
-            // Prevent infinite loop by checking if we've already set the placeholder
-            if (!e.target.src.includes('placehold.co')) {
-              e.target.src = 'https://placehold.co/400x300/f0f0f0/666?text=Producto';
-            }
-          }}
+          lazy={true}
+          fallback="https://placehold.co/400x300/f0f0f0/666?text=Producto"
         />
       </div>
 
@@ -106,6 +112,9 @@ function ProductCard({ product }) {
       </div>
     </Card>
   );
-}
+});
+
+// Display name for debugging
+ProductCard.displayName = 'ProductCard';
 
 export default ProductCard;

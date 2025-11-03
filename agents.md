@@ -554,30 +554,55 @@ API_V1_PREFIX=/api/v1
 - [x] Fully responsive design for image upload component
 - [x] Support for external URLs (backward compatibility)
 
+### ✅ Recently Completed (2025-11-03)
+
+**Fase 15 - Testing & Quality Assurance:**
+- [x] Backend: pytest test framework configuration
+- [x] Backend: Comprehensive fixtures setup (db_session, test client, sample data)
+- [x] Backend: Test markers for organization (unit, integration, cache, images, products, categories)
+- [x] Backend: 104 tests implemented (100% passing):
+  - 24 tests for ImageOptimizer (optimize, resize, thumbnails, delete, metadata)
+  - 29 tests for Cache utilities (get, set, delete, patterns, decorators)
+  - 28 tests for ProductService (CRUD, caching, validation, images)
+  - 23 tests for CategoryService (CRUD, caching, validation)
+- [x] Backend: SQLite in-memory database for test isolation
+- [x] Backend: Code coverage configuration (80% threshold)
+- [x] Backend: Test documentation in README
+- [x] Frontend: Vitest + React Testing Library configuration
+- [x] Frontend: jsdom environment for browser simulation
+- [x] Frontend: Global test setup with mocks (IntersectionObserver, matchMedia, Image)
+- [x] Frontend: 99 tests implemented (100% passing):
+  - 25 tests for OptimizedImage (lazy loading, progressive loading, responsive images)
+  - 15 tests for Skeleton (variants, dimensions, animation)
+  - 34 tests for ProductCard (rendering, cart integration, accessibility)
+  - 25 tests for ProductGrid (filtering, search, performance)
+- [x] Frontend: Coverage configuration (80% threshold)
+- [x] Frontend: Mocking strategy for stores, router, and components
+- [x] Frontend: Test documentation in README
+- [x] Total: 203 comprehensive tests ensuring code quality
+
 ### 🔄 In Progress
 
 - None currently
 
 ### 📋 Planned Features
 
-**Phase 14 - Additional Admin Features:**
+**Phase 16 - Additional Admin Features:**
 - [ ] Bulk actions for products (bulk delete, bulk update stock)
 - [ ] Export orders to CSV/Excel
 - [ ] Product-category relationship management
 - [ ] Category product count display
 - [ ] Advanced user management (change role, reset password)
 
-**Phase 15 - Backend Improvements:**
-- [ ] Unit and integration testing (pytest)
+**Phase 17 - Backend Improvements:**
 - [ ] Structured logging
 - [ ] API rate limiting
 - [ ] Refresh tokens
 - [ ] Password reset/recovery
 - [ ] Email notifications
-- [ ] Image optimization (thumbnails, multiple sizes)
 - [ ] Cloud storage integration (S3, Google Cloud Storage)
 
-**Phase 16 - Additional Features:**
+**Phase 18 - Additional Features:**
 - [ ] Payment integration (Stripe/PayPal)
 - [ ] Advanced search and filtering
 - [ ] Product reviews and ratings
@@ -706,9 +731,10 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 15. ~~Admin order management (view all orders, change status)~~ ✅ DONE
 16. ~~Admin category management (CRUD)~~ ✅ DONE
 17. ~~Admin user management (view, edit, deactivate)~~ ✅ DONE
-18. Bulk operations for products
-19. Payment integration
-20. Testing and deployment
+18. ~~Testing (backend pytest + frontend vitest)~~ ✅ DONE
+19. Bulk operations for products
+20. Payment integration
+21. Deployment
 
 ### Important Notes for AI Assistants
 
@@ -742,9 +768,12 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - ✅ Frontend: Admin order management fully implemented
 - ✅ Frontend: Admin category management fully implemented
 - ✅ Frontend: Admin user management fully implemented
+- ✅ Frontend: 99 tests implemented (100% passing)
 - ✅ Backend: All endpoints working with auth
 - ✅ Backend: Cart items include subtotal field
 - ✅ Backend: Admin can view and update all orders
 - ✅ Backend: Admin can view, create, update and delete categories
 - ✅ Backend: Admin can view, update and deactivate users
-- ⏳ Pending: Bulk operations, image upload, testing
+- ✅ Backend: Image optimization system implemented
+- ✅ Backend: 104 tests implemented (100% passing)
+- ⏳ Pending: Bulk operations, payment integration

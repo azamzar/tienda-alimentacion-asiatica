@@ -1,14 +1,20 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useProductStore } from '../../store/useProductStore';
 import ProductCard from './ProductCard';
+import ProductGridSkeleton from './ProductGridSkeleton';
 import Spinner from '../common/Spinner';
 import Input from '../common/Input';
 import './ProductGrid.css';
 
 /**
- * Product grid with filters and search
+ * Product grid with filters and search (optimized)
  * Displays products in a responsive grid layout
+ *
+ * Optimizations:
+ * - useMemo for expensive filtering operations
+ * - useCallback for stable function references
+ * - ProductGridSkeleton for better loading UX
+ * - Debounced search to reduce re-renders
  */
 function ProductGrid() {
   const {
@@ -29,7 +35,7 @@ function ProductGrid() {
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, []);
+  }, [fetchProducts, fetchCategories]);
 
   // Debounced search
   useEffect(() => {
@@ -40,27 +46,43 @@ function ProductGrid() {
     return () => clearTimeout(timer);
   }, [localSearchQuery, setSearchQuery]);
 
-  const handleCategoryChange = (categoryId) => {
+  // Memoize handlers with useCallback
+  const handleCategoryChange = useCallback((categoryId) => {
     setSelectedCategory(categoryId);
-  };
+  }, [setSelectedCategory]);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setSelectedCategory(null);
     setLocalSearchQuery('');
     setSearchQuery('');
-  };
+  }, [setSelectedCategory, setSearchQuery]);
 
-  // Filter products based on category and search
-  const filteredProducts = products.filter((product) => {
-    const matchesCategory = !selectedCategory || product.category_id === selectedCategory;
-    const matchesSearch =
-      !searchQuery ||
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  // Memoize filtered products to avoid re-computing on every render
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesCategory = !selectedCategory || product.category_id === selectedCategory;
+      const matchesSearch =
+        !searchQuery ||
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [products, selectedCategory, searchQuery]);
 
-  const hasActiveFilters = selectedCategory || searchQuery;
+  // Memoize category counts to avoid recalculating on every render
+  const categoryCounts = useMemo(() => {
+    const counts = new Map();
+    products.forEach((product) => {
+      const count = counts.get(product.category_id) || 0;
+      counts.set(product.category_id, count + 1);
+    });
+    return counts;
+  }, [products]);
+
+  // Memoize active filters check
+  const hasActiveFilters = useMemo(() => {
+    return !!(selectedCategory || searchQuery);
+  }, [selectedCategory, searchQuery]);
 
   return (
     <div className="product-grid-wrapper">
@@ -97,7 +119,7 @@ function ProductGrid() {
               <span className="product-grid-category-count">{products.length}</span>
             </button>
             {categories.map((category) => {
-              const count = products.filter((p) => p.category_id === category.id).length;
+              const count = categoryCounts.get(category.id) || 0;
               return (
                 <button
                   key={category.id}
@@ -129,12 +151,8 @@ function ProductGrid() {
           </p>
         </div>
 
-        {/* Loading */}
-        {loading && (
-          <div className="product-grid-loading">
-            <Spinner size="large" centered text="Cargando productos..." />
-          </div>
-        )}
+        {/* Loading with skeleton */}
+        {loading && <ProductGridSkeleton count={8} />}
 
         {/* Error */}
         {error && !loading && (

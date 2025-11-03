@@ -14,6 +14,7 @@ services:
       - .env
     depends_on:
       - db
+      - redis
     networks:
       - tienda-net
 
@@ -28,8 +29,24 @@ services:
     networks:
       - tienda-net
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - tienda-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   tienda-net:
