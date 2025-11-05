@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useOrderStore } from '../store/useOrderStore';
 import { formatPrice, formatDate } from '../utils/formatters';
 import OrderStatusBadge from '../components/orders/OrderStatusBadge';
@@ -37,19 +38,63 @@ function OrderDetailPage() {
   }, [id, location.state]);
 
   const handleCancelOrder = async () => {
-    if (!window.confirm('¿Estás seguro de que quieres cancelar este pedido?')) {
-      return;
-    }
+    // Use toast.promise for a better UX
+    toast(
+      (t) => (
+        <div>
+          <p style={{ marginBottom: '10px' }}>
+            ¿Estás seguro de que quieres cancelar este pedido?
+          </p>
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              style={{
+                padding: '6px 12px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                background: 'white',
+                cursor: 'pointer',
+              }}
+            >
+              No
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                setIsCancelling(true);
 
-    setIsCancelling(true);
-    try {
-      await cancelOrder(id);
-      alert('Pedido cancelado exitosamente');
-    } catch (error) {
-      alert('Error al cancelar el pedido. Por favor, inténtalo de nuevo.');
-    } finally {
-      setIsCancelling(false);
-    }
+                try {
+                  await cancelOrder(id);
+                  toast.success('Pedido cancelado exitosamente', {
+                    icon: '✓',
+                  });
+                } catch (error) {
+                  toast.error('Error al cancelar el pedido. Por favor, inténtalo de nuevo.');
+                } finally {
+                  setIsCancelling(false);
+                }
+              }}
+              style={{
+                padding: '6px 12px',
+                border: 'none',
+                borderRadius: '4px',
+                background: '#ef4444',
+                color: 'white',
+                cursor: 'pointer',
+              }}
+            >
+              Sí, cancelar
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        duration: 5000,
+        style: {
+          maxWidth: '400px',
+        },
+      }
+    );
   };
 
   // Loading state

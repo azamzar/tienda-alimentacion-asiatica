@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query, status, UploadFile, File
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, get_current_admin
-from app.schemas.product import Product, ProductCreate, ProductUpdate
+from app.schemas.product import Product, ProductCreate, ProductUpdate, BulkDeleteRequest, BulkUpdateRequest, BulkOperationResponse
 from app.services.product_service import ProductService
 from app.models.user import User
 
@@ -142,3 +142,51 @@ def delete_product_image(
     """
     service = ProductService(db)
     return service.delete_product_image(product_id)
+
+
+@router.post("/bulk/delete", response_model=BulkOperationResponse)
+def bulk_delete_products(
+    request: BulkDeleteRequest,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Delete multiple products at once.
+
+    **Requires admin role**
+
+    - **product_ids**: List of product IDs to delete
+
+    Returns:
+    - success_count: Number of products successfully deleted
+    - error_count: Number of errors encountered
+    - total: Total products attempted
+    - errors: List of error messages (if any)
+    """
+    service = ProductService(db)
+    return service.bulk_delete_products(request.product_ids)
+
+
+@router.patch("/bulk/update", response_model=BulkOperationResponse)
+def bulk_update_products(
+    request: BulkUpdateRequest,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Update multiple products at once with the same values.
+
+    **Requires admin role**
+
+    - **product_ids**: List of product IDs to update
+    - **update_data**: Data to update (can include: stock, price, category_id, etc.)
+
+    Returns:
+    - success_count: Number of products successfully updated
+    - error_count: Number of errors encountered
+    - total: Total products attempted
+    - errors: List of error messages (if any)
+    """
+    service = ProductService(db)
+    update_dict = request.update_data.model_dump(exclude_unset=True)
+    return service.bulk_update_products(request.product_ids, update_dict)

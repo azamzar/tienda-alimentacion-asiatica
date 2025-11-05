@@ -1,17 +1,21 @@
 from typing import Optional
-from datetime import timedelta
+from datetime import timedelta, datetime
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models.user import User, UserRole
-from app.schemas.user import UserCreate, UserResponse, Token
+from app.schemas.user import UserCreate, UserResponse
+from app.schemas.refresh_token import TokenResponse, RefreshTokenRequest
 from app.repositories.user_repository import UserRepository
+from app.repositories.refresh_token_repository import RefreshTokenRepository
 from app.core.security import (
     verify_password,
     get_password_hash,
     create_access_token,
-    ACCESS_TOKEN_EXPIRE_MINUTES
+    create_refresh_token,
+    decode_refresh_token
 )
+from app.config.settings import settings
 
 
 class AuthService:
@@ -20,6 +24,7 @@ class AuthService:
     def __init__(self, db: Session):
         self.db = db
         self.repository = UserRepository(db)
+        self.refresh_token_repository = RefreshTokenRepository(db)
 
     def register(self, user_data: UserCreate) -> UserResponse:
         """
@@ -80,16 +85,16 @@ class AuthService:
 
         return user
 
-    def login(self, email: str, password: str) -> Token:
+    def login(self, email: str, password: str) -> TokenResponse:
         """
-        Login user and generate JWT token
+        Login user and generate JWT tokens (access + refresh)
 
         Args:
             email: User email
             password: Plain password
 
         Returns:
-            JWT token
+            TokenResponse with access_token and refresh_token
 
         Raises:
             HTTPException: If credentials are invalid
@@ -103,18 +108,38 @@ class AuthService:
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        # Crear token con datos del usuario
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        # Crear access token
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
             data={
-                "sub": str(user.id),  # "sub" es el estándar JWT para user_id
+                "sub": str(user.id),
                 "email": user.email,
                 "role": user.role.value
             },
             expires_delta=access_token_expires
         )
 
-        return Token(access_token=access_token, token_type="bearer")
+        # Crear refresh token
+        refresh_token = create_refresh_token(
+            data={
+                "sub": str(user.id),
+                "email": user.email
+            }
+        )
+
+        # Guardar refresh token en la base de datos
+        refresh_token_expires = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+        self.refresh_token_repository.create_refresh_token(
+            token=refresh_token,
+            user_id=user.id,
+            expires_at=refresh_token_expires
+        )
+
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="bearer"
+        )
 
     def get_user_by_id(self, user_id: int) -> Optional[User]:
         """
@@ -139,3 +164,104 @@ class AuthService:
             User if found, None otherwise
         """
         return self.repository.get_by_email(email)
+
+    def refresh_access_token(self, refresh_token: str) -> TokenResponse:
+        """
+        Genera un nuevo access token usando un refresh token válido
+
+        Args:
+            refresh_token: Refresh token JWT
+
+        Returns:
+            TokenResponse con nuevo access_token y refresh_token
+
+        Raises:
+            HTTPException: Si el refresh token es inválido o expirado
+        """
+        # Decodificar y validar el refresh token
+        payload = decode_refresh_token(refresh_token)
+        if not payload:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Refresh token inválido o expirado",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        # Verificar que el token existe en la base de datos y es válido
+        db_token = self.refresh_token_repository.get_by_token(refresh_token)
+        if not db_token or not db_token.is_valid():
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Refresh token inválido o revocado",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        # Obtener usuario
+        user_id = int(payload.get("sub"))
+        user = self.repository.get_by_id(user_id)
+        if not user or not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Usuario no encontrado o inactivo",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        # Revocar el refresh token antiguo (rotación de tokens)
+        self.refresh_token_repository.revoke_token(refresh_token)
+
+        # Crear nuevo access token
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        new_access_token = create_access_token(
+            data={
+                "sub": str(user.id),
+                "email": user.email,
+                "role": user.role.value
+            },
+            expires_delta=access_token_expires
+        )
+
+        # Crear nuevo refresh token
+        new_refresh_token = create_refresh_token(
+            data={
+                "sub": str(user.id),
+                "email": user.email
+            }
+        )
+
+        # Guardar nuevo refresh token en la base de datos
+        refresh_token_expires = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+        self.refresh_token_repository.create_refresh_token(
+            token=new_refresh_token,
+            user_id=user.id,
+            expires_at=refresh_token_expires
+        )
+
+        return TokenResponse(
+            access_token=new_access_token,
+            refresh_token=new_refresh_token,
+            token_type="bearer"
+        )
+
+    def logout(self, refresh_token: str) -> bool:
+        """
+        Revoca un refresh token (logout de una sesión específica)
+
+        Args:
+            refresh_token: Refresh token a revocar
+
+        Returns:
+            True si se revocó exitosamente
+        """
+        return self.refresh_token_repository.revoke_token(refresh_token)
+
+    def logout_all_sessions(self, user_id: int) -> int:
+        """
+        Revoca todos los refresh tokens de un usuario (logout de todas las sesiones)
+
+        Args:
+            user_id: ID del usuario
+
+        Returns:
+            Número de tokens revocados
+        """
+        return self.refresh_token_repository.revoke_all_user_tokens(user_id)

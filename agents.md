@@ -275,20 +275,56 @@ The frontend is also connected to the `tienda-net` network.
 - `GET /` - API information
 - `GET /health` - Health check
 
-**Categories**
+**Authentication** (Rate Limited)
+- `POST /api/v1/auth/register` - Register new user (3 per hour)
+- `POST /api/v1/auth/login` - Login and get tokens (5 per minute)
+- `POST /api/v1/auth/refresh` - Refresh access token
+- `POST /api/v1/auth/logout` - Logout (revoke refresh token)
+- `POST /api/v1/auth/logout-all` - Logout from all sessions (requires auth)
+- `GET /api/v1/auth/me` - Get current user info (requires auth)
+
+**Categories** (Admin only for POST/PUT/DELETE)
 - `GET /api/v1/categories/` - List all categories
 - `GET /api/v1/categories/{id}` - Get category by ID
-- `POST /api/v1/categories/` - Create new category
-- `DELETE /api/v1/categories/{id}` - Delete category
+- `POST /api/v1/categories/` - Create new category (admin)
+- `PUT /api/v1/categories/{id}` - Update category (admin)
+- `DELETE /api/v1/categories/{id}` - Delete category (admin)
 
-**Products**
+**Products** (Admin only for POST/PUT/DELETE)
 - `GET /api/v1/products/` - List products (pagination + filters)
 - `GET /api/v1/products/{id}` - Get product by ID
 - `GET /api/v1/products/search/?name=xxx` - Search products by name
 - `GET /api/v1/products/low-stock/?threshold=10` - Get low stock products
-- `POST /api/v1/products/` - Create new product
-- `PUT /api/v1/products/{id}` - Update product
-- `DELETE /api/v1/products/{id}` - Delete product
+- `POST /api/v1/products/` - Create new product (admin)
+- `PUT /api/v1/products/{id}` - Update product (admin)
+- `DELETE /api/v1/products/{id}` - Delete product (admin)
+- `POST /api/v1/products/{id}/image` - Upload product image (admin)
+- `DELETE /api/v1/products/{id}/image` - Delete product image (admin)
+- `POST /api/v1/products/bulk/delete` - Bulk delete products (admin)
+- `PATCH /api/v1/products/bulk/update` - Bulk update products (admin)
+
+**Carts** (Requires authentication)
+- `GET /api/v1/carts/me` - Get current user's cart
+- `POST /api/v1/carts/me/items` - Add item to cart
+- `PUT /api/v1/carts/me/items/{item_id}` - Update cart item quantity
+- `DELETE /api/v1/carts/me/items/{item_id}` - Remove item from cart
+- `DELETE /api/v1/carts/me` - Clear cart
+
+**Orders** (Requires authentication)
+- `GET /api/v1/orders/` - List orders (user's orders or all for admin)
+- `GET /api/v1/orders/{id}` - Get order details
+- `POST /api/v1/orders/` - Create order from cart
+- `PATCH /api/v1/orders/{id}/status` - Update order status (admin)
+- `DELETE /api/v1/orders/{id}` - Cancel order (pending only)
+
+**Users** (Admin only)
+- `GET /api/v1/users/` - List all users with filters
+- `GET /api/v1/users/stats` - Get user statistics
+- `PUT /api/v1/users/{id}` - Update user details
+- `DELETE /api/v1/users/{id}` - Deactivate user (soft delete)
+
+**Admin**
+- `GET /api/v1/admin/dashboard/stats` - Get dashboard statistics
 
 ## 8. Development Conventions
 
@@ -334,9 +370,24 @@ APP_NAME=Tienda Alimentación Asiática API
 APP_VERSION=1.0.0
 DEBUG=False
 API_V1_PREFIX=/api/v1
+
+# Security & JWT
+SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
+
+# Rate Limiting
+RATE_LIMIT_ENABLED=True
+RATE_LIMIT_PER_MINUTE=60
+RATE_LIMIT_AUTH_PER_MINUTE=5
+RATE_LIMIT_REGISTER_PER_HOUR=3
 ```
 
-**Note:** If you change the PostgreSQL password, you must recreate the Docker volumes. See backend README for instructions.
+**Important Notes:**
+- Generate a secure SECRET_KEY in production: `openssl rand -hex 32`
+- Never commit `.env` files with real secrets to git
+- If you change the PostgreSQL password, you must recreate the Docker volumes. See backend README for instructions.
 
 ## 10. Project Status & Roadmap
 
@@ -581,35 +632,110 @@ API_V1_PREFIX=/api/v1
 - [x] Frontend: Test documentation in README
 - [x] Total: 203 comprehensive tests ensuring code quality
 
+### ✅ Recently Completed (2025-11-05)
+
+**Fase 16 - Security Improvements & Production Readiness:**
+- [x] Backend: Moved SECRET_KEY from hardcoded to environment variables
+- [x] Backend: SECRET_KEY configuration in settings.py and .env
+- [x] Backend: Refresh token system implemented:
+  - RefreshToken model with database storage
+  - RefreshTokenRepository for CRUD operations
+  - Token rotation on refresh (old tokens automatically revoked)
+  - Revoke specific tokens or all user sessions
+  - /api/v1/auth/refresh endpoint for renewing access tokens
+  - /api/v1/auth/logout endpoint for effective logout (revokes refresh token)
+  - /api/v1/auth/logout-all endpoint to close all user sessions
+- [x] Backend: Access token expiration reduced to 30 minutes (more secure)
+- [x] Backend: Refresh tokens valid for 7 days
+- [x] Backend: Rate limiting system implemented:
+  - RateLimiter class with IP-based tracking
+  - Configurable limits per endpoint
+  - /auth/login: 5 attempts per minute
+  - /auth/register: 3 attempts per hour
+  - 429 HTTP responses with retry information
+  - Headers with rate limit info (X-RateLimit-Limit, Retry-After)
+- [x] Backend: Bulk operations for products (admin only):
+  - POST /api/v1/products/bulk/delete - Delete multiple products
+  - PATCH /api/v1/products/bulk/update - Update multiple products
+  - BulkOperationResponse with success/error counts
+  - Automatic image cleanup on bulk delete
+  - Category validation on bulk update
+- [x] Backend: Security configuration in settings.py
+- [x] Backend: Database migration for refresh_tokens table
+- [x] Frontend: productService updated with bulkDeleteProducts and bulkUpdateProducts
+- [x] Frontend: BulkActionsToolbar component with animated appearance
+- [x] Frontend: BulkUpdateModal for mass product updates (stock, price, category)
+- [x] Frontend: Bulk delete confirmation modal with warnings
+- [x] Frontend: ProductTable updated with multi-selection checkboxes
+- [x] Frontend: Select all/individual checkbox functionality
+- [x] Frontend: Selected rows visually highlighted
+- [x] Frontend: Toast notifications for bulk operation results
+- [x] Frontend: AdminProductsPage integration with bulk operations
+- [x] Frontend: Fully responsive bulk operations UI
+- [x] Frontend: Dark mode corrections:
+  - Removed duplicate CSS variables causing conflicts
+  - Extended theme variables (43 total variables)
+  - Modal colors updated to use theme variables
+  - ProductTable colors updated for dark mode compatibility
+  - Input/Card/Button components verified
+  - Perfect contrast in both light and dark modes
+  - Smooth transitions between themes (0.3s ease)
+- [x] Total: ~1,380 lines of code across 24 files
+
+**Security Enhancements Summary:**
+- ✅ SECRET_KEY in environment variables (production ready)
+- ✅ Refresh token system with rotation (enhanced security)
+- ✅ Effective logout with token revocation
+- ✅ Rate limiting on auth endpoints (brute force protection)
+- ✅ Shorter access token lifespan (30 min vs 24h)
+- ✅ Session management (logout from all devices)
+
+**Admin Productivity Features:**
+- ✅ Bulk delete products with confirmation
+- ✅ Bulk update products (stock, price, category)
+- ✅ Multi-selection with checkboxes
+- ✅ Visual feedback with toast notifications
+- ✅ Error handling per product
+
+**Dark Mode Fixes:**
+- ✅ All components properly themed
+- ✅ Perfect visibility in both modes
+- ✅ Theme persistence in localStorage
+- ✅ Smooth color transitions
+
 ### 🔄 In Progress
 
 - None currently
 
 ### 📋 Planned Features
 
-**Phase 16 - Additional Admin Features:**
-- [ ] Bulk actions for products (bulk delete, bulk update stock)
+**Phase 17 - Additional Admin Features:**
+- [ ] Bulk operations for categories (bulk delete)
 - [ ] Export orders to CSV/Excel
-- [ ] Product-category relationship management
-- [ ] Category product count display
-- [ ] Advanced user management (change role, reset password)
+- [ ] Export products to CSV/Excel
+- [ ] Category product count display in table
+- [ ] Advanced user management (change role, reset password from admin)
 
-**Phase 17 - Backend Improvements:**
-- [ ] Structured logging
-- [ ] API rate limiting
-- [ ] Refresh tokens
-- [ ] Password reset/recovery
-- [ ] Email notifications
-- [ ] Cloud storage integration (S3, Google Cloud Storage)
+**Phase 18 - Backend Improvements:**
+- [ ] Structured logging (JSON format for production)
+- [ ] Password reset/recovery via email
+- [ ] Email notifications (order confirmations, status updates)
+- [ ] Cloud storage integration (S3, Google Cloud Storage) for images
+- [ ] Redis for rate limiting (distributed system)
 
-**Phase 18 - Additional Features:**
-- [ ] Payment integration (Stripe/PayPal)
-- [ ] Advanced search and filtering
+**Phase 19 - Customer Features:**
 - [ ] Product reviews and ratings
-- [ ] Wishlist functionality
-- [ ] Real-time notifications (WebSockets)
-- [ ] Analytics dashboard for admin
-- [ ] Export orders to CSV/PDF
+- [ ] Wishlist/favorites functionality
+- [ ] Order history with reorder button
+- [ ] Product search with autocomplete
+- [ ] Advanced filtering (price range, availability)
+
+**Phase 20 - Payment & Deployment:**
+- [ ] Payment integration (Stripe/PayPal)
+- [ ] Real-time order tracking
+- [ ] CI/CD pipeline configuration
+- [ ] Docker production configuration
+- [ ] Deployment to cloud (AWS/GCP/Azure)
 
 ## 11. Common Development Tasks
 
@@ -674,14 +800,21 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - Use `get_current_user` dependency for authenticated endpoints
 - Use `get_current_admin` dependency for admin-only endpoints
 - Passwords are hashed with bcrypt (never store plain text)
-- Tokens expire after 24 hours (configurable in `app/core/security.py`)
-- Protected endpoints must include header: `Authorization: Bearer <token>`
+- Access tokens expire after 30 minutes (more secure)
+- Refresh tokens valid for 7 days (can be revoked)
+- Protected endpoints must include header: `Authorization: Bearer <access_token>`
+- Use `/api/v1/auth/refresh` endpoint to renew access tokens
 
 ### Security Best Practices
-- The SECRET_KEY in `app/core/security.py` is currently hardcoded - **MUST** be moved to environment variables in production
-- Never commit `.env` files with real secrets
+- ✅ SECRET_KEY is now in environment variables (`.env` file)
+- ✅ Refresh token system implemented for enhanced security
+- ✅ Rate limiting active on authentication endpoints
+- Never commit `.env` files with real secrets (use `.env.example` for reference)
 - Always validate user permissions in the service layer, not just in endpoints
 - Use `user_id` from JWT token, never trust user_id from request parameters
+- Access tokens expire after 30 minutes (short-lived for security)
+- Refresh tokens valid for 7 days (can be revoked anytime)
+- Generate SECRET_KEY with: `openssl rand -hex 32`
 
 ### Cart and Orders
 - Cart endpoints use `/me` instead of `/{user_id}` to get user_id from token

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useCartStore } from '../store/useCartStore';
 import { useOrderStore } from '../store/useOrderStore';
 import CheckoutForm from '../components/checkout/CheckoutForm';
@@ -44,9 +45,20 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (formData) => {
     setIsProcessingOrder(true);
+
+    // Show loading toast
+    const toastId = toast.loading('Procesando tu pedido...');
+
     try {
       // Crear orden (el backend vacía el carrito automáticamente)
       const order = await createOrder(formData);
+
+      // Dismiss loading and show success
+      toast.success('¡Pedido creado exitosamente!', {
+        id: toastId,
+        icon: '🎉',
+        duration: 3000,
+      });
 
       // Navegar directamente a la página de detalle del pedido con estado de éxito
       navigate(`/orders/${order.id}`, {
@@ -54,8 +66,14 @@ const CheckoutPage = () => {
       });
     } catch (error) {
       console.error('Error creating order:', error);
+
+      // Dismiss loading and show error
+      toast.error(error.response?.data?.detail || 'Error al crear el pedido. Intenta nuevamente.', {
+        id: toastId,
+        duration: 5000,
+      });
+
       setIsProcessingOrder(false);
-      // El error ya está en el store
     }
   };
 

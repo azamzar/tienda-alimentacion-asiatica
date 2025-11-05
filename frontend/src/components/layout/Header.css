@@ -1,11 +1,12 @@
 /* Header container */
 .header {
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
+  background-color: var(--color-card-background);
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px 0 var(--color-card-shadow);
+  transition: var(--transition-theme);
 }
 
 .header-container {
@@ -24,10 +25,10 @@
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
-  color: #111827;
+  color: var(--color-text-primary);
   font-weight: 700;
   font-size: 1.25rem;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, color 0.3s;
 }
 
 .header-logo:hover {
@@ -64,7 +65,7 @@
 
 .header-nav-link {
   text-decoration: none;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   font-weight: 500;
   font-size: 0.9375rem;
   transition: color 0.2s;
@@ -72,7 +73,7 @@
 }
 
 .header-nav-link:hover {
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 .header-nav-link::after {
@@ -100,7 +101,7 @@
 /* Cart button */
 .header-cart-btn {
   position: relative;
-  color: #374151;
+  color: var(--color-text-primary);
   padding: 0.5rem;
   border-radius: 0.375rem;
   transition: all 0.2s;
@@ -110,8 +111,8 @@
 }
 
 .header-cart-btn:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
 }
 
 .header-cart-badge {
@@ -139,17 +140,17 @@
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   background: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
   cursor: pointer;
   transition: all 0.2s;
-  color: #374151;
+  color: var(--color-text-primary);
   font-family: inherit;
 }
 
 .header-user-btn:hover {
-  border-color: #d1d5db;
-  background-color: #f9fafb;
+  border-color: var(--color-border-hover);
+  background-color: var(--color-background-secondary);
 }
 
 .header-user-icon {
@@ -182,10 +183,10 @@
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  background-color: white;
-  border: 1px solid #e5e7eb;
+  background-color: var(--color-card-background);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px var(--color-card-shadow);
   min-width: 200px;
   opacity: 0;
   visibility: hidden;
@@ -206,7 +207,7 @@
   padding: 0.75rem 1rem;
   text-align: left;
   text-decoration: none;
-  color: #374151;
+  color: var(--color-text-primary);
   font-size: 0.875rem;
   border: none;
   background: none;
@@ -216,7 +217,7 @@
 }
 
 .header-dropdown-item:hover {
-  background-color: #f3f4f6;
+  background-color: var(--color-background-secondary);
 }
 
 .header-dropdown-logout {
@@ -226,7 +227,7 @@
 .header-dropdown-divider {
   margin: 0.25rem 0;
   border: none;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--color-border);
 }
 
 /* Auth buttons */

@@ -1,0 +1,224 @@
+/**
+ * Theme Variables
+ * Light and Dark mode color schemes
+ */
+
+:root {
+  /* Light Theme Colors */
+  --color-background: #ffffff;
+  --color-background-secondary: #f9fafb;
+  --color-background-tertiary: #f3f4f6;
+
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+
+  --color-border: #e5e7eb;
+  --color-border-hover: #d1d5db;
+
+  --color-card-background: #ffffff;
+  --color-card-shadow: rgba(0, 0, 0, 0.1);
+  --color-card-border: #e5e7eb;
+
+  --color-input-background: #ffffff;
+  --color-input-border: #d1d5db;
+  --color-input-focus-border: #3b82f6;
+  --color-input-text: #111827;
+
+  /* Button colors */
+  --color-button-text: #ffffff;
+  --color-button-secondary-bg: #f3f4f6;
+  --color-button-secondary-text: #374151;
+  --color-button-secondary-hover: #e5e7eb;
+
+  /* Table colors */
+  --color-table-header: #f9fafb;
+  --color-table-row-hover: #f9fafb;
+  --color-table-border: #e5e7eb;
+
+  /* Modal colors */
+  --color-modal-backdrop: rgba(0, 0, 0, 0.5);
+  --color-modal-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Transitions */
+  --transition-theme: all 0.3s ease;
+}
+
+.dark-theme {
+  /* Dark Theme Colors */
+  --color-background: #0f172a;
+  --color-background-secondary: #1e293b;
+  --color-background-tertiary: #334155;
+
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-tertiary: #94a3b8;
+
+  --color-border: #334155;
+  --color-border-hover: #475569;
+
+  --color-card-background: #1e293b;
+  --color-card-shadow: rgba(0, 0, 0, 0.5);
+  --color-card-border: #334155;
+
+  --color-input-background: #1e293b;
+  --color-input-border: #475569;
+  --color-input-focus-border: #60a5fa;
+  --color-input-text: #f1f5f9;
+
+  /* Button colors */
+  --color-button-text: #ffffff;
+  --color-button-secondary-bg: #334155;
+  --color-button-secondary-text: #f1f5f9;
+  --color-button-secondary-hover: #475569;
+
+  /* Table colors */
+  --color-table-header: #1e293b;
+  --color-table-row-hover: #334155;
+  --color-table-border: #334155;
+
+  /* Modal colors */
+  --color-modal-backdrop: rgba(0, 0, 0, 0.75);
+  --color-modal-shadow: rgba(0, 0, 0, 0.5);
+}
+
+/* Apply theme colors globally */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  transition: var(--transition-theme);
+}
+
+/* Card styles */
+.card,
+.product-card,
+.home-product-card {
+  background-color: var(--color-card-background);
+  box-shadow: 0 2px 8px var(--color-card-shadow);
+  transition: var(--transition-theme);
+}
+
+/* Input styles */
+input,
+textarea,
+select {
+  background-color: var(--color-input-background);
+  color: var(--color-text-primary);
+  border-color: var(--color-input-border);
+  transition: var(--transition-theme);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* Headers and text */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+}
+
+p, span, div {
+  color: var(--color-text-primary);
+}
+
+/* Borders */
+.border,
+.product-card,
+.admin-table,
+.modal {
+  border-color: var(--color-border);
+}
+
+/* Secondary text */
+.text-secondary,
+.product-card-category,
+.product-card-stock {
+  color: var(--color-text-secondary);
+}
+
+/* Modal styles */
+.modal {
+  background-color: var(--color-card-background);
+  box-shadow: 0 20px 25px -5px var(--color-card-shadow);
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dark-theme .modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Table styles */
+.product-table,
+.admin-table {
+  background-color: var(--color-card-background);
+}
+
+.product-table thead,
+.admin-table thead {
+  background-color: var(--color-background-secondary);
+}
+
+.product-table tbody tr:hover,
+.admin-table tbody tr:hover {
+  background-color: var(--color-background-secondary);
+}
+
+/* Form styles */
+.form-group label {
+  color: var(--color-text-primary);
+}
+
+.form-error {
+  color: #ef4444;
+}
+
+/* Home page styles */
+.home-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.dark-theme .home-hero {
+  background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 100%);
+}
+
+.home-feature {
+  background-color: var(--color-card-background);
+  border: 1px solid var(--color-border);
+}
+
+/* Product card specific */
+.product-card-description {
+  color: var(--color-text-secondary);
+}
+
+.product-card-price {
+  color: var(--color-text-primary);
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-background-tertiary);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
+}
+
+/* Footer */
+.footer {
+  background-color: var(--color-background-secondary);
+  border-top: 1px solid var(--color-border);
+}

@@ -19,7 +19,7 @@
   width: 100%;
   padding-top: 75%; /* 4:3 aspect ratio */
   overflow: hidden;
-  background-color: #f3f4f6;
+  background-color: var(--color-background-secondary);
 }
 
 .product-card-image {
@@ -82,7 +82,7 @@
 .product-card-name {
   font-size: 1rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
   margin: 0;
   line-height: 1.4;
   display: -webkit-box;
@@ -94,7 +94,7 @@
 /* Description */
 .product-card-description {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   margin: 0;
   line-height: 1.5;
   display: -webkit-box;
@@ -122,12 +122,12 @@
 .product-card-price {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 .product-card-stock {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .product-card-btn {

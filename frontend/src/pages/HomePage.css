@@ -33,7 +33,7 @@
 /* Featured products */
 .home-featured {
   padding: 4rem 1.5rem;
-  background-color: #f9fafb;
+  background-color: var(--color-background);
 }
 
 .home-featured-container {
@@ -51,7 +51,7 @@
 .home-featured-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -115,7 +115,7 @@
   width: 100%;
   padding-top: 75%;
   overflow: hidden;
-  background-color: #f3f4f6;
+  background-color: var(--color-background-secondary);
 }
 
 .home-product-image {
@@ -143,7 +143,7 @@
 .home-product-name {
   font-size: 1rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -181,7 +181,7 @@
 /* Features section */
 .home-features {
   padding: 4rem 1.5rem;
-  background-color: white;
+  background-color: var(--color-background-secondary);
 }
 
 .home-features-container {
@@ -210,13 +210,13 @@
 .home-feature-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
   margin: 0 0 0.75rem 0;
 }
 
 .home-feature-description {
   font-size: 0.9375rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   margin: 0;
   line-height: 1.6;
 }

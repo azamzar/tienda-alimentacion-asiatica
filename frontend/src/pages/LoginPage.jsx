@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '../store';
 
 /**
@@ -42,10 +43,16 @@ function LoginPage() {
 
     try {
       await login(formData);
+      // Success notification
+      toast.success('¡Bienvenido! Sesión iniciada correctamente', {
+        icon: '👋',
+      });
       // La redirección se maneja en el useEffect
     } catch (err) {
       // El error ya está manejado en el store
       console.error('Error al iniciar sesión:', err);
+      // Show error toast
+      toast.error(err.message || 'Error al iniciar sesión. Verifica tus credenciales.');
     }
   };
 

@@ -325,6 +325,8 @@ Configuración base de axios con:
 ✅ deleteProduct(id)             // Eliminar producto (admin)
 ✅ uploadProductImage(id, file)  // Subir imagen de producto (admin)
 ✅ deleteProductImage(id)        // Eliminar imagen de producto (admin)
+✅ bulkDeleteProducts(ids)       // Eliminar múltiples productos (admin)
+✅ bulkUpdateProducts(ids, data) // Actualizar múltiples productos (admin)
 ```
 
 #### **categoryService.js**
@@ -648,8 +650,10 @@ cancelOrder(orderId, userId)      // POST /api/v1/orders/{order_id}/cancel
 ### Admin Components
 
 - **StatCard**: Tarjeta de estadística con icono y valor (usado en dashboard)
-- **ProductTable**: Tabla de productos con acciones de editar y eliminar
+- **ProductTable**: Tabla de productos con checkboxes multi-selección, editar y eliminar
 - **ProductFormModal**: Modal para crear y editar productos con validación
+- **BulkActionsToolbar**: Toolbar que aparece al seleccionar productos con acciones en lote
+- **BulkUpdateModal**: Modal para actualizar stock, precio o categoría de múltiples productos
 - **AdminCategoryTable**: Tabla responsive de categorías con CRUD
 - **CategoryFormModal**: Modal para crear y editar categorías
 - **AdminOrderTable**: Tabla responsive de pedidos con filtros y búsqueda
@@ -664,6 +668,7 @@ cancelOrder(orderId, userId)      // POST /api/v1/orders/{order_id}/cancel
 - **Card**: Contenedor genérico con estilos consistentes
 - **Modal**: Modal genérico con overlay y animaciones
 - **Spinner**: Indicador de carga centrado
+- **ThemeToggle**: Botón animado para cambiar entre modo claro y oscuro
 - **ImageUpload**: Componente de upload de imágenes con drag & drop, preview y validación
 - **OptimizedImage**: Componente de imagen con lazy loading, carga progresiva y WebP
 - **Skeleton**: Componente genérico de placeholder animado
@@ -807,7 +812,235 @@ const ProductGrid = () => {
 };
 ```
 
+## Dark Mode Theme System
+
+El frontend incluye un sistema completo de temas con soporte para modo claro y oscuro.
+
+### useTheme Hook
+
+Hook personalizado para gestionar el tema:
+
+```jsx
+import { useTheme } from './hooks/useTheme';
+
+function MyComponent() {
+  const { theme, toggleTheme, isDark } = useTheme();
+
+  return (
+    <button onClick={toggleTheme}>
+      {isDark ? 'Modo Claro' : 'Modo Oscuro'}
+    </button>
+  );
+}
+```
+
+**Características:**
+- ✅ Persistencia en `localStorage`
+- ✅ Detección automática de preferencia del sistema
+- ✅ Clase CSS `.dark-theme` aplicada a `documentElement`
+- ✅ Transiciones suaves entre temas (0.3s ease)
+
+### ThemeToggle Component
+
+Componente con animación de rotación para cambiar tema:
+
+```jsx
+import ThemeToggle from './components/common/ThemeToggle';
+
+// En Header
+<ThemeToggle />
+```
+
+**Características:**
+- ✅ Icono Sol ☀️ en modo claro
+- ✅ Icono Luna 🌙 en modo oscuro
+- ✅ Animación de rotación 180° al cambiar
+- ✅ Tooltips descriptivos
+
+### CSS Variables System
+
+Sistema unificado de variables CSS en `src/styles/theme.css`:
+
+**Modo Claro (`:root`):**
+```css
+--color-background: #ffffff;
+--color-text-primary: #111827;
+--color-card-background: #ffffff;
+--color-border: #e5e7eb;
+/* ... 43 variables totales */
+```
+
+**Modo Oscuro (`.dark-theme`):**
+```css
+--color-background: #0f172a;
+--color-text-primary: #f1f5f9;
+--color-card-background: #1e293b;
+--color-border: #334155;
+/* ... 43 variables totales */
+```
+
+**Categorías de Variables:**
+- Backgrounds (primary, secondary, tertiary)
+- Text colors (primary, secondary, tertiary)
+- Card & Modal (background, shadow, border)
+- Inputs (background, border, focus, text)
+- Tables (header, row-hover, border)
+- Buttons (secondary variants)
+
+**Uso en Componentes:**
+```css
+.my-component {
+  background-color: var(--color-card-background);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  transition: var(--transition-theme);
+}
+```
+
+**Colores de Marca (sin cambio con tema):**
+```css
+:root {
+  --color-primary: #3b82f6;
+  --color-danger: #ef4444;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+}
+```
+
+### Componentes Compatibles
+
+Todos los componentes usan variables de tema:
+- ✅ Modal (backdrop, background, borders, text)
+- ✅ ProductTable (backgrounds, borders, hover states)
+- ✅ Input, Button, Card (completamente themed)
+- ✅ Header, Footer (backgrounds y text)
+- ✅ Forms y modales (todos los elementos)
+
+**Ejemplo de Componente Themed:**
+```jsx
+// El CSS usa variables automáticamente
+const MyCard = () => (
+  <div className="themed-card">
+    <h3>Título</h3>
+    <p>Contenido</p>
+  </div>
+);
+```
+
+```css
+.themed-card {
+  background: var(--color-card-background);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px var(--color-card-shadow);
+}
+```
+
+**Beneficios:**
+- Contraste perfecto en ambos modos
+- Sin colores hardcodeados
+- Transiciones suaves
+- Fácil de mantener y extender
+
+## Bulk Operations (Admin)
+
+Sistema completo de operaciones en lote para productos.
+
+### BulkActionsToolbar
+
+Toolbar animado que aparece al seleccionar productos:
+
+```jsx
+<BulkActionsToolbar
+  selectedCount={selectedIds.length}
+  onBulkDelete={handleBulkDelete}
+  onBulkUpdate={handleBulkUpdate}
+  onClearSelection={handleClearSelection}
+/>
+```
+
+**Características:**
+- ✅ Aparece solo cuando hay selección
+- ✅ Muestra cantidad de productos seleccionados
+- ✅ Botones: Actualizar, Eliminar, Limpiar
+- ✅ Animación slide-down
+- ✅ Diseño responsive
+
+### BulkUpdateModal
+
+Modal para actualizar múltiples productos:
+
+```jsx
+<BulkUpdateModal
+  isOpen={isOpen}
+  onClose={onClose}
+  onConfirm={handleConfirm}
+  selectedCount={5}
+  categories={categories}
+/>
+```
+
+**Campos opcionales:**
+- Stock (número)
+- Precio (decimal)
+- Categoría (selector)
+
+**Validación:**
+- Al menos un campo debe tener valor
+- Validación de tipos (números positivos)
+
+### ProductTable con Multi-selección
+
+Tabla mejorada con checkboxes:
+
+**Características:**
+- ✅ Checkbox "Seleccionar todos" en header
+- ✅ Checkboxes individuales por fila
+- ✅ Estado indeterminado (algunos seleccionados)
+- ✅ Filas seleccionadas con fondo azul
+- ✅ Manejo de estado en AdminProductsPage
+
+**Uso:**
+```jsx
+<ProductTable
+  products={products}
+  selectedIds={selectedIds}
+  onSelectAll={handleSelectAll}
+  onSelectOne={handleSelectOne}
+  onEdit={handleEdit}
+  onRefresh={fetchProducts}
+/>
+```
+
+### Flow de Bulk Operations
+
+1. **Usuario selecciona productos** (checkboxes)
+2. **Aparece BulkActionsToolbar** (animado)
+3. **Usuario elige acción:**
+   - **Eliminar**: Modal de confirmación → API call → Toast resultado
+   - **Actualizar**: Modal con formulario → Validación → API call → Toast resultado
+4. **Resultados mostrados** con contadores:
+   - `success_count`: Productos procesados correctamente
+   - `error_count`: Productos con errores
+   - `errors[]`: Lista de errores por producto
+
+**Ejemplo de respuesta:**
+```json
+{
+  "success_count": 8,
+  "error_count": 2,
+  "total": 10,
+  "errors": [
+    "Product ID 123 not found",
+    "Product ID 456: Category not found"
+  ]
+}
+```
+
 **Optimizaciones:**
+- `React.memo` - Solo re-renderiza si props cambian
+- `useCallback` - Referencias estables de funciones
+- `OptimizedImage` - Lazy loading automático
 - `useMemo` - Evita recalcular filtros en cada render
 - `useCallback` - Handlers estables para ProductCard
 - Debounce search (300ms) - Reduce re-renders

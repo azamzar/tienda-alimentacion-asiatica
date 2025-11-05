@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useCartStore } from '../../store/useCartStore';
 import Button from '../common/Button';
+import ThemeToggle from '../common/ThemeToggle';
 import './Header.css';
 
 /**
@@ -63,6 +64,9 @@ function Header() {
             </svg>
             {totalItems > 0 && <span className="header-cart-badge">{totalItems}</span>}
           </Link>
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
 
           {/* User menu */}
           {isAuthenticated ? (

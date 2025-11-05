@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '../store';
 
 /**
@@ -33,16 +34,19 @@ function RegisterPage() {
   const validateForm = () => {
     if (formData.password !== formData.confirmPassword) {
       setValidationError('Las contraseñas no coinciden');
+      toast.error('Las contraseñas no coinciden');
       return false;
     }
 
     if (formData.password.length < 6) {
       setValidationError('La contraseña debe tener al menos 6 caracteres');
+      toast.error('La contraseña debe tener al menos 6 caracteres');
       return false;
     }
 
     if (!formData.full_name.trim()) {
       setValidationError('El nombre completo es requerido');
+      toast.error('El nombre completo es requerido');
       return false;
     }
 
@@ -63,11 +67,16 @@ function RegisterPage() {
         password: formData.password,
         full_name: formData.full_name
       });
+      // Success notification
+      toast.success('¡Cuenta creada exitosamente! Bienvenido', {
+        icon: '🎉',
+      });
       // El register hace login automáticamente, redirigir al home
       navigate('/');
     } catch (err) {
       // El error ya está manejado en el store
       console.error('Error al registrar usuario:', err);
+      toast.error(err.message || 'Error al crear la cuenta. Intenta con otro email.');
     }
   };
 

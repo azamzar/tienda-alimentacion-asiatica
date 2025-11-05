@@ -1,9 +1,9 @@
 /* Card container */
 .card {
-  background-color: white;
-  border: 1px solid #e5e7eb;
+  background-color: var(--color-card-background);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px 0 var(--color-card-shadow);
   overflow: hidden;
   transition: all 0.2s ease-in-out;
 }
@@ -11,15 +11,15 @@
 /* Header */
 .card-header {
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-background-secondary);
 }
 
 .card-title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 /* Body */
@@ -30,8 +30,8 @@
 /* Footer */
 .card-footer {
   padding: 1rem 1.5rem;
-  border-top: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-background-secondary);
 }
 
 /* Hoverable variant */

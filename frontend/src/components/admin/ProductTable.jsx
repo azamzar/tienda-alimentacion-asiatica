@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { productService } from '../../services/productService';
 import { formatPrice, getImageUrl } from '../../utils/formatters';
 import Button from '../common/Button';
@@ -9,10 +10,14 @@ import './ProductTable.css';
  * Product Table Component
  * Displays products in a table with edit and delete actions
  */
-function ProductTable({ products, onEdit, onRefresh }) {
+function ProductTable({ products, onEdit, onRefresh, selectedIds = [], onSelectAll, onSelectOne }) {
   const [deletingProduct, setDeletingProduct] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+
+  // Check if all products are selected
+  const allSelected = products.length > 0 && selectedIds.length === products.length;
+  const someSelected = selectedIds.length > 0 && selectedIds.length < products.length;
 
   // Handle delete confirmation
   const handleDeleteClick = (product) => {
@@ -35,13 +40,17 @@ function ProductTable({ products, onEdit, onRefresh }) {
 
     try {
       await productService.deleteProduct(deletingProduct.id);
+      toast.success(`Producto "${deletingProduct.name}" eliminado exitosamente`, {
+        icon: '🗑️',
+      });
       setDeletingProduct(null);
       onRefresh(); // Refresh the product list
     } catch (error) {
       console.error('Error deleting product:', error);
-      setDeleteError(
-        error.response?.data?.detail || 'Error al eliminar el producto'
-      );
+      const errorMessage =
+        error.response?.data?.detail || 'Error al eliminar el producto';
+      setDeleteError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsDeleting(false);
     }
@@ -71,6 +80,18 @@ function ProductTable({ products, onEdit, onRefresh }) {
         <table className="product-table">
           <thead>
             <tr>
+              <th className="checkbox-column">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={input => {
+                    if (input) input.indeterminate = someSelected;
+                  }}
+                  onChange={(e) => onSelectAll && onSelectAll(e.target.checked)}
+                  className="product-checkbox"
+                  title={allSelected ? 'Deseleccionar todos' : 'Seleccionar todos'}
+                />
+              </th>
               <th>ID</th>
               <th>Imagen</th>
               <th>Nombre</th>
@@ -83,7 +104,16 @@ function ProductTable({ products, onEdit, onRefresh }) {
           </thead>
           <tbody>
             {products.map((product) => (
-              <tr key={product.id}>
+              <tr key={product.id} className={selectedIds.includes(product.id) ? 'row-selected' : ''}>
+                <td className="checkbox-column">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(product.id)}
+                    onChange={(e) => onSelectOne && onSelectOne(product.id, e.target.checked)}
+                    className="product-checkbox"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </td>
                 <td className="product-id">{product.id}</td>
                 <td className="product-image">
                   <img

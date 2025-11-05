@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { productService } from '../services/productService';
 import { useCartStore } from '../store/useCartStore';
 import { formatPrice, getImageUrl } from '../utils/formatters';
@@ -44,16 +45,25 @@ function ProductDetailPage() {
     setIsAdding(true);
     try {
       await addItem(product.id, quantity);
-      // Success - could show a toast notification here
-      alert(`${quantity} ${quantity === 1 ? 'producto agregado' : 'productos agregados'} al carrito`);
+      // Success notification
+      toast.success(
+        `${quantity} ${quantity === 1 ? 'producto agregado' : 'productos agregados'} al carrito`,
+        {
+          icon: '🛒',
+        }
+      );
+      // Reset quantity after adding
+      setQuantity(1);
     } catch (error) {
       console.error('Error adding to cart:', error);
       // If not authenticated, redirect to login
       if (error.response?.status === 401) {
-        alert('Debes iniciar sesión para agregar productos al carrito');
-        navigate('/login');
+        toast.error('Debes iniciar sesión para agregar productos al carrito', {
+          duration: 4000,
+        });
+        setTimeout(() => navigate('/login'), 1500);
       } else {
-        alert(error.response?.data?.detail || 'Error al agregar al carrito');
+        toast.error(error.response?.data?.detail || 'Error al agregar al carrito');
       }
     } finally {
       setIsAdding(false);

@@ -192,7 +192,28 @@ DEBUG=False
 
 # API Configuration
 API_V1_PREFIX=/api/v1
+
+# Security & JWT Configuration
+# IMPORTANT: Generate a secure SECRET_KEY for production using:
+# openssl rand -hex 32
+SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
+
+# Rate Limiting
+RATE_LIMIT_ENABLED=True
+RATE_LIMIT_PER_MINUTE=60
+RATE_LIMIT_AUTH_PER_MINUTE=5
+RATE_LIMIT_REGISTER_PER_HOUR=3
 ```
+
+**🔐 Notas de Seguridad:**
+- **SECRET_KEY**: En producción, genera una clave segura con `openssl rand -hex 32`
+- **ACCESS_TOKEN_EXPIRE_MINUTES**: Tokens de corta duración (30 min) para mayor seguridad
+- **REFRESH_TOKEN_EXPIRE_DAYS**: Tokens de renovación válidos por 7 días
+- **Rate Limiting**: Protección contra brute force en endpoints de autenticación
+- Nunca commits `.env` files con secretos reales al repositorio
 
 **⚠️ Importante al cambiar la contraseña de PostgreSQL:**
 
@@ -324,13 +345,21 @@ GET /                    # Información de la API
 GET /health              # Health check
 ```
 
-#### Autenticación
+#### Autenticación (Rate Limited)
 ```
-POST   /api/v1/auth/register         # Registrar nuevo usuario (role: customer)
-POST   /api/v1/auth/login            # Login (retorna JWT token)
+POST   /api/v1/auth/register         # Registrar nuevo usuario (role: customer) [⚠️ 3/hora]
+POST   /api/v1/auth/login            # Login (retorna access + refresh token) [⚠️ 5/min]
+POST   /api/v1/auth/refresh          # Renovar access token con refresh token
+POST   /api/v1/auth/logout           # Logout (revoca refresh token) (🔒 requiere refresh token)
+POST   /api/v1/auth/logout-all       # Logout de todas las sesiones (🔒 requiere auth)
 GET    /api/v1/auth/me               # Obtener información del usuario actual (🔒 requiere auth)
-POST   /api/v1/auth/logout           # Logout (client-side)
 ```
+
+**Notas:**
+- `login` retorna `access_token` (30 min) y `refresh_token` (7 días)
+- `refresh` usa el `refresh_token` para obtener un nuevo `access_token`
+- Refresh tokens se rotan automáticamente (el antiguo se revoca)
+- Rate limiting previene ataques de fuerza bruta
 
 #### Categorías
 ```
@@ -351,7 +380,14 @@ PUT    /api/v1/products/{id}         # Actualizar producto (🔒 requiere admin)
 DELETE /api/v1/products/{id}         # Eliminar producto (🔒 requiere admin)
 POST   /api/v1/products/{id}/image   # Subir imagen de producto (🔒 requiere admin)
 DELETE /api/v1/products/{id}/image   # Eliminar imagen de producto (🔒 requiere admin)
+POST   /api/v1/products/bulk/delete  # Eliminar múltiples productos (🔒 requiere admin)
+PATCH  /api/v1/products/bulk/update  # Actualizar múltiples productos (🔒 requiere admin)
 ```
+
+**Bulk Operations:**
+- `bulk/delete`: Recibe array de IDs, elimina productos e imágenes asociadas
+- `bulk/update`: Recibe array de IDs + datos a actualizar (stock, precio, categoría)
+- Retorna contadores de éxito/error y lista de errores por producto
 
 **Archivos Estáticos:**
 ```

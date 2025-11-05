@@ -107,5 +107,31 @@ export const productService = {
   deleteProductImage: async (id) => {
     const { data } = await api.delete(`/products/${id}/image`);
     return data;
+  },
+
+  /**
+   * Eliminar múltiples productos (solo admin)
+   * @param {number[]} productIds - Array de IDs de productos a eliminar
+   * @returns {Promise<Object>} Resultado de la operación
+   */
+  bulkDeleteProducts: async (productIds) => {
+    const { data } = await api.post('/products/bulk/delete', {
+      product_ids: productIds
+    });
+    return data;
+  },
+
+  /**
+   * Actualizar múltiples productos (solo admin)
+   * @param {number[]} productIds - Array de IDs de productos a actualizar
+   * @param {Object} updateData - Datos a actualizar
+   * @returns {Promise<Object>} Resultado de la operación
+   */
+  bulkUpdateProducts: async (productIds, updateData) => {
+    const { data } = await api.patch('/products/bulk/update', {
+      product_ids: productIds,
+      update_data: updateData
+    });
+    return data;
   }
 };

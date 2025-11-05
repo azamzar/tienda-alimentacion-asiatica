@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useProductStore } from '../../store/useProductStore';
+import { productService } from '../../services/productService';
 import ProductTable from '../../components/admin/ProductTable';
 import ProductFormModal from '../../components/admin/ProductFormModal';
+import BulkActionsToolbar from '../../components/admin/BulkActionsToolbar';
+import BulkUpdateModal from '../../components/admin/BulkUpdateModal';
+import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Spinner from '../../components/common/Spinner';
@@ -27,6 +32,12 @@ function AdminProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+
+  // Bulk operations state
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [isBulkUpdateModalOpen, setIsBulkUpdateModalOpen] = useState(false);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
+  const [bulkOperationLoading, setBulkOperationLoading] = useState(false);
 
   // Load products and categories on mount
   useEffect(() => {
@@ -94,6 +105,107 @@ function AdminProductsPage() {
     }
   };
 
+  // Handle select all products
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedIds(products.map(p => p.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  // Handle select one product
+  const handleSelectOne = (id, checked) => {
+    if (checked) {
+      setSelectedIds(prev => [...prev, id]);
+    } else {
+      setSelectedIds(prev => prev.filter(selectedId => selectedId !== id));
+    }
+  };
+
+  // Handle clear selection
+  const handleClearSelection = () => {
+    setSelectedIds([]);
+  };
+
+  // Handle bulk delete
+  const handleBulkDelete = () => {
+    setIsBulkDeleteModalOpen(true);
+  };
+
+  // Confirm bulk delete
+  const confirmBulkDelete = async () => {
+    setBulkOperationLoading(true);
+    try {
+      const result = await productService.bulkDeleteProducts(selectedIds);
+
+      toast.success(
+        `✅ ${result.success_count} productos eliminados correctamente${result.error_count > 0 ? ` (${result.error_count} errores)` : ''}`,
+        { duration: 4000 }
+      );
+
+      if (result.errors && result.errors.length > 0) {
+        console.error('Bulk delete errors:', result.errors);
+      }
+
+      setSelectedIds([]);
+      setIsBulkDeleteModalOpen(false);
+
+      // Refresh products
+      if (selectedCategory) {
+        fetchProducts({ category_id: selectedCategory });
+      } else if (searchQuery) {
+        searchProducts(searchQuery);
+      } else {
+        fetchProducts();
+      }
+    } catch (error) {
+      console.error('Error in bulk delete:', error);
+      toast.error(error.response?.data?.detail || 'Error al eliminar productos');
+    } finally {
+      setBulkOperationLoading(false);
+    }
+  };
+
+  // Handle bulk update
+  const handleBulkUpdate = () => {
+    setIsBulkUpdateModalOpen(true);
+  };
+
+  // Confirm bulk update
+  const confirmBulkUpdate = async (updateData) => {
+    setBulkOperationLoading(true);
+    try {
+      const result = await productService.bulkUpdateProducts(selectedIds, updateData);
+
+      toast.success(
+        `✅ ${result.success_count} productos actualizados correctamente${result.error_count > 0 ? ` (${result.error_count} errores)` : ''}`,
+        { duration: 4000 }
+      );
+
+      if (result.errors && result.errors.length > 0) {
+        console.error('Bulk update errors:', result.errors);
+      }
+
+      setSelectedIds([]);
+      setIsBulkUpdateModalOpen(false);
+
+      // Refresh products
+      if (selectedCategory) {
+        fetchProducts({ category_id: selectedCategory });
+      } else if (searchQuery) {
+        searchProducts(searchQuery);
+      } else {
+        fetchProducts();
+      }
+    } catch (error) {
+      console.error('Error in bulk update:', error);
+      toast.error(error.response?.data?.detail || 'Error al actualizar productos');
+    } finally {
+      setBulkOperationLoading(false);
+    }
+  };
+
   return (
     <div className="admin-products-page">
       <div className="admin-products-header">
@@ -155,12 +267,25 @@ function AdminProductsPage() {
         </div>
       )}
 
+      {/* Bulk Actions Toolbar */}
+      {!loading && !error && (
+        <BulkActionsToolbar
+          selectedCount={selectedIds.length}
+          onBulkDelete={handleBulkDelete}
+          onBulkUpdate={handleBulkUpdate}
+          onClearSelection={handleClearSelection}
+        />
+      )}
+
       {/* Products Table */}
       {!loading && !error && (
         <ProductTable
           products={products}
           onEdit={handleEditProduct}
           onRefresh={() => fetchProducts()}
+          selectedIds={selectedIds}
+          onSelectAll={handleSelectAll}
+          onSelectOne={handleSelectOne}
         />
       )}
 
@@ -182,6 +307,49 @@ function AdminProductsPage() {
           onClose={handleModalClose}
           onSave={handleProductSaved}
         />
+      )}
+
+      {/* Bulk Update Modal */}
+      <BulkUpdateModal
+        isOpen={isBulkUpdateModalOpen}
+        onClose={() => setIsBulkUpdateModalOpen(false)}
+        onConfirm={confirmBulkUpdate}
+        selectedCount={selectedIds.length}
+        categories={categories}
+      />
+
+      {/* Bulk Delete Confirmation Modal */}
+      {isBulkDeleteModalOpen && (
+        <Modal
+          isOpen={isBulkDeleteModalOpen}
+          onClose={() => setIsBulkDeleteModalOpen(false)}
+          title="Confirmar eliminación masiva"
+        >
+          <div className="bulk-delete-modal">
+            <p className="bulk-delete-warning">
+              ⚠️ Estás a punto de eliminar <strong>{selectedIds.length}</strong>{' '}
+              {selectedIds.length === 1 ? 'producto' : 'productos'}.
+            </p>
+            <p>Esta acción no se puede deshacer.</p>
+
+            <div className="modal-actions">
+              <Button
+                variant="secondary"
+                onClick={() => setIsBulkDeleteModalOpen(false)}
+                disabled={bulkOperationLoading}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="danger"
+                onClick={confirmBulkDelete}
+                loading={bulkOperationLoading}
+              >
+                {bulkOperationLoading ? 'Eliminando...' : 'Eliminar productos'}
+              </Button>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );

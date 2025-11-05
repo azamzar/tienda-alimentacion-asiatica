@@ -1,5 +1,7 @@
 import React, { useState, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { useCartStore } from '../../store/useCartStore';
 import { formatPrice } from '../../utils/formatters';
 import Button from '../common/Button';
@@ -31,20 +33,25 @@ const ProductCard = memo(({ product }) => {
     setIsAdding(true);
     try {
       await addItem(product.id, 1);
-      // Success - could show a toast notification here
+      // Success notification
+      toast.success(`${product.name} añadido al carrito`, {
+        icon: '🛒',
+      });
     } catch (error) {
       console.error('Error adding to cart:', error);
       // If not authenticated, redirect to login
       if (error.response?.status === 401) {
-        alert('Debes iniciar sesión para agregar productos al carrito');
-        navigate('/login');
+        toast.error('Debes iniciar sesión para agregar productos al carrito', {
+          duration: 4000,
+        });
+        setTimeout(() => navigate('/login'), 1500);
       } else {
-        alert(error.response?.data?.detail || 'Error al agregar al carrito');
+        toast.error(error.response?.data?.detail || 'Error al agregar al carrito');
       }
     } finally {
       setIsAdding(false);
     }
-  }, [addItem, product.id, navigate]);
+  }, [addItem, product.id, product.name, navigate]);
 
   const handleCardClick = useCallback(() => {
     navigate(`/products/${product.id}`);
@@ -55,23 +62,34 @@ const ProductCard = memo(({ product }) => {
   const isLowStock = product.stock > 0 && product.stock <= 10;
 
   return (
-    <Card hoverable onClick={handleCardClick} className="product-card">
-      {/* Image with lazy loading and optimized thumbnails */}
-      <div className="product-card-image-wrapper">
-        {isOutOfStock && <div className="product-card-badge product-card-badge-out">Agotado</div>}
-        {isLowStock && !isOutOfStock && (
-          <div className="product-card-badge product-card-badge-low">¡Últimas unidades!</div>
-        )}
-        <OptimizedImage
-          src={product.image_url}
-          productId={product.id}
-          alt={product.name}
-          size="medium"
-          className="product-card-image"
-          lazy={true}
-          fallback="https://placehold.co/400x300/f0f0f0/666?text=Producto"
-        />
-      </div>
+    <motion.div
+      whileHover={{
+        y: -6,
+        transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1] },
+      }}
+      whileTap={{ scale: 0.98 }}
+    >
+      <Card hoverable onClick={handleCardClick} className="product-card">
+        {/* Image with lazy loading and optimized thumbnails */}
+        <motion.div
+          className="product-card-image-wrapper"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+        >
+          {isOutOfStock && <div className="product-card-badge product-card-badge-out">Agotado</div>}
+          {isLowStock && !isOutOfStock && (
+            <div className="product-card-badge product-card-badge-low">¡Últimas unidades!</div>
+          )}
+          <OptimizedImage
+            src={product.image_url}
+            productId={product.id}
+            alt={product.name}
+            size="medium"
+            className="product-card-image"
+            lazy={true}
+            fallback="https://placehold.co/400x300/f0f0f0/666?text=Producto"
+          />
+        </motion.div>
 
       {/* Content */}
       <div className="product-card-content">
@@ -111,6 +129,7 @@ const ProductCard = memo(({ product }) => {
         </div>
       </div>
     </Card>
+    </motion.div>
   );
 });
 

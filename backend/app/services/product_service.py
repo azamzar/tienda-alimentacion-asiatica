@@ -250,3 +250,117 @@ class ProductService:
         delete_pattern_from_cache("products:list:*")
 
         return updated_product
+
+    def bulk_delete_products(self, product_ids: List[int]) -> dict:
+        """
+        Elimina múltiples productos por sus IDs
+
+        Args:
+            product_ids: Lista de IDs de productos a eliminar
+
+        Returns:
+            Dict con información de éxito y errores
+
+        Raises:
+            HTTPException: Si hay errores en la eliminación
+        """
+        if not product_ids:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No product IDs provided"
+            )
+
+        success_count = 0
+        error_count = 0
+        errors = []
+
+        for product_id in product_ids:
+            try:
+                # Intentar eliminar el producto
+                success = self.repository.delete(product_id)
+                if success:
+                    # Eliminar imágenes si existen
+                    delete_product_images(product_id, Path(settings.PRODUCTS_UPLOAD_DIR))
+                    success_count += 1
+                else:
+                    error_count += 1
+                    errors.append(f"Product ID {product_id} not found")
+            except Exception as e:
+                error_count += 1
+                errors.append(f"Product ID {product_id}: {str(e)}")
+
+        # Invalidar toda la caché de productos
+        delete_pattern_from_cache("products:*")
+
+        return {
+            "success_count": success_count,
+            "error_count": error_count,
+            "total": len(product_ids),
+            "errors": errors if errors else None
+        }
+
+    def bulk_update_products(self, product_ids: List[int], update_data: dict) -> dict:
+        """
+        Actualiza múltiples productos con los mismos valores
+
+        Args:
+            product_ids: Lista de IDs de productos a actualizar
+            update_data: Diccionario con campos a actualizar
+
+        Returns:
+            Dict con información de éxito y errores
+
+        Raises:
+            HTTPException: Si hay errores en la actualización
+        """
+        if not product_ids:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No product IDs provided"
+            )
+
+        if not update_data:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No update data provided"
+            )
+
+        # Validar categoría si se proporciona
+        if "category_id" in update_data and update_data["category_id"]:
+            category = self.category_repository.get_by_id(update_data["category_id"])
+            if not category:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Category with id {update_data['category_id']} not found"
+                )
+
+        success_count = 0
+        error_count = 0
+        errors = []
+
+        for product_id in product_ids:
+            try:
+                # Obtener producto
+                product = self.repository.get_by_id(product_id)
+                if not product:
+                    error_count += 1
+                    errors.append(f"Product ID {product_id} not found")
+                    continue
+
+                # Actualizar producto
+                self.repository.update(product, update_data)
+                success_count += 1
+
+            except Exception as e:
+                error_count += 1
+                errors.append(f"Product ID {product_id}: {str(e)}")
+
+        # Invalidar toda la caché de productos
+        delete_pattern_from_cache("products:*")
+
+        return {
+            "success_count": success_count,
+            "error_count": error_count,
+            "total": len(product_ids),
+            "errors": errors if errors else None
+        }

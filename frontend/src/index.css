@@ -21,27 +21,17 @@
   line-height: 1.5;
   font-weight: 400;
 
-  /* Colors */
+  /* Brand Colors (no change with theme) */
   --color-primary: #3b82f6;
   --color-primary-dark: #2563eb;
+  --color-primary-light: #60a5fa;
   --color-secondary: #6b7280;
   --color-danger: #ef4444;
+  --color-danger-dark: #dc2626;
   --color-success: #10b981;
+  --color-success-dark: #059669;
   --color-warning: #f59e0b;
-
-  /* Text colors */
-  --color-text-primary: #111827;
-  --color-text-secondary: #6b7280;
-  --color-text-light: #9ca3af;
-
-  /* Background colors */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f9fafb;
-  --color-bg-tertiary: #f3f4f6;
-
-  /* Border colors */
-  --color-border: #e5e7eb;
-  --color-border-light: #f3f4f6;
+  --color-info: #06b6d4;
 
   /* Rendering optimization */
   font-synthesis: none;
@@ -56,12 +46,14 @@ body {
   min-width: 320px;
   min-height: 100vh;
   color: var(--color-text-primary);
-  background-color: var(--color-bg-primary);
+  background-color: var(--color-background);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Root container */
 #root {
   min-height: 100vh;
+  background-color: var(--color-background);
 }
 
 /* Headings */
@@ -152,16 +144,16 @@ select {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-tertiary);
+  background: var(--color-background-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--color-background-tertiary);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-secondary);
+  background: var(--color-border-hover);
 }
 
 /* Focus visible */

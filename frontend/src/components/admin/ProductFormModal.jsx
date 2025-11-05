@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { productService } from '../../services/productService';
 import { getImageUrl } from '../../utils/formatters';
 import Modal from '../common/Modal';
@@ -95,10 +96,13 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
       try {
         await productService.deleteProductImage(product.id);
         setImageFile(null);
+        toast.success('Imagen eliminada exitosamente', { icon: '🗑️' });
         onSave(); // Refresh product data
       } catch (error) {
         console.error('Error deleting image:', error);
-        setSubmitError('Error al eliminar la imagen');
+        const errorMessage = 'Error al eliminar la imagen';
+        setSubmitError(errorMessage);
+        toast.error(errorMessage);
       }
     } else {
       setImageFile(null);
@@ -142,13 +146,23 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
         await productService.uploadProductImage(savedProduct.id, imageFile);
       }
 
+      // Show success notification
+      toast.success(
+        isEditMode ? 'Producto actualizado exitosamente' : 'Producto creado exitosamente',
+        {
+          icon: '✓',
+        }
+      );
+
       onSave(); // Callback to parent
     } catch (error) {
       console.error('Error saving product:', error);
-      setSubmitError(
+      const errorMessage =
         error.response?.data?.detail ||
-          `Error al ${isEditMode ? 'actualizar' : 'crear'} el producto`
-      );
+        `Error al ${isEditMode ? 'actualizar' : 'crear'} el producto`;
+
+      setSubmitError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
