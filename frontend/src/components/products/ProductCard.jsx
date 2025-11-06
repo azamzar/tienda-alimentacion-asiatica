@@ -7,6 +7,7 @@ import { formatPrice } from '../../utils/formatters';
 import Button from '../common/Button';
 import Card from '../common/Card';
 import OptimizedImage from '../common/OptimizedImage';
+import WishlistButton from '../wishlist/WishlistButton';
 import './ProductCard.css';
 
 /**
@@ -80,6 +81,12 @@ const ProductCard = memo(({ product }) => {
           {isLowStock && !isOutOfStock && (
             <div className="product-card-badge product-card-badge-low">¡Últimas unidades!</div>
           )}
+
+          {/* Wishlist button */}
+          <div className="product-card-wishlist">
+            <WishlistButton productId={product.id} size="small" />
+          </div>
+
           <OptimizedImage
             src={product.image_url}
             productId={product.id}

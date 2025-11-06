@@ -60,6 +60,14 @@
   color: white;
 }
 
+/* Wishlist button */
+.product-card-wishlist {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 20;
+}
+
 /* Content */
 .product-card-content {
   padding: 1rem;
