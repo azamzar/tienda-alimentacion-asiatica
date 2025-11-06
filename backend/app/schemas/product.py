@@ -45,6 +45,15 @@ class Product(ProductBase):
 ProductResponse = Product
 
 
+class ProductWithReviews(Product):
+    """Schema for Product with review statistics"""
+    average_rating: Optional[float] = Field(None, description="Average rating (0-5)")
+    total_reviews: Optional[int] = Field(None, description="Total number of reviews")
+
+    class Config:
+        from_attributes = True
+
+
 class BulkDeleteRequest(BaseModel):
     """Schema for bulk delete request"""
     product_ids: List[int]
