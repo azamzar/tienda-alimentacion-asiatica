@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { categoryService } from '../../services/categoryService';
 import AdminCategoryTable from '../../components/admin/AdminCategoryTable';
 import CategoryFormModal from '../../components/admin/CategoryFormModal';
+import BulkActionsToolbar from '../../components/admin/BulkActionsToolbar';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
 import './AdminCategoriesPage.css';
@@ -17,6 +19,9 @@ const AdminCategoriesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
+
+  // Bulk operations state
+  const [selectedIds, setSelectedIds] = useState([]);
 
   // Cargar categorías
   const fetchCategories = async () => {
@@ -36,6 +41,64 @@ const AdminCategoriesPage = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  // Selection handlers
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedIds(categories.map((cat) => cat.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectOne = (id, checked) => {
+    if (checked) {
+      setSelectedIds((prev) => [...prev, id]);
+    } else {
+      setSelectedIds((prev) => prev.filter((selectedId) => selectedId !== id));
+    }
+  };
+
+  const handleClearSelection = () => {
+    setSelectedIds([]);
+  };
+
+  // Bulk delete handler
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+
+    const confirmed = window.confirm(
+      `¿Estás seguro de que quieres eliminar ${selectedIds.length} categoría(s)?\n\n⚠️ Esta acción no se puede deshacer. Los productos asociados a estas categorías quedarán sin categoría.`
+    );
+
+    if (!confirmed) return;
+
+    const loadingToast = toast.loading(`Eliminando ${selectedIds.length} categoría(s)...`);
+
+    try {
+      const result = await categoryService.bulkDeleteCategories(selectedIds);
+
+      toast.dismiss(loadingToast);
+
+      if (result.error_count > 0) {
+        toast.error(
+          `Eliminadas ${result.success_count} de ${result.total} categorías. ${result.error_count} errores.`,
+          { duration: 5000 }
+        );
+      } else {
+        toast.success(`${result.success_count} categoría(s) eliminadas exitosamente`, {
+          icon: '🗑️',
+        });
+      }
+
+      setSelectedIds([]);
+      await fetchCategories();
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      console.error('Error en eliminación masiva:', error);
+      toast.error(error.response?.data?.detail || 'Error al eliminar las categorías');
+    }
+  };
 
   // Abrir modal para crear
   const handleCreate = () => {
@@ -127,6 +190,16 @@ const AdminCategoriesPage = () => {
         </div>
       </div>
 
+      {/* Bulk Actions Toolbar */}
+      {selectedIds.length > 0 && (
+        <BulkActionsToolbar
+          selectedCount={selectedIds.length}
+          onBulkDelete={handleBulkDelete}
+          onClearSelection={handleClearSelection}
+          showUpdateButton={false}
+        />
+      )}
+
       {/* Error */}
       {error && (
         <div className="error-message">
@@ -142,6 +215,9 @@ const AdminCategoriesPage = () => {
           onEdit={handleEdit}
           onDelete={handleDeleteClick}
           loading={loading}
+          selectedIds={selectedIds}
+          onSelectAll={handleSelectAll}
+          onSelectOne={handleSelectOne}
         />
       )}
 

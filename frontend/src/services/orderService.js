@@ -68,5 +68,19 @@ export const orderService = {
   cancelOrder: async (orderId) => {
     const { data } = await api.post(`/orders/${orderId}/cancel`);
     return data;
+  },
+
+  /**
+   * Exportar pedidos a CSV (solo admin)
+   * @param {Object} filters - Filtros de exportación
+   * @param {string} filters.status - Filtrar por estado (opcional)
+   * @returns {Promise<Blob>} Archivo CSV como blob
+   */
+  exportOrdersCSV: async (filters = {}) => {
+    const response = await api.get('/orders/export/csv', {
+      params: filters,
+      responseType: 'blob'
+    });
+    return response.data;
   }
 };

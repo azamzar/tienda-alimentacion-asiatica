@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -24,6 +24,37 @@ class Category(CategoryBase):
     """Schema for Category response"""
     id: int
     created_at: datetime
+    product_count: Optional[int] = Field(None, description="Number of products in this category")
 
     class Config:
         from_attributes = True
+
+
+class BulkDeleteRequest(BaseModel):
+    """Schema for bulk delete request"""
+    category_ids: List[int]
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "category_ids": [1, 2, 3, 4, 5]
+            }
+        }
+
+
+class BulkOperationResponse(BaseModel):
+    """Schema for bulk operation response"""
+    success_count: int
+    error_count: int
+    total: int
+    errors: Optional[List[str]] = None
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "success_count": 3,
+                "error_count": 0,
+                "total": 3,
+                "errors": None
+            }
+        }

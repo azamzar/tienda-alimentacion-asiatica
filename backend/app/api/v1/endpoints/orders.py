@@ -1,6 +1,10 @@
 from typing import Annotated, List, Optional
 from fastapi import APIRouter, Depends, Query, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import csv
+import io
+from datetime import datetime
 
 from app.api.deps import get_db, get_current_user, get_current_admin
 from app.services.order_service import OrderService
@@ -147,3 +151,73 @@ def cancel_order(
     # Si es cliente, solo puede cancelar sus propios pedidos
     user_id_filter = None if current_user.role == UserRole.ADMIN else str(current_user.id)
     return service.cancel_order(order_id, user_id_filter)
+
+
+@router.get("/export/csv", status_code=status.HTTP_200_OK)
+def export_orders_csv(
+    status_filter: Optional[OrderStatusEnum] = Query(None, alias="status", description="Filtrar por estado"),
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Exporta todos los pedidos a un archivo CSV
+
+    **Requires admin role**
+
+    - **status**: Filtrar por estado (pending, confirmed, processing, shipped, delivered, cancelled)
+
+    Genera un archivo CSV con todos los pedidos del sistema con la siguiente estructura:
+    - Order ID, Date, Customer Name, Customer Email, Customer Phone, Status, Total Amount, Items
+    """
+    service = OrderService(db)
+
+    # Obtener todos los pedidos (sin límite de paginación para exportación)
+    if status_filter:
+        orders = service.get_orders_by_status(status_filter, skip=0, limit=100000)
+    else:
+        orders = service.get_all_orders(skip=0, limit=100000)
+
+    # Crear CSV en memoria
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Escribir encabezados
+    writer.writerow([
+        'Order ID',
+        'Date',
+        'Customer Name',
+        'Customer Email',
+        'Customer Phone',
+        'Shipping Address',
+        'Status',
+        'Total Amount',
+        'Items Count',
+        'Notes'
+    ])
+
+    # Escribir datos de pedidos
+    for order in orders:
+        writer.writerow([
+            order.id,
+            order.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            order.customer_name,
+            order.customer_email,
+            order.customer_phone,
+            order.shipping_address,
+            order.status.value,
+            f"{order.total_amount:.2f}",
+            len(order.items),
+            order.notes or ''
+        ])
+
+    # Preparar la respuesta
+    output.seek(0)
+
+    # Generar nombre de archivo con timestamp
+    filename = f"orders_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )

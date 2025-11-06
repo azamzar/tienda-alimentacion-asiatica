@@ -60,6 +60,19 @@
   letter-spacing: 0.05em;
 }
 
+/* Checkbox column */
+.admin-category-table .checkbox-column {
+  width: 40px;
+  text-align: center;
+}
+
+.category-checkbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
 .admin-category-table tbody tr {
   border-bottom: 1px solid var(--color-gray-200);
   transition: background-color 0.2s ease;
@@ -67,6 +80,14 @@
 
 .admin-category-table tbody tr:hover {
   background-color: var(--color-gray-50);
+}
+
+.admin-category-table tbody tr.row-selected {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.admin-category-table tbody tr.row-selected:hover {
+  background-color: rgba(59, 130, 246, 0.15);
 }
 
 .admin-category-table tbody tr:last-child {
@@ -105,6 +126,22 @@
   font-size: 0.875rem;
 }
 
+.admin-category-table .category-product-count {
+  text-align: center;
+}
+
+.product-count-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  min-width: 28px;
+  text-align: center;
+}
+
 .admin-category-table .category-actions {
   white-space: nowrap;
 }
@@ -141,16 +178,33 @@
     margin-bottom: 0;
   }
 
+  .admin-category-card.card-selected {
+    border: 2px solid var(--color-primary);
+    background-color: rgba(59, 130, 246, 0.05);
+  }
+
   .category-card-header {
     padding: 1rem;
     background-color: var(--color-gray-50);
     border-bottom: 1px solid var(--color-gray-200);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .category-checkbox-mobile {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-primary);
+    flex-shrink: 0;
   }
 
   .category-card-title {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    flex: 1;
   }
 
   .category-card-id {

@@ -1,14 +1,27 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 from app.api.deps import get_db, get_current_admin
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.schemas.user import UserResponse, UserUpdate
 from app.services.user_service import UserService
 
 
 router = APIRouter()
+
+
+# Schema for role change request
+class ChangeRoleRequest(BaseModel):
+    """Schema for changing user role"""
+    role: UserRole
+
+
+# Schema for password reset request
+class ResetPasswordRequest(BaseModel):
+    """Schema for resetting user password"""
+    new_password: str = Field(..., min_length=6, description="New password must be at least 6 characters")
 
 
 @router.get("/", response_model=List[UserResponse])
@@ -108,3 +121,50 @@ def delete_user(
     """
     service = UserService(db)
     return service.delete_user(user_id)
+
+
+@router.patch("/{user_id}/role", response_model=UserResponse)
+def change_user_role(
+    user_id: int,
+    request: ChangeRoleRequest,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Change user role between customer and admin.
+
+    **Requires admin role**
+
+    Body:
+    - role: New role for the user (customer/admin)
+
+    Security note: Changing roles is a sensitive operation.
+    Make sure to verify the user before performing this action.
+    """
+    service = UserService(db)
+    user_data = UserUpdate(role=request.role)
+    return service.update_user(user_id, user_data)
+
+
+@router.post("/{user_id}/reset-password", response_model=UserResponse)
+def reset_user_password(
+    user_id: int,
+    request: ResetPasswordRequest,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Reset user password as admin.
+
+    **Requires admin role**
+
+    Body:
+    - new_password: New password for the user (minimum 6 characters)
+
+    Security note: This is a sensitive operation that should be performed
+    with caution. The user should be notified through a secure channel
+    about their new password.
+    """
+    service = UserService(db)
+    user_data = UserUpdate(password=request.new_password)
+    return service.update_user(user_id, user_data)

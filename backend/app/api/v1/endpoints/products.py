@@ -1,6 +1,10 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, status, UploadFile, File
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import csv
+import io
+from datetime import datetime
 
 from app.api.deps import get_db, get_current_admin
 from app.schemas.product import Product, ProductCreate, ProductUpdate, BulkDeleteRequest, BulkUpdateRequest, BulkOperationResponse
@@ -190,3 +194,71 @@ def bulk_update_products(
     service = ProductService(db)
     update_dict = request.update_data.model_dump(exclude_unset=True)
     return service.bulk_update_products(request.product_ids, update_dict)
+
+
+@router.get("/export/csv", status_code=status.HTTP_200_OK)
+def export_products_csv(
+    category_id: Optional[int] = Query(None, description="Filtrar por categoría"),
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Exporta todos los productos a un archivo CSV
+
+    **Requires admin role**
+
+    - **category_id**: Filtrar por categoría (opcional)
+
+    Genera un archivo CSV con todos los productos del sistema con la siguiente estructura:
+    - Product ID, Name, Description, Price, Stock, Category, Image URL, Created At, Updated At
+    """
+    service = ProductService(db)
+
+    # Obtener todos los productos (sin límite de paginación para exportación)
+    if category_id:
+        products = service.get_products_by_category(category_id)
+    else:
+        products = service.get_products(skip=0, limit=100000)
+
+    # Crear CSV en memoria
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Escribir encabezados
+    writer.writerow([
+        'Product ID',
+        'Name',
+        'Description',
+        'Price',
+        'Stock',
+        'Category',
+        'Image URL',
+        'Created At',
+        'Updated At'
+    ])
+
+    # Escribir datos de productos
+    for product in products:
+        writer.writerow([
+            product.id,
+            product.name,
+            product.description or '',
+            f"{product.price:.2f}",
+            product.stock,
+            product.category.name if product.category else 'Sin categoría',
+            product.image_url or '',
+            product.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            product.updated_at.strftime('%Y-%m-%d %H:%M:%S') if product.updated_at else ''
+        ])
+
+    # Preparar la respuesta
+    output.seek(0)
+
+    # Generar nombre de archivo con timestamp
+    filename = f"products_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )

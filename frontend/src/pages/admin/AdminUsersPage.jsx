@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { userService } from '../../services/userService';
 import AdminUserTable from '../../components/admin/AdminUserTable';
 import UserFormModal from '../../components/admin/UserFormModal';
@@ -20,6 +21,8 @@ const AdminUsersPage = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [filterRole, setFilterRole] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [userToResetPassword, setUserToResetPassword] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
 
   // Cargar usuarios y estadísticas
   const fetchUsers = async () => {
@@ -87,6 +90,62 @@ const AdminUsersPage = () => {
     } catch (err) {
       console.error('Error al desactivar usuario:', err);
       alert(err.response?.data?.detail || 'Error al desactivar el usuario');
+    }
+  };
+
+  // Cambiar rol de usuario
+  const handleChangeRole = async (user) => {
+    const newRole = user.role === 'admin' ? 'customer' : 'admin';
+    const roleLabel = newRole === 'admin' ? 'Administrador' : 'Cliente';
+
+    const confirmed = window.confirm(
+      `¿Estás seguro de que quieres cambiar el rol de ${user.full_name || user.email} a ${roleLabel}?\n\n⚠️ Esta es una operación sensible que afecta los permisos del usuario.`
+    );
+
+    if (!confirmed) return;
+
+    const loadingToast = toast.loading('Cambiando rol del usuario...');
+
+    try {
+      await userService.changeUserRole(user.id, newRole);
+      toast.success(`Rol cambiado exitosamente a ${roleLabel}`, { id: loadingToast, icon: '✅' });
+      await fetchUsers();
+    } catch (error) {
+      console.error('Error al cambiar rol:', error);
+      toast.error(error.response?.data?.detail || 'Error al cambiar el rol del usuario', {
+        id: loadingToast,
+      });
+    }
+  };
+
+  // Abrir modal para resetear contraseña
+  const handleResetPasswordClick = (user) => {
+    setUserToResetPassword(user);
+    setNewPassword('');
+  };
+
+  // Confirmar reset de contraseña
+  const handleResetPasswordConfirm = async () => {
+    if (!userToResetPassword || !newPassword) return;
+
+    if (newPassword.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    const loadingToast = toast.loading('Reseteando contraseña...');
+
+    try {
+      await userService.resetUserPassword(userToResetPassword.id, newPassword);
+      toast.success('Contraseña reseteada exitosamente', { id: loadingToast, icon: '🔑' });
+      setUserToResetPassword(null);
+      setNewPassword('');
+      await fetchUsers();
+    } catch (error) {
+      console.error('Error al resetear contraseña:', error);
+      toast.error(error.response?.data?.detail || 'Error al resetear la contraseña', {
+        id: loadingToast,
+      });
     }
   };
 
@@ -175,6 +234,8 @@ const AdminUsersPage = () => {
           users={users}
           onEdit={handleEdit}
           onDelete={handleDeleteClick}
+          onChangeRole={handleChangeRole}
+          onResetPassword={handleResetPasswordClick}
           loading={loading}
         />
       )}
@@ -213,6 +274,58 @@ const AdminUsersPage = () => {
               </Button>
               <Button variant="danger" onClick={handleDeleteConfirm}>
                 Desactivar
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Modal de reset de contraseña */}
+      {userToResetPassword && (
+        <Modal
+          isOpen={!!userToResetPassword}
+          onClose={() => {
+            setUserToResetPassword(null);
+            setNewPassword('');
+          }}
+          title="Resetear Contraseña"
+        >
+          <div className="reset-password-form">
+            <p>
+              Resetear contraseña para <strong>{userToResetPassword.email}</strong>
+            </p>
+            <p className="warning-text">
+              ⚠️ El usuario deberá usar esta nueva contraseña para iniciar sesión. Asegúrate de
+              comunicársela a través de un canal seguro.
+            </p>
+            <div className="form-group">
+              <label htmlFor="new-password">Nueva Contraseña (mínimo 6 caracteres)</label>
+              <input
+                id="new-password"
+                type="text"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Ingresa la nueva contraseña"
+                className="password-input"
+                autoFocus
+              />
+            </div>
+            <div className="modal-actions">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setUserToResetPassword(null);
+                  setNewPassword('');
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleResetPasswordConfirm}
+                disabled={!newPassword || newPassword.length < 6}
+              >
+                Resetear Contraseña
               </Button>
             </div>
           </div>

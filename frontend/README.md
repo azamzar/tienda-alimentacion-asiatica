@@ -594,30 +594,61 @@ frontend/src/
 ### productService.js
 
 ```javascript
-getProducts(params)           // GET /api/v1/products
-getProductById(id)            // GET /api/v1/products/{id}
-searchProducts(name)          // GET /api/v1/products/search?name=
-getCategories()               // GET /api/v1/categories
+getProducts(params)                      // GET /api/v1/products
+getProductById(id)                       // GET /api/v1/products/{id}
+searchProducts(name)                     // GET /api/v1/products/search?name=
+createProduct(productData)               // POST /api/v1/products
+updateProduct(id, productData)           // PUT /api/v1/products/{id}
+deleteProduct(id)                        // DELETE /api/v1/products/{id}
+uploadProductImage(id, file)             // POST /api/v1/products/{id}/image
+deleteProductImage(id)                   // DELETE /api/v1/products/{id}/image
+bulkDeleteProducts(productIds)           // POST /api/v1/products/bulk/delete
+bulkUpdateProducts(productIds, updateData) // PATCH /api/v1/products/bulk/update
+exportProductsCSV(filters)               // GET /api/v1/products/export/csv (admin)
+```
+
+### categoryService.js
+
+```javascript
+getCategories()                          // GET /api/v1/categories
+getCategoryById(id)                      // GET /api/v1/categories/{id}
+createCategory(categoryData)             // POST /api/v1/categories
+updateCategory(id, categoryData)         // PUT /api/v1/categories/{id}
+deleteCategory(id)                       // DELETE /api/v1/categories/{id}
+bulkDeleteCategories(categoryIds)        // POST /api/v1/categories/bulk/delete (admin)
 ```
 
 ### cartService.js
 
 ```javascript
-getCart(userId)               // GET /api/v1/carts/{user_id}
-addToCart(userId, item)       // POST /api/v1/carts/{user_id}/items
+getCart(userId)                          // GET /api/v1/carts/{user_id}
+addToCart(userId, item)                  // POST /api/v1/carts/{user_id}/items
 updateCartItem(userId, productId, quantity)  // PUT /api/v1/carts/{user_id}/items/{product_id}
-removeFromCart(userId, productId)            // DELETE /api/v1/carts/{user_id}/items/{product_id}
-clearCart(userId)             // DELETE /api/v1/carts/{user_id}
+removeFromCart(userId, productId)        // DELETE /api/v1/carts/{user_id}/items/{product_id}
+clearCart(userId)                        // DELETE /api/v1/carts/{user_id}
 ```
 
 ### orderService.js
 
 ```javascript
-createOrder(userId, orderData)    // POST /api/v1/orders?user_id={user_id}
-getOrders(userId, filters)        // GET /api/v1/orders?user_id={user_id}
-getOrderById(orderId, userId)     // GET /api/v1/orders/{order_id}
-updateOrder(orderId, updates)     // PATCH /api/v1/orders/{order_id}
-cancelOrder(orderId, userId)      // POST /api/v1/orders/{order_id}/cancel
+createOrder(userId, orderData)           // POST /api/v1/orders?user_id={user_id}
+getOrders(userId, filters)               // GET /api/v1/orders?user_id={user_id}
+getOrderById(orderId, userId)            // GET /api/v1/orders/{order_id}
+updateOrder(orderId, updates)            // PATCH /api/v1/orders/{order_id}
+cancelOrder(orderId, userId)             // POST /api/v1/orders/{order_id}/cancel
+exportOrdersCSV(filters)                 // GET /api/v1/orders/export/csv (admin)
+```
+
+### userService.js
+
+```javascript
+getUsers(params)                         // GET /api/v1/users (admin)
+getUserStats()                           // GET /api/v1/users/stats (admin)
+getUserById(id)                          // GET /api/v1/users/{id} (admin)
+updateUser(id, userData)                 // PUT /api/v1/users/{id} (admin)
+deleteUser(id)                           // DELETE /api/v1/users/{id} (admin)
+changeUserRole(id, role)                 // PATCH /api/v1/users/{id}/role (admin)
+resetUserPassword(id, newPassword)       // POST /api/v1/users/{id}/reset-password (admin)
 ```
 
 ## Componentes
@@ -652,13 +683,21 @@ cancelOrder(orderId, userId)      // POST /api/v1/orders/{order_id}/cancel
 - **StatCard**: Tarjeta de estadística con icono y valor (usado en dashboard)
 - **ProductTable**: Tabla de productos con checkboxes multi-selección, editar y eliminar
 - **ProductFormModal**: Modal para crear y editar productos con validación
-- **BulkActionsToolbar**: Toolbar que aparece al seleccionar productos con acciones en lote
+- **BulkActionsToolbar**: Toolbar que aparece al seleccionar productos/categorías con acciones en lote
 - **BulkUpdateModal**: Modal para actualizar stock, precio o categoría de múltiples productos
-- **AdminCategoryTable**: Tabla responsive de categorías con CRUD
+- **AdminCategoryTable**: Tabla responsive de categorías con:
+  - Checkboxes multi-selección
+  - Badge de product_count
+  - Operaciones CRUD
+  - Bulk delete integrado
 - **CategoryFormModal**: Modal para crear y editar categorías
 - **AdminOrderTable**: Tabla responsive de pedidos con filtros y búsqueda
 - **OrderStatusUpdateModal**: Modal para actualizar estado de pedidos
-- **AdminUserTable**: Tabla responsive de usuarios con filtros por rol y estado
+- **AdminUserTable**: Tabla responsive de usuarios con:
+  - Filtros por rol y estado
+  - Botones de cambio de rol (👤 → Cliente / 👑 → Admin)
+  - Botón de reset de contraseña (🔑 Reset Pass)
+  - Operaciones de edición y desactivación
 - **UserFormModal**: Modal para editar información de usuarios
 
 ### Common Components
@@ -1586,15 +1625,68 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] Mocking de stores, router y componentes
 - [x] Setup global con IntersectionObserver y matchMedia mocks
 
-### 📋 Fase 13: Futuras Mejoras
-- [ ] Agregar paginación infinita en productos (react-window/virtualization)
+### ✅ Fase 13: Dark Mode (Completado - 2025-11-04)
+- [x] Sistema de temas con CSS variables
+- [x] ThemeToggle component con animación
+- [x] Persistencia del tema en localStorage
+- [x] 43 variables CSS para light y dark mode
+- [x] Transiciones suaves entre temas (0.3s)
+- [x] Todos los componentes adaptados al dark mode
+- [x] Perfect contrast en ambos modos
+
+### ✅ Fase 14-16: Security & Admin Features (Completado - 2025-11-05)
+- [x] Sistema de refresh tokens con rotación
+- [x] Rate limiting en autenticación (5/min login, 3/hora register)
+- [x] SECRET_KEY movido a variables de entorno
+- [x] Access tokens expiran en 30 minutos
+- [x] Refresh tokens válidos por 7 días
+- [x] Endpoints de logout efectivo (/logout, /logout-all)
+- [x] Operaciones bulk para productos:
+  - BulkActionsToolbar con animación
+  - BulkUpdateModal para actualización masiva
+  - Bulk delete con confirmación
+  - Multi-selección con checkboxes
+- [x] Dark mode fixes y mejoras de contraste
+- [x] 99 tests frontend (100% passing)
+
+### ✅ Fase 17: Additional Admin Features (Completado - 2025-11-06)
+- [x] Operaciones bulk para categorías:
+  - Multi-selección con checkboxes
+  - Bulk delete con confirmación
+  - BulkActionsToolbar integrado
+  - Toast notifications
+- [x] Exportación de datos a CSV:
+  - Botón "Exportar CSV" en AdminOrdersPage
+  - Botón "Exportar CSV" en AdminProductsPage
+  - Descarga automática con timestamp
+  - Respeta filtros actuales (estado, categoría)
+- [x] Contador de productos por categoría:
+  - Badge visual en AdminCategoryTable
+  - Desktop y mobile responsive
+  - Actualizado en tiempo real
+- [x] Gestión avanzada de usuarios:
+  - Botón cambio de rol: 👤 → Cliente / 👑 → Admin
+  - Botón reset password: 🔑 Reset Pass
+  - Modal de reset con validación
+  - Confirmaciones con advertencias de seguridad
+- [x] Toast notifications para todas las operaciones
+- [x] Manejo de errores mejorado
+
+### 📋 Fase 18: Futuras Mejoras
 - [ ] Sistema de wishlist/favoritos
-- [ ] Modo oscuro
+- [ ] Product reviews y ratings
+- [ ] Reorder button en historial de pedidos
+- [ ] Búsqueda con autocomplete
+- [ ] Filtros avanzados (precio, disponibilidad)
+- [ ] Paginación infinita en productos
 - [ ] Internacionalización (i18n)
 - [ ] PWA (Progressive Web App)
-- [ ] Agregar animaciones con Framer Motion
-- [ ] Notificaciones toast para acciones del usuario
+- [ ] Animaciones con Framer Motion
 - [ ] Service Worker para caché offline
+- [ ] Payment integration (Stripe/PayPal)
+- [ ] Email notifications
+- [ ] Structured logging (backend)
+- [ ] Cloud storage para imágenes (S3/GCS)
 
 ## Cómo Continuar el Desarrollo
 
@@ -1653,7 +1745,10 @@ touch src/pages/OrderDetail.jsx
 - Separación clara de responsabilidades
 
 ✅ **Capa de Servicios**
-- 6 servicios completos (auth, products, categories, cart, orders, users)
+- 7 servicios completos (auth, products, categories, cart, orders, users, dashboard)
+- Métodos de exportación CSV para productos y pedidos
+- Operaciones bulk para productos y categorías
+- Gestión avanzada de usuarios (cambio de rol, reset password)
 - Configuración de axios con interceptores para JWT
 - Manejo centralizado de errores
 
@@ -1677,31 +1772,41 @@ touch src/pages/OrderDetail.jsx
 - Detalle de pedidos con toda la información
 
 ✅ **UI Completa para Administradores**
-- Dashboard con estadísticas completas
-- Panel de gestión de productos (CRUD completo)
-- Búsqueda y filtros de productos
-- Creación y edición de productos con validación
-- Eliminación de productos con confirmación
-- Badges visuales de stock (disponible/bajo/agotado)
-- Panel de gestión de pedidos (ver todos, filtrar, buscar)
-- Actualización de estado de pedidos con validación
-- Estadísticas de pedidos en tiempo real
-- Panel de gestión de categorías (CRUD completo)
-- Creación, edición y eliminación de categorías
-- Estadísticas de categorías en tiempo real
-- Panel de gestión de usuarios (view, edit, deactivate)
-- Filtros por rol y estado de usuarios
-- Estadísticas de usuarios en tiempo real
-- Protección contra desactivar usuarios admin
+- Dashboard con estadísticas completas y gráficos
+- Panel de gestión de productos:
+  - CRUD completo con validación
+  - Multi-selección con checkboxes
+  - Bulk delete y bulk update
+  - Exportación a CSV con filtros
+  - Upload de imágenes con optimización
+  - Badges visuales de stock
+- Panel de gestión de pedidos:
+  - Ver todos, filtrar y buscar
+  - Exportación a CSV con filtros
+  - Actualización de estado con validación
+  - Estadísticas en tiempo real
+- Panel de gestión de categorías:
+  - CRUD completo
+  - Multi-selección con checkboxes
+  - Bulk delete
+  - Contador de productos por categoría
+  - Estadísticas en tiempo real
+- Panel de gestión de usuarios:
+  - View, edit, deactivate
+  - Cambio de rol (customer ⟷ admin)
+  - Reset de contraseña desde admin
+  - Filtros por rol y estado
+  - Estadísticas en tiempo real
+  - Protección contra operaciones críticas
 
 ✅ **Componentes Reutilizables**
 - Layout: Header con navegación responsive, Footer
-- Common: Button, Input, Card, Modal, Spinner
+- Common: Button, Input, Card, Modal, Spinner, ThemeToggle, OptimizedImage, Skeleton, ImageUpload
 - Auth: ProtectedRoute, AdminRoute
 - Products: ProductCard, ProductGrid
 - Cart: CartItem, CartSummary
 - Orders: OrderStatusBadge, CheckoutForm
-- Admin: StatCard, ProductTable, ProductFormModal, AdminOrderTable, OrderStatusUpdateModal, AdminCategoryTable, CategoryFormModal, AdminUserTable, UserFormModal
+- Admin: StatCard, ProductTable, ProductFormModal, BulkActionsToolbar, BulkUpdateModal, AdminOrderTable, OrderStatusUpdateModal, AdminCategoryTable, CategoryFormModal, AdminUserTable, UserFormModal
 
 ✅ **Utilidades**
 - Formateadores (precios, fechas, texto)
@@ -1709,17 +1814,27 @@ touch src/pages/OrderDetail.jsx
 - Validadores (email, teléfono, formularios)
 
 ✅ **Estilos y UX**
-- Diseño responsive para todos los dispositivos
+- Diseño responsive para todos los dispositivos (mobile, tablet, desktop)
+- Dark mode completo con 43 variables CSS
 - Estilos CSS modulares y consistentes
-- Animaciones suaves y transiciones
-- Estados de loading y error bien manejados
+- Animaciones suaves y transiciones (0.3s ease)
+- Estados de loading con skeleton loaders
+- Estados de error bien manejados
 - Feedback visual en todas las acciones
+- Toast notifications para operaciones críticas
+- Confirmaciones para acciones destructivas
+- Lazy loading de imágenes
+- Carga progresiva con blur-up effect
+- Optimización WebP automática
 
 🔄 **Pendiente**
-- Bulk operations para productos y categorías
-- Sistema de subida de imágenes
-- Tests unitarios y de integración
-- Mejoras de rendimiento y optimización
+- Sistema de wishlist/favoritos
+- Product reviews y ratings
+- Reorder button en historial
+- Búsqueda con autocomplete
+- Payment integration (Stripe/PayPal)
+- PWA (Progressive Web App)
+- Internacionalización (i18n)
 
 ## Notas Importantes para Desarrollo
 

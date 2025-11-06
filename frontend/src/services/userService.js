@@ -56,5 +56,29 @@ export const userService = {
   deleteUser: async (id) => {
     const { data } = await api.delete(`/users/${id}`);
     return data;
+  },
+
+  /**
+   * Cambiar rol de un usuario (solo admin)
+   * @param {number} id - ID del usuario
+   * @param {string} role - Nuevo rol ('customer' o 'admin')
+   * @returns {Promise<Object>} Usuario actualizado
+   */
+  changeUserRole: async (id, role) => {
+    const { data } = await api.patch(`/users/${id}/role`, { role });
+    return data;
+  },
+
+  /**
+   * Resetear contraseña de un usuario (solo admin)
+   * @param {number} id - ID del usuario
+   * @param {string} newPassword - Nueva contraseña
+   * @returns {Promise<Object>} Usuario actualizado
+   */
+  resetUserPassword: async (id, newPassword) => {
+    const { data } = await api.post(`/users/${id}/reset-password`, {
+      new_password: newPassword
+    });
+    return data;
   }
 };

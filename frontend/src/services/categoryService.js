@@ -51,5 +51,17 @@ export const categoryService = {
    */
   deleteCategory: async (id) => {
     await api.delete(`/categories/${id}`);
+  },
+
+  /**
+   * Eliminar múltiples categorías (solo admin)
+   * @param {Array<number>} categoryIds - Array de IDs de categorías
+   * @returns {Promise<Object>} Resultado de la operación bulk
+   */
+  bulkDeleteCategories: async (categoryIds) => {
+    const { data } = await api.post('/categories/bulk/delete', {
+      category_ids: categoryIds
+    });
+    return data;
   }
 };

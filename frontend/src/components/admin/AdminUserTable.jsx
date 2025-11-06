@@ -6,7 +6,7 @@ import './AdminUserTable.css';
 /**
  * Tabla de usuarios para administradores
  */
-const AdminUserTable = ({ users, onEdit, onDelete, loading }) => {
+const AdminUserTable = ({ users, onEdit, onDelete, onChangeRole, onResetPassword, loading }) => {
   if (loading) {
     return (
       <div className="admin-user-table-loading">
@@ -71,6 +71,26 @@ const AdminUserTable = ({ users, onEdit, onDelete, loading }) => {
                     <Button variant="ghost" size="sm" onClick={() => onEdit(user)}>
                       Editar
                     </Button>
+                    {onChangeRole && (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => onChangeRole(user)}
+                        title={`Cambiar a ${user.role === 'admin' ? 'Cliente' : 'Administrador'}`}
+                      >
+                        {user.role === 'admin' ? '👤 → Cliente' : '👑 → Admin'}
+                      </Button>
+                    )}
+                    {onResetPassword && (
+                      <Button
+                        variant="warning"
+                        size="sm"
+                        onClick={() => onResetPassword(user)}
+                        title="Resetear contraseña"
+                      >
+                        🔑 Reset Pass
+                      </Button>
+                    )}
                     {user.role !== 'admin' && (
                       <Button
                         variant="danger"
@@ -125,6 +145,24 @@ const AdminUserTable = ({ users, onEdit, onDelete, loading }) => {
               <Button variant="ghost" onClick={() => onEdit(user)}>
                 Editar
               </Button>
+              {onChangeRole && (
+                <Button
+                  variant="secondary"
+                  onClick={() => onChangeRole(user)}
+                  title={`Cambiar a ${user.role === 'admin' ? 'Cliente' : 'Administrador'}`}
+                >
+                  {user.role === 'admin' ? '👤 Cliente' : '👑 Admin'}
+                </Button>
+              )}
+              {onResetPassword && (
+                <Button
+                  variant="warning"
+                  onClick={() => onResetPassword(user)}
+                  title="Resetear contraseña"
+                >
+                  🔑 Reset Pass
+                </Button>
+              )}
               {user.role !== 'admin' && (
                 <Button
                   variant="danger"

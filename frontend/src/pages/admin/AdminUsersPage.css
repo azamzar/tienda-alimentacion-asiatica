@@ -189,6 +189,50 @@
   border-top: 1px solid var(--color-gray-200);
 }
 
+/* Reset password modal */
+.reset-password-form {
+  padding: 1rem 0;
+}
+
+.reset-password-form p {
+  margin-bottom: 1rem;
+}
+
+.reset-password-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.reset-password-form label {
+  display: block;
+  font-weight: 500;
+  color: var(--color-gray-700);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.reset-password-form .password-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: monospace;
+}
+
+.reset-password-form .password-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.reset-password-form .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-gray-200);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .admin-users-page {

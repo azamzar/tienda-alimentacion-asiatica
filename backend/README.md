@@ -363,11 +363,17 @@ GET    /api/v1/auth/me               # Obtener información del usuario actual (
 
 #### Categorías
 ```
-GET    /api/v1/categories/           # Listar todas las categorías (público)
+GET    /api/v1/categories/           # Listar todas las categorías con product_count (público)
 GET    /api/v1/categories/{id}       # Obtener categoría por ID (público)
 POST   /api/v1/categories/           # Crear nueva categoría (🔒 requiere admin)
+PUT    /api/v1/categories/{id}       # Actualizar categoría (🔒 requiere admin)
 DELETE /api/v1/categories/{id}       # Eliminar categoría (🔒 requiere admin)
+POST   /api/v1/categories/bulk/delete # Eliminar múltiples categorías (🔒 requiere admin)
 ```
+
+**Notas:**
+- Cada categoría incluye `product_count` (número de productos)
+- `bulk/delete`: Recibe array de IDs, retorna contadores de éxito/error
 
 #### Productos
 ```
@@ -382,12 +388,18 @@ POST   /api/v1/products/{id}/image   # Subir imagen de producto (🔒 requiere a
 DELETE /api/v1/products/{id}/image   # Eliminar imagen de producto (🔒 requiere admin)
 POST   /api/v1/products/bulk/delete  # Eliminar múltiples productos (🔒 requiere admin)
 PATCH  /api/v1/products/bulk/update  # Actualizar múltiples productos (🔒 requiere admin)
+GET    /api/v1/products/export/csv   # Exportar productos a CSV (🔒 requiere admin)
 ```
 
 **Bulk Operations:**
 - `bulk/delete`: Recibe array de IDs, elimina productos e imágenes asociadas
 - `bulk/update`: Recibe array de IDs + datos a actualizar (stock, precio, categoría)
 - Retorna contadores de éxito/error y lista de errores por producto
+
+**Export:**
+- `export/csv`: Exporta todos los productos a CSV con filtro opcional por categoría
+- Genera archivo con timestamp: `products_export_YYYYMMDD_HHMMSS.csv`
+- Campos: Product ID, Name, Description, Price, Stock, Category, Image URL, Created, Updated
 
 **Archivos Estáticos:**
 ```
@@ -410,7 +422,13 @@ GET    /api/v1/orders/               # Listar pedidos (🔒 cliente: solo suyos,
 GET    /api/v1/orders/{id}           # Obtener pedido por ID (🔒 cliente: solo suyos, admin: todos)
 PATCH  /api/v1/orders/{id}           # Actualizar pedido (🔒 cliente: datos básicos, admin: todo)
 POST   /api/v1/orders/{id}/cancel    # Cancelar pedido (🔒 cliente: solo suyos, admin: todos)
+GET    /api/v1/orders/export/csv     # Exportar pedidos a CSV (🔒 requiere admin)
 ```
+
+**Export:**
+- `export/csv`: Exporta todos los pedidos a CSV con filtro opcional por estado
+- Genera archivo con timestamp: `orders_export_YYYYMMDD_HHMMSS.csv`
+- Campos: Order ID, Date, Customer Name, Email, Phone, Address, Status, Total Amount, Items Count, Notes
 
 #### Admin
 ```
@@ -419,11 +437,13 @@ GET    /api/v1/admin/dashboard/stats # Obtener estadísticas del dashboard (🔒
 
 #### Usuarios (Admin)
 ```
-GET    /api/v1/users/                # Listar usuarios con filtros (🔒 requiere admin)
-GET    /api/v1/users/stats           # Obtener estadísticas de usuarios (🔒 requiere admin)
-GET    /api/v1/users/{id}            # Obtener usuario por ID (🔒 requiere admin)
-PUT    /api/v1/users/{id}            # Actualizar usuario (🔒 requiere admin)
-DELETE /api/v1/users/{id}            # Desactivar usuario (soft delete) (🔒 requiere admin)
+GET    /api/v1/users/                    # Listar usuarios con filtros (🔒 requiere admin)
+GET    /api/v1/users/stats               # Obtener estadísticas de usuarios (🔒 requiere admin)
+GET    /api/v1/users/{id}                # Obtener usuario por ID (🔒 requiere admin)
+PUT    /api/v1/users/{id}                # Actualizar usuario (🔒 requiere admin)
+DELETE /api/v1/users/{id}                # Desactivar usuario (soft delete) (🔒 requiere admin)
+PATCH  /api/v1/users/{id}/role           # Cambiar rol de usuario (🔒 requiere admin)
+POST   /api/v1/users/{id}/reset-password # Resetear contraseña de usuario (🔒 requiere admin)
 ```
 
 **Filtros disponibles en GET /api/v1/users/:**
@@ -431,6 +451,11 @@ DELETE /api/v1/users/{id}            # Desactivar usuario (soft delete) (🔒 re
 - `limit` - Límite de registros (max 100)
 - `role` - Filtrar por rol (customer/admin)
 - `is_active` - Filtrar por estado activo (true/false)
+
+**Operaciones especiales:**
+- `role`: Cambiar rol entre customer y admin (operación sensible)
+- `reset-password`: Resetear contraseña de usuario (mínimo 6 caracteres)
+- Ambas operaciones requieren confirmación y registro de auditoría
 
 **Leyenda:**
 - 🔒 **Requiere autenticación** - Debe incluir header: `Authorization: Bearer <token>`
@@ -1078,6 +1103,27 @@ markers =
   - Invalidación automática en operaciones de escritura
   - Reducción del 90% en tiempo de respuesta
   - TTL configurable por operación
+- [x] Sistema de refresh tokens y mejoras de seguridad
+  - Refresh tokens con rotación automática
+  - Rate limiting en endpoints de autenticación
+  - SECRET_KEY en variables de entorno
+  - Access tokens con expiración de 30 minutos
+  - Refresh tokens válidos por 7 días
+- [x] Operaciones bulk para administradores
+  - Bulk delete y bulk update para productos
+  - Bulk delete para categorías
+  - Manejo de errores detallado por item
+- [x] Exportación de datos a CSV
+  - Export de productos con filtro por categoría
+  - Export de pedidos con filtro por estado
+  - Archivos con timestamp automático
+- [x] Gestión avanzada de usuarios (admin)
+  - Cambio de rol (customer ⟷ admin)
+  - Reset de contraseña desde panel admin
+  - Validaciones y seguridad reforzada
+- [x] Mejoras en categorías
+  - Campo product_count calculado dinámicamente
+  - Integrado en sistema de caché
 
 ### 📋 Pendiente
 
@@ -1088,12 +1134,12 @@ markers =
   - Tests para optimización de imágenes
   - Tests para sistema de caché
   - **104 tests implementados con 100% de éxito**
+- [x] Rate limiting para endpoints de autenticación
+- [x] Refresh tokens
 - [ ] Implementar logging estructurado
 - [ ] Paginación mejorada con cursores
-- [ ] Rate limiting para endpoints de autenticación
-- [ ] Refresh tokens
-- [ ] Password reset/recovery
-- [ ] Email notifications
+- [ ] Password reset/recovery via email
+- [ ] Email notifications (confirmaciones de pedido, cambios de estado)
 - [ ] Soporte para almacenamiento en cloud (S3, Google Cloud Storage)
 - [ ] Image CDN para servir imágenes optimizadas
 
@@ -1111,7 +1157,7 @@ markers =
 **DevOps:**
 - [ ] Configuración de CI/CD
 - [ ] Docker Compose para producción
-- [ ] Variables de entorno seguras (SECRET_KEY, etc.)
+- [x] Variables de entorno seguras (SECRET_KEY, DATABASE_URL, etc.)
 - [ ] Backup automático de base de datos
 
 ## Contribuir

@@ -133,5 +133,19 @@ export const productService = {
       update_data: updateData
     });
     return data;
+  },
+
+  /**
+   * Exportar productos a CSV (solo admin)
+   * @param {Object} filters - Filtros de exportación
+   * @param {number} filters.category_id - Filtrar por categoría (opcional)
+   * @returns {Promise<Blob>} Archivo CSV como blob
+   */
+  exportProductsCSV: async (filters = {}) => {
+    const response = await api.get('/products/export/csv', {
+      params: filters,
+      responseType: 'blob'
+    });
+    return response.data;
   }
 };

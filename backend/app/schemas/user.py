@@ -24,6 +24,7 @@ class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     password: Optional[str] = Field(None, min_length=6)
     is_active: Optional[bool] = None
+    role: Optional[UserRole] = None
 
 
 # Schema para respuesta (sin password)

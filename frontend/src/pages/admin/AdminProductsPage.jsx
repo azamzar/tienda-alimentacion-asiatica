@@ -206,13 +206,44 @@ function AdminProductsPage() {
     }
   };
 
+  // Export products to CSV
+  const handleExportCSV = async () => {
+    try {
+      toast.loading('Generando archivo CSV...', { id: 'export' });
+
+      // Use current category filter if exists
+      const filters = selectedCategory ? { category_id: parseInt(selectedCategory) } : {};
+      const blob = await productService.exportProductsCSV(filters);
+
+      // Create blob URL and download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `products_export_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('Archivo CSV descargado exitosamente', { id: 'export', icon: '📥' });
+    } catch (error) {
+      console.error('Error exporting products:', error);
+      toast.error('Error al exportar productos', { id: 'export' });
+    }
+  };
+
   return (
     <div className="admin-products-page">
       <div className="admin-products-header">
         <h1>Gestión de Productos</h1>
-        <Button variant="primary" onClick={handleCreateProduct}>
-          + Nuevo Producto
-        </Button>
+        <div className="header-actions">
+          <Button variant="ghost" onClick={handleExportCSV} disabled={loading}>
+            Exportar CSV
+          </Button>
+          <Button variant="primary" onClick={handleCreateProduct}>
+            + Nuevo Producto
+          </Button>
+        </div>
       </div>
 
       {/* Filters Section */}

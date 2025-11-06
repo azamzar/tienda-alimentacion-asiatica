@@ -703,18 +703,69 @@ RATE_LIMIT_REGISTER_PER_HOUR=3
 - ✅ Theme persistence in localStorage
 - ✅ Smooth color transitions
 
+### ✅ Recently Completed (2025-11-06)
+
+**Fase 17 - Additional Admin Features:**
+- [x] Backend: Bulk operations for categories:
+  - POST /api/v1/categories/bulk/delete - Delete multiple categories
+  - BulkDeleteRequest and BulkOperationResponse schemas
+  - Error handling with detailed reporting per category
+  - Cache invalidation for categories and products
+- [x] Backend: CSV export endpoints (admin only):
+  - GET /api/v1/orders/export/csv - Export all orders with optional status filter
+  - GET /api/v1/products/export/csv - Export all products with optional category filter
+  - StreamingResponse with automatic file download
+  - Timestamp-based filenames
+  - Comprehensive data fields (all relevant info)
+- [x] Backend: Category product count:
+  - product_count field added to Category schema
+  - Calculated dynamically using relationships
+  - Integrated into cache strategy
+- [x] Backend: Advanced user management:
+  - PATCH /api/v1/users/{user_id}/role - Change user role (customer ⟷ admin)
+  - POST /api/v1/users/{user_id}/reset-password - Admin password reset
+  - ChangeRoleRequest and ResetPasswordRequest schemas
+  - UserUpdate schema extended with role field
+  - Security warnings in documentation
+- [x] Frontend: Category bulk operations:
+  - Multi-selection checkboxes in AdminCategoryTable
+  - BulkActionsToolbar integration
+  - Bulk delete with confirmation modal
+  - Toast notifications with result summary
+  - Desktop and mobile support
+- [x] Frontend: CSV export functionality:
+  - Export buttons in AdminOrdersPage and AdminProductsPage
+  - Automatic blob download with generated filenames
+  - Respects current filters (status, category)
+  - Loading states with toast notifications
+  - Error handling
+- [x] Frontend: Category product counter:
+  - Visual badge in table desktop view
+  - Badge in mobile card view
+  - Styled with primary color and rounded borders
+  - Real-time count from backend
+- [x] Frontend: User management features:
+  - Change role button with emoji indicators (👤 → Cliente / 👑 → Admin)
+  - Reset password button (🔑 Reset Pass)
+  - Confirmation dialogs with security warnings
+  - Reset password modal with validation
+  - Toast notifications for all operations
+  - Desktop and mobile responsive UI
+- [x] Total: ~850 lines of code across 15 files
+
+**Admin Features Summary:**
+- ✅ Bulk delete categories with multi-selection
+- ✅ Export orders and products to CSV
+- ✅ Product count per category displayed
+- ✅ Change user roles (customer ⟷ admin)
+- ✅ Reset user passwords from admin panel
+- ✅ All operations with proper validation and feedback
+
 ### 🔄 In Progress
 
 - None currently
 
 ### 📋 Planned Features
-
-**Phase 17 - Additional Admin Features:**
-- [ ] Bulk operations for categories (bulk delete)
-- [ ] Export orders to CSV/Excel
-- [ ] Export products to CSV/Excel
-- [ ] Category product count display in table
-- [ ] Advanced user management (change role, reset password from admin)
 
 **Phase 18 - Backend Improvements:**
 - [ ] Structured logging (JSON format for production)

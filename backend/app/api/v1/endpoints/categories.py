@@ -3,7 +3,13 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, get_current_admin
-from app.schemas.category import Category, CategoryCreate, CategoryUpdate
+from app.schemas.category import (
+    Category,
+    CategoryCreate,
+    CategoryUpdate,
+    BulkDeleteRequest,
+    BulkOperationResponse
+)
 from app.services.category_service import CategoryService
 from app.models.user import User
 
@@ -77,3 +83,28 @@ def delete_category(
     service = CategoryService(db)
     service.delete_category(category_id)
     return None
+
+
+@router.post("/bulk/delete", response_model=BulkOperationResponse)
+def bulk_delete_categories(
+    request: BulkDeleteRequest,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Delete multiple categories at once.
+
+    **Requires admin role**
+
+    - **category_ids**: List of category IDs to delete
+
+    Returns:
+    - success_count: Number of categories successfully deleted
+    - error_count: Number of errors encountered
+    - total: Total categories attempted
+    - errors: List of error messages (if any)
+
+    Note: Products associated with deleted categories will need to be reassigned
+    """
+    service = CategoryService(db)
+    return service.bulk_delete_categories(request.category_ids)

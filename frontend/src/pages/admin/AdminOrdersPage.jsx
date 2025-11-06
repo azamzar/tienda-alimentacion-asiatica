@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { orderService } from '../../services/orderService';
 import AdminOrderTable from '../../components/admin/AdminOrderTable';
 import OrderStatusUpdateModal from '../../components/admin/OrderStatusUpdateModal';
@@ -88,6 +89,32 @@ const AdminOrdersPage = () => {
     setSearchTerm('');
   };
 
+  // Exportar pedidos a CSV
+  const handleExportCSV = async () => {
+    try {
+      toast.loading('Generando archivo CSV...', { id: 'export' });
+
+      // Usar el filtro de estado actual si existe
+      const filters = statusFilter ? { status: statusFilter } : {};
+      const blob = await orderService.exportOrdersCSV(filters);
+
+      // Crear URL del blob y descargar
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `orders_export_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('Archivo CSV descargado exitosamente', { id: 'export', icon: '📥' });
+    } catch (error) {
+      console.error('Error al exportar pedidos:', error);
+      toast.error('Error al exportar pedidos', { id: 'export' });
+    }
+  };
+
   // Estadísticas rápidas
   const stats = {
     total: orders.length,
@@ -106,9 +133,14 @@ const AdminOrdersPage = () => {
           <h1>Gestión de Pedidos</h1>
           <p className="subtitle">Administra todos los pedidos de la tienda</p>
         </div>
-        <Button onClick={fetchOrders} disabled={loading}>
-          {loading ? 'Actualizando...' : 'Actualizar'}
-        </Button>
+        <div className="header-actions">
+          <Button onClick={handleExportCSV} variant="ghost" disabled={loading}>
+            Exportar CSV
+          </Button>
+          <Button onClick={fetchOrders} disabled={loading}>
+            {loading ? 'Actualizando...' : 'Actualizar'}
+          </Button>
+        </div>
       </div>
 
       {/* Estadísticas */}

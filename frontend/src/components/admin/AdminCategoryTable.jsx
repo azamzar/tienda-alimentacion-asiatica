@@ -6,7 +6,15 @@ import './AdminCategoryTable.css';
 /**
  * Tabla de categorías para administradores
  */
-const AdminCategoryTable = ({ categories, onEdit, onDelete, loading }) => {
+const AdminCategoryTable = ({
+  categories,
+  onEdit,
+  onDelete,
+  loading,
+  selectedIds = [],
+  onSelectAll,
+  onSelectOne
+}) => {
   if (loading) {
     return (
       <div className="admin-category-table-loading">
@@ -25,6 +33,10 @@ const AdminCategoryTable = ({ categories, onEdit, onDelete, loading }) => {
     );
   }
 
+  // Check if all categories are selected
+  const allSelected = categories.length > 0 && selectedIds.length === categories.length;
+  const someSelected = selectedIds.length > 0 && selectedIds.length < categories.length;
+
   return (
     <div className="admin-category-table-container">
       {/* Desktop table */}
@@ -32,20 +44,50 @@ const AdminCategoryTable = ({ categories, onEdit, onDelete, loading }) => {
         <table className="admin-category-table">
           <thead>
             <tr>
+              <th className="checkbox-column">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={input => {
+                    if (input) input.indeterminate = someSelected;
+                  }}
+                  onChange={(e) => onSelectAll && onSelectAll(e.target.checked)}
+                  className="category-checkbox"
+                  title={allSelected ? 'Deseleccionar todas' : 'Seleccionar todas'}
+                />
+              </th>
               <th>ID</th>
               <th>Nombre</th>
               <th>Descripción</th>
+              <th>Productos</th>
               <th>Fecha de Creación</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {categories.map((category) => (
-              <tr key={category.id}>
+              <tr
+                key={category.id}
+                className={selectedIds.includes(category.id) ? 'row-selected' : ''}
+              >
+                <td className="checkbox-column">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(category.id)}
+                    onChange={(e) => onSelectOne && onSelectOne(category.id, e.target.checked)}
+                    className="category-checkbox"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </td>
                 <td className="category-id">#{category.id}</td>
                 <td className="category-name">{category.name}</td>
                 <td className="category-description">
                   {category.description || <span className="no-description">Sin descripción</span>}
+                </td>
+                <td className="category-product-count">
+                  <span className="product-count-badge">
+                    {category.product_count !== undefined ? category.product_count : 0}
+                  </span>
                 </td>
                 <td className="category-date">{formatDate(category.created_at)}</td>
                 <td className="category-actions">
@@ -67,8 +109,18 @@ const AdminCategoryTable = ({ categories, onEdit, onDelete, loading }) => {
       {/* Mobile cards */}
       <div className="admin-category-cards">
         {categories.map((category) => (
-          <div key={category.id} className="admin-category-card">
+          <div
+            key={category.id}
+            className={`admin-category-card ${selectedIds.includes(category.id) ? 'card-selected' : ''}`}
+          >
             <div className="category-card-header">
+              <input
+                type="checkbox"
+                checked={selectedIds.includes(category.id)}
+                onChange={(e) => onSelectOne && onSelectOne(category.id, e.target.checked)}
+                className="category-checkbox-mobile"
+                onClick={(e) => e.stopPropagation()}
+              />
               <div className="category-card-title">
                 <span className="category-card-id">#{category.id}</span>
                 <h3 className="category-card-name">{category.name}</h3>
@@ -82,6 +134,14 @@ const AdminCategoryTable = ({ categories, onEdit, onDelete, loading }) => {
                   {category.description || (
                     <span className="no-description">Sin descripción</span>
                   )}
+                </span>
+              </div>
+              <div className="category-card-row">
+                <span className="label">Productos:</span>
+                <span className="value">
+                  <span className="product-count-badge">
+                    {category.product_count !== undefined ? category.product_count : 0}
+                  </span>
                 </span>
               </div>
               <div className="category-card-row">
