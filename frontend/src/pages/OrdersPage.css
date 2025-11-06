@@ -136,7 +136,8 @@
 .order-card-footer {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
+  gap: 1rem;
   padding-top: 1rem;
   border-top: 1px solid #e5e7eb;
 }
@@ -147,6 +148,11 @@
   gap: 0.5rem;
   font-size: 0.875rem;
   color: #6b7280;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .order-card-address svg {

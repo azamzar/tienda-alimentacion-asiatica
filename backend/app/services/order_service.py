@@ -311,6 +311,132 @@ class OrderService:
         order = self.order_repo.get_with_items(order_id)
         return self._build_order_response(order)
 
+    def reorder(self, order_id: int, user_id: str):
+        """
+        Repite un pedido anterior agregando sus items al carrito
+
+        Args:
+            order_id: ID del pedido a repetir
+            user_id: ID del usuario
+
+        Returns:
+            Dictionary con resultado de la operación
+
+        Raises:
+            HTTPException: Si el pedido no existe o no pertenece al usuario
+        """
+        # Obtener pedido con items
+        order = self.order_repo.get_with_items(order_id)
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Pedido con ID {order_id} no encontrado"
+            )
+
+        # Validar propiedad
+        if order.user_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No tienes permiso para repetir este pedido"
+            )
+
+        # Obtener o crear carrito
+        cart = self.cart_repo.get_by_user_id(user_id)
+        if not cart:
+            cart = self.cart_repo.create({'user_id': user_id})
+
+        # Agregar items al carrito
+        added_items = []
+        out_of_stock_items = []
+        insufficient_stock_items = []
+
+        for order_item in order.items:
+            product = self.product_repo.get_by_id(order_item.product_id)
+
+            if not product:
+                continue
+
+            # Verificar stock
+            if product.stock == 0:
+                out_of_stock_items.append({
+                    'name': product.name,
+                    'ordered_quantity': order_item.quantity
+                })
+                continue
+
+            # Ajustar cantidad si no hay suficiente stock
+            quantity = order_item.quantity
+            if product.stock < quantity:
+                quantity = product.stock
+                insufficient_stock_items.append({
+                    'name': product.name,
+                    'ordered_quantity': order_item.quantity,
+                    'available_quantity': product.stock
+                })
+
+            # Verificar si el producto ya está en el carrito
+            existing_cart_item = self.cart_item_repo.get_by_cart_and_product(
+                cart.id,
+                product.id
+            )
+
+            if existing_cart_item:
+                # Actualizar cantidad (sin exceder stock)
+                new_quantity = min(
+                    existing_cart_item.quantity + quantity,
+                    product.stock
+                )
+                self.cart_item_repo.update(
+                    existing_cart_item,
+                    {'quantity': new_quantity}
+                )
+            else:
+                # Agregar nuevo item
+                self.cart_item_repo.create({
+                    'cart_id': cart.id,
+                    'product_id': product.id,
+                    'quantity': quantity
+                })
+
+            added_items.append({
+                'name': product.name,
+                'quantity': quantity
+            })
+
+        self.db.commit()
+
+        return {
+            'success': len(added_items) > 0,
+            'added_items': added_items,
+            'out_of_stock_items': out_of_stock_items,
+            'insufficient_stock_items': insufficient_stock_items,
+            'message': self._build_reorder_message(
+                added_items,
+                out_of_stock_items,
+                insufficient_stock_items
+            )
+        }
+
+    def _build_reorder_message(
+        self,
+        added_items: list,
+        out_of_stock_items: list,
+        insufficient_stock_items: list
+    ) -> str:
+        """Construye mensaje informativo del reorder"""
+        if not added_items:
+            return "No se pudo agregar ningún producto al carrito. Todos están agotados."
+
+        message = f"Se agregaron {len(added_items)} productos al carrito."
+
+        if insufficient_stock_items:
+            message += f" {len(insufficient_stock_items)} productos tienen stock limitado."
+
+        if out_of_stock_items:
+            message += f" {len(out_of_stock_items)} productos están agotados."
+
+        return message
+
     def _build_order_response(self, order: Order) -> OrderResponse:
         """
         Construye la respuesta del pedido

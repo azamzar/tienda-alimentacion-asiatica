@@ -71,6 +71,21 @@ export const orderService = {
   },
 
   /**
+   * Repetir un pedido anterior agregando sus items al carrito
+   * @param {number} orderId - ID del pedido a repetir
+   * @returns {Promise<Object>} Resultado de la operación
+   *   - success: boolean - Si se agregaron productos
+   *   - added_items: Array - Productos agregados
+   *   - out_of_stock_items: Array - Productos sin stock
+   *   - insufficient_stock_items: Array - Productos con stock limitado
+   *   - message: string - Mensaje informativo
+   */
+  reorder: async (orderId) => {
+    const { data } = await api.post(`/orders/${orderId}/reorder`);
+    return data;
+  },
+
+  /**
    * Exportar pedidos a CSV (solo admin)
    * @param {Object} filters - Filtros de exportación
    * @param {string} filters.status - Filtrar por estado (opcional)

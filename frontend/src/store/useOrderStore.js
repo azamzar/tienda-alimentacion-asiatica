@@ -82,6 +82,22 @@ const useOrderStore = create((set, get) => ({
     }
   },
 
+  // Repetir un pedido (agregar items al carrito)
+  reorderOrder: async (orderId) => {
+    set({ loading: true, error: null });
+    try {
+      const result = await orderService.reorder(orderId);
+      set({ loading: false });
+      return result;
+    } catch (error) {
+      set({
+        loading: false,
+        error: error.response?.data?.detail || 'Error al repetir el pedido'
+      });
+      throw error;
+    }
+  },
+
   // Limpiar pedido actual
   clearCurrentOrder: () => set({ currentOrder: null }),
 

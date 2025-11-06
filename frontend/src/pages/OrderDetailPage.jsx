@@ -17,8 +17,9 @@ function OrderDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentOrder, loading, error, fetchOrderById, cancelOrder } = useOrderStore();
+  const { currentOrder, loading, error, fetchOrderById, cancelOrder, reorderOrder } = useOrderStore();
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
 
   useEffect(() => {
@@ -95,6 +96,53 @@ function OrderDetailPage() {
         },
       }
     );
+  };
+
+  const handleReorder = async () => {
+    setIsReordering(true);
+
+    try {
+      const result = await reorderOrder(id);
+
+      // Show success message
+      if (result.success) {
+        toast.success(result.message, {
+          icon: '🛒',
+          duration: 5000
+        });
+
+        // Show warnings if any
+        if (result.out_of_stock_items.length > 0) {
+          setTimeout(() => {
+            toast.error(
+              `${result.out_of_stock_items.length} producto(s) agotado(s): ${result.out_of_stock_items.map(item => item.name).join(', ')}`,
+              { duration: 6000 }
+            );
+          }, 500);
+        }
+
+        if (result.insufficient_stock_items.length > 0) {
+          setTimeout(() => {
+            toast(
+              `Stock limitado para ${result.insufficient_stock_items.length} producto(s)`,
+              { icon: '⚠️', duration: 5000 }
+            );
+          }, 1000);
+        }
+
+        // Navigate to cart after a short delay
+        setTimeout(() => {
+          navigate('/cart');
+        }, 2000);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error reordering:', error);
+      toast.error(error.response?.data?.detail || 'Error al repetir el pedido');
+    } finally {
+      setIsReordering(false);
+    }
   };
 
   // Loading state
@@ -286,8 +334,16 @@ function OrderDetailPage() {
         </Card>
 
         {/* Actions */}
-        {canCancel && (
-          <div className="order-detail-actions">
+        <div className="order-detail-actions">
+          <Button
+            variant="primary"
+            onClick={handleReorder}
+            disabled={isReordering}
+            loading={isReordering}
+          >
+            🔄 Volver a pedir
+          </Button>
+          {canCancel && (
             <Button
               variant="danger"
               onClick={handleCancelOrder}
@@ -296,8 +352,8 @@ function OrderDetailPage() {
             >
               Cancelar Pedido
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

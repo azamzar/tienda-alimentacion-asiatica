@@ -153,6 +153,32 @@ def cancel_order(
     return service.cancel_order(order_id, user_id_filter)
 
 
+@router.post("/{order_id}/reorder", status_code=status.HTTP_200_OK)
+def reorder_order(
+    order_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Repite un pedido anterior agregando sus items al carrito
+
+    **Requires authentication**
+
+    Toma todos los productos del pedido especificado y los agrega al carrito actual.
+    Verifica disponibilidad de stock y ajusta cantidades si es necesario.
+
+    Returns:
+        - **success**: True si se agregaron productos
+        - **added_items**: Lista de productos agregados
+        - **out_of_stock_items**: Productos sin stock
+        - **insufficient_stock_items**: Productos con stock limitado
+        - **message**: Mensaje informativo del resultado
+    """
+    service = OrderService(db)
+    result = service.reorder(order_id, str(current_user.id))
+    return result
+
+
 @router.get("/export/csv", status_code=status.HTTP_200_OK)
 def export_orders_csv(
     status_filter: Optional[OrderStatusEnum] = Query(None, alias="status", description="Filtrar por estado"),

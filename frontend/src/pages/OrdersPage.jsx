@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useOrderStore } from '../store/useOrderStore';
 import { formatPrice, formatDate } from '../utils/formatters';
 import OrderStatusBadge from '../components/orders/OrderStatusBadge';
@@ -14,8 +15,9 @@ import './OrdersPage.css';
  */
 function OrdersPage() {
   const navigate = useNavigate();
-  const { orders, loading, error, fetchOrders } = useOrderStore();
+  const { orders, loading, error, fetchOrders, reorderOrder } = useOrderStore();
   const [statusFilter, setStatusFilter] = useState('all');
+  const [reorderingId, setReorderingId] = useState(null);
 
   useEffect(() => {
     fetchOrders();
@@ -31,6 +33,34 @@ function OrdersPage() {
       fetchOrders();
     } else {
       fetchOrders({ status });
+    }
+  };
+
+  const handleReorder = async (e, orderId) => {
+    e.stopPropagation(); // Prevenir navegación al detalle
+    setReorderingId(orderId);
+
+    try {
+      const result = await reorderOrder(orderId);
+
+      if (result.success) {
+        toast.success(result.message, {
+          icon: '🛒',
+          duration: 4000
+        });
+
+        // Navegar al carrito después de un momento
+        setTimeout(() => {
+          navigate('/cart');
+        }, 1500);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error reordering:', error);
+      toast.error(error.response?.data?.detail || 'Error al repetir el pedido');
+    } finally {
+      setReorderingId(null);
     }
   };
 
@@ -187,6 +217,15 @@ function OrdersPage() {
                   </svg>
                   {order.shipping_address}
                 </span>
+                <Button
+                  variant="secondary"
+                  size="small"
+                  onClick={(e) => handleReorder(e, order.id)}
+                  disabled={reorderingId === order.id}
+                  loading={reorderingId === order.id}
+                >
+                  🔄 Repetir
+                </Button>
               </div>
 
               <div className="order-card-arrow">

@@ -6,5 +6,6 @@ from app.models.order import Order, OrderItem, OrderStatus
 from app.models.user import User, UserRole
 from app.models.refresh_token import RefreshToken
 from app.models.review import Review
+from app.models.wishlist import WishlistItem
 
-__all__ = ["Base", "Category", "Product", "Cart", "CartItem", "Order", "OrderItem", "OrderStatus", "User", "UserRole", "RefreshToken", "Review"]
+__all__ = ["Base", "Category", "Product", "Cart", "CartItem", "Order", "OrderItem", "OrderStatus", "User", "UserRole", "RefreshToken", "Review", "WishlistItem"]
