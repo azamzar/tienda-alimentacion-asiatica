@@ -204,6 +204,85 @@ The backend implements a **layered architecture (Clean Architecture)** with clea
 - `created_at` (DateTime)
 - `updated_at` (DateTime)
 - `category` (Relationship → Category)
+- `reviews` (Relationship → Review)
+- `wishlist_items` (Relationship → WishlistItem)
+
+**User**
+- `id` (Integer, PK)
+- `email` (String, unique, indexed)
+- `hashed_password` (String)
+- `full_name` (String, optional)
+- `role` (Enum: customer/admin)
+- `is_active` (Boolean, default=True)
+- `created_at` (DateTime)
+- `updated_at` (DateTime)
+- `refresh_tokens` (Relationship → RefreshToken)
+- `reviews` (Relationship → Review)
+- `wishlist_items` (Relationship → WishlistItem)
+
+**Cart**
+- `id` (Integer, PK)
+- `user_id` (Integer, FK → users.id)
+- `created_at` (DateTime)
+- `items` (Relationship → CartItem)
+
+**CartItem**
+- `id` (Integer, PK)
+- `cart_id` (Integer, FK → carts.id)
+- `product_id` (Integer, FK → products.id)
+- `quantity` (Integer)
+- `added_at` (DateTime)
+
+**Order**
+- `id` (Integer, PK)
+- `user_id` (Integer, FK → users.id)
+- `status` (Enum: pending/confirmed/processing/shipped/delivered/cancelled)
+- `total_amount` (Float)
+- `customer_name` (String)
+- `customer_email` (String)
+- `customer_phone` (String)
+- `shipping_address` (Text)
+- `notes` (Text, optional)
+- `created_at` (DateTime)
+- `updated_at` (DateTime)
+- `items` (Relationship → OrderItem)
+
+**OrderItem**
+- `id` (Integer, PK)
+- `order_id` (Integer, FK → orders.id)
+- `product_id` (Integer, FK → products.id)
+- `quantity` (Integer)
+- `price` (Float)
+
+**Review**
+- `id` (Integer, PK)
+- `product_id` (Integer, FK → products.id)
+- `user_id` (Integer, FK → users.id)
+- `rating` (Integer, 1-5)
+- `title` (String, optional, max 200)
+- `comment` (Text, optional, max 2000)
+- `created_at` (DateTime)
+- `updated_at` (DateTime)
+- `product` (Relationship → Product)
+- `user` (Relationship → User)
+- Unique constraint: one review per user per product
+
+**WishlistItem**
+- `id` (Integer, PK)
+- `user_id` (Integer, FK → users.id)
+- `product_id` (Integer, FK → products.id)
+- `added_at` (DateTime)
+- `user` (Relationship → User)
+- `product` (Relationship → Product)
+- Unique constraint: one product per user in wishlist
+
+**RefreshToken**
+- `id` (Integer, PK)
+- `user_id` (Integer, FK → users.id)
+- `token` (String, unique, indexed)
+- `expires_at` (DateTime)
+- `revoked` (Boolean)
+- `created_at` (DateTime)
 
 ## 6. How to Run the Project
 
@@ -314,14 +393,39 @@ The frontend is also connected to the `tienda-net` network.
 - `GET /api/v1/orders/` - List orders (user's orders or all for admin)
 - `GET /api/v1/orders/{id}` - Get order details
 - `POST /api/v1/orders/` - Create order from cart
+- `POST /api/v1/orders/{id}/reorder` - Repeat order (add items to cart)
 - `PATCH /api/v1/orders/{id}/status` - Update order status (admin)
 - `DELETE /api/v1/orders/{id}` - Cancel order (pending only)
+- `GET /api/v1/orders/export/csv` - Export orders to CSV (admin)
+
+**Reviews** (Public GET, authenticated POST/PUT/DELETE)
+- `GET /api/v1/reviews/products/{id}` - Get product reviews (public)
+- `GET /api/v1/reviews/products/{id}/stats` - Get review statistics (public)
+- `GET /api/v1/reviews/products/{id}/me` - Get user's review for product (auth)
+- `GET /api/v1/reviews/me` - Get all user reviews (auth)
+- `POST /api/v1/reviews/` - Create review (auth)
+- `PUT /api/v1/reviews/{id}` - Update review (owner/admin)
+- `DELETE /api/v1/reviews/{id}` - Delete review (owner/admin)
+
+**Wishlist** (Requires authentication)
+- `GET /api/v1/wishlist/me` - Get user's wishlist
+- `GET /api/v1/wishlist/me/count` - Get wishlist count
+- `GET /api/v1/wishlist/me/check/{id}` - Check if product in wishlist
+- `POST /api/v1/wishlist/me` - Add product to wishlist
+- `POST /api/v1/wishlist/me/bulk` - Bulk add products to wishlist
+- `DELETE /api/v1/wishlist/me/{id}` - Remove product from wishlist
+- `DELETE /api/v1/wishlist/me` - Clear wishlist
 
 **Users** (Admin only)
 - `GET /api/v1/users/` - List all users with filters
 - `GET /api/v1/users/stats` - Get user statistics
 - `PUT /api/v1/users/{id}` - Update user details
+- `PATCH /api/v1/users/{id}/role` - Change user role (admin)
+- `POST /api/v1/users/{id}/reset-password` - Reset user password (admin)
 - `DELETE /api/v1/users/{id}` - Deactivate user (soft delete)
+
+**Categories (Admin)**
+- `POST /api/v1/categories/bulk/delete` - Bulk delete categories (admin)
 
 **Admin**
 - `GET /api/v1/admin/dashboard/stats` - Get dashboard statistics
@@ -761,32 +865,119 @@ RATE_LIMIT_REGISTER_PER_HOUR=3
 - ✅ Reset user passwords from admin panel
 - ✅ All operations with proper validation and feedback
 
+### ✅ Recently Completed (2025-11-06) - PHASE 19
+
+**Fase 19 - Customer Features (Complete):**
+
+**1. Product Reviews & Ratings System:**
+- [x] Backend: Review model with SQLAlchemy (ratings 1-5, title, comment)
+- [x] Backend: ReviewRepository with specialized queries
+- [x] Backend: ReviewService with business logic and authorization
+- [x] Backend: Complete API endpoints (7 endpoints):
+  * GET /api/v1/reviews/products/{id} - Get product reviews (public)
+  * GET /api/v1/reviews/products/{id}/stats - Get review statistics
+  * GET /api/v1/reviews/products/{id}/me - Get user's review
+  * GET /api/v1/reviews/me - Get all user reviews
+  * POST /api/v1/reviews - Create review
+  * PUT /api/v1/reviews/{id} - Update review (owner/admin)
+  * DELETE /api/v1/reviews/{id} - Delete review (owner/admin)
+- [x] Backend: Review statistics with rating distribution
+- [x] Backend: Unique constraint (one review per user per product)
+- [x] Backend: Database migration applied
+- [x] Frontend: reviewService.js with all API methods
+- [x] Frontend: RatingStars component (interactive and display modes)
+- [x] Frontend: ReviewCard component with user info and actions
+- [x] Frontend: ReviewForm component with validation
+- [x] Frontend: Full integration in ProductDetailPage
+- [x] Frontend: Review statistics with rating distribution bars
+- [x] Frontend: Edit and delete own reviews
+- [x] Frontend: Complete CSS styling and dark mode
+- [x] Total: ~2,800 lines of code across 22 files
+
+**2. Reorder Button (Repeat Orders):**
+- [x] Backend: OrderService.reorder() method
+- [x] Backend: Smart stock verification and quantity adjustment
+- [x] Backend: POST /api/v1/orders/{id}/reorder endpoint
+- [x] Backend: Detailed result with added/out-of-stock/insufficient items
+- [x] Backend: Automatic cart creation if needed
+- [x] Frontend: orderService.reorder() API method
+- [x] Frontend: useOrderStore.reorderOrder() state management
+- [x] Frontend: Reorder button in OrderDetailPage
+- [x] Frontend: Reorder button in OrdersPage (list view)
+- [x] Frontend: Toast notifications with stock warnings
+- [x] Frontend: Loading states and error handling
+- [x] Total: ~650 lines of code across 11 files
+
+**3. Wishlist/Favorites System:**
+- [x] Backend: WishlistItem model with user-product relationships
+- [x] Backend: WishlistRepository with specialized queries
+- [x] Backend: WishlistService with business logic
+- [x] Backend: Complete API endpoints (7 endpoints):
+  * GET /api/v1/wishlist/me - Get user's wishlist
+  * GET /api/v1/wishlist/me/count - Get wishlist count
+  * GET /api/v1/wishlist/me/check/{id} - Check if in wishlist
+  * POST /api/v1/wishlist/me - Add to wishlist
+  * POST /api/v1/wishlist/me/bulk - Bulk add multiple products
+  * DELETE /api/v1/wishlist/me/{id} - Remove from wishlist
+  * DELETE /api/v1/wishlist/me - Clear wishlist
+- [x] Backend: Unique constraint (one product per user)
+- [x] Backend: Cascade delete on user/product removal
+- [x] Backend: Database migration applied
+- [x] Frontend: wishlistService.js with all API methods
+- [x] Frontend: useWishlistStore with Zustand + persist
+- [x] Frontend: WishlistButton component with heart animation
+- [x] Frontend: Integration in ProductCard (top-left corner)
+- [x] Frontend: Animated heartbeat effect on add
+- [x] Frontend: Toast notifications for all operations
+- [x] Frontend: Complete CSS styling and dark mode
+- [x] Total: ~2,100 lines of code across 13 files
+
+**Phase 19 Complete Summary:**
+- ✅ Product Reviews & Ratings (~2,800 lines)
+- ✅ Reorder Button (~650 lines)
+- ✅ Wishlist/Favorites (~2,100 lines)
+- **Total: ~5,550 lines of code across 46 files**
+
 ### 🔄 In Progress
 
 - None currently
 
 ### 📋 Planned Features
 
-**Phase 18 - Backend Improvements:**
+**Phase 20 - Enhanced Product Discovery:**
+- [ ] Product search with autocomplete (predictive search)
+- [ ] Advanced filtering system:
+  - [ ] Price range slider
+  - [ ] Filter by rating (reviews)
+  - [ ] Filter by availability (in stock/out of stock)
+  - [ ] Sort by: price, name, rating, date
+- [ ] Wishlist page (dedicated page beyond the button)
+- [ ] Pagination/Infinite scroll for products
+
+**Phase 21 - Backend Improvements:**
 - [ ] Structured logging (JSON format for production)
 - [ ] Password reset/recovery via email
 - [ ] Email notifications (order confirmations, status updates)
 - [ ] Cloud storage integration (S3, Google Cloud Storage) for images
-- [ ] Redis for rate limiting (distributed system)
+- [ ] Redis for distributed rate limiting
+- [ ] Database query optimization and indexing
+- [ ] API response caching improvements
 
-**Phase 19 - Customer Features:**
-- [ ] Product reviews and ratings
-- [ ] Wishlist/favorites functionality
-- [ ] Order history with reorder button
-- [ ] Product search with autocomplete
-- [ ] Advanced filtering (price range, availability)
-
-**Phase 20 - Payment & Deployment:**
+**Phase 22 - Payment & Deployment:**
 - [ ] Payment integration (Stripe/PayPal)
 - [ ] Real-time order tracking
-- [ ] CI/CD pipeline configuration
+- [ ] CI/CD pipeline configuration (GitHub Actions / GitLab CI)
 - [ ] Docker production configuration
 - [ ] Deployment to cloud (AWS/GCP/Azure)
+- [ ] SSL/TLS certificates configuration
+- [ ] Domain configuration and DNS
+
+**Phase 23 - Progressive Web App:**
+- [ ] PWA configuration (manifest.json, service worker)
+- [ ] Offline support for browsing
+- [ ] Push notifications
+- [ ] Install to home screen functionality
+- [ ] App-like navigation experience
 
 ## 11. Common Development Tasks
 
@@ -916,9 +1107,14 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 16. ~~Admin category management (CRUD)~~ ✅ DONE
 17. ~~Admin user management (view, edit, deactivate)~~ ✅ DONE
 18. ~~Testing (backend pytest + frontend vitest)~~ ✅ DONE
-19. Bulk operations for products
-20. Payment integration
-21. Deployment
+19. ~~Bulk operations for products and categories~~ ✅ DONE
+20. ~~Product reviews and ratings system~~ ✅ DONE
+21. ~~Wishlist/favorites functionality~~ ✅ DONE
+22. ~~Reorder button for past orders~~ ✅ DONE
+23. Product search with autocomplete
+24. Advanced filtering (price range, rating, availability)
+25. Payment integration (Stripe/PayPal)
+26. Deployment to production
 
 ### Important Notes for AI Assistants
 
@@ -942,7 +1138,7 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - This covers all Vite dev server port variations
 - Located in `backend/app/config/settings.py`
 
-**Current Status:**
+**Current Status (Phase 19 Complete):**
 - ✅ Frontend: Product catalog fully functional
 - ✅ Frontend: Shopping cart fully functional
 - ✅ Frontend: Checkout flow complete with optimized UX
@@ -952,12 +1148,24 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - ✅ Frontend: Admin order management fully implemented
 - ✅ Frontend: Admin category management fully implemented
 - ✅ Frontend: Admin user management fully implemented
+- ✅ Frontend: Bulk operations for products and categories
+- ✅ Frontend: CSV export for products and orders
+- ✅ Frontend: Product reviews and ratings system
+- ✅ Frontend: Wishlist/favorites functionality
+- ✅ Frontend: Reorder button for past orders
 - ✅ Frontend: 99 tests implemented (100% passing)
 - ✅ Backend: All endpoints working with auth
 - ✅ Backend: Cart items include subtotal field
 - ✅ Backend: Admin can view and update all orders
 - ✅ Backend: Admin can view, create, update and delete categories
 - ✅ Backend: Admin can view, update and deactivate users
+- ✅ Backend: Bulk operations for products and categories
+- ✅ Backend: CSV export endpoints for products and orders
 - ✅ Backend: Image optimization system implemented
+- ✅ Backend: Product reviews and ratings (7 endpoints)
+- ✅ Backend: Wishlist system (7 endpoints)
+- ✅ Backend: Reorder functionality with stock verification
 - ✅ Backend: 104 tests implemented (100% passing)
-- ⏳ Pending: Bulk operations, payment integration
+- ⏳ Next: Product search with autocomplete
+- ⏳ Next: Advanced filtering (price, rating, availability)
+- ⏳ Next: Payment integration (Stripe/PayPal)

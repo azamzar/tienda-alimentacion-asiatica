@@ -422,6 +422,7 @@ GET    /api/v1/orders/               # Listar pedidos (🔒 cliente: solo suyos,
 GET    /api/v1/orders/{id}           # Obtener pedido por ID (🔒 cliente: solo suyos, admin: todos)
 PATCH  /api/v1/orders/{id}           # Actualizar pedido (🔒 cliente: datos básicos, admin: todo)
 POST   /api/v1/orders/{id}/cancel    # Cancelar pedido (🔒 cliente: solo suyos, admin: todos)
+POST   /api/v1/orders/{id}/reorder   # Reordenar productos de un pedido anterior (🔒 requiere auth)
 GET    /api/v1/orders/export/csv     # Exportar pedidos a CSV (🔒 requiere admin)
 ```
 
@@ -429,6 +430,12 @@ GET    /api/v1/orders/export/csv     # Exportar pedidos a CSV (🔒 requiere adm
 - `export/csv`: Exporta todos los pedidos a CSV con filtro opcional por estado
 - Genera archivo con timestamp: `orders_export_YYYYMMDD_HHMMSS.csv`
 - Campos: Order ID, Date, Customer Name, Email, Phone, Address, Status, Total Amount, Items Count, Notes
+
+**Reorder:**
+- `reorder`: Agrega todos los productos de un pedido anterior al carrito actual
+- Verifica disponibilidad de stock para cada producto
+- Ajusta cantidades automáticamente si hay stock insuficiente
+- Retorna detalles de productos agregados, agotados y con stock insuficiente
 
 #### Admin
 ```
