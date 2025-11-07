@@ -148,6 +148,43 @@ class ProductService:
         """Get products with low stock"""
         return self.repository.get_low_stock_products(threshold)
 
+    def search_products_advanced(
+        self,
+        search_query: Optional[str] = None,
+        category_id: Optional[int] = None,
+        min_price: Optional[float] = None,
+        max_price: Optional[float] = None,
+        min_rating: Optional[float] = None,
+        in_stock_only: Optional[bool] = None,
+        sort_by: Optional[str] = "created_at",
+        sort_order: Optional[str] = "desc",
+        skip: int = 0,
+        limit: int = 100
+    ) -> List[Product]:
+        """Advanced product search with multiple filters and sorting"""
+        return self.repository.search_products_advanced(
+            search_query=search_query,
+            category_id=category_id,
+            min_price=min_price,
+            max_price=max_price,
+            min_rating=min_rating,
+            in_stock_only=in_stock_only,
+            sort_by=sort_by,
+            sort_order=sort_order,
+            skip=skip,
+            limit=limit
+        )
+
+    def autocomplete_search(self, query: str, limit: int = 5) -> List[Product]:
+        """Quick autocomplete search for product suggestions"""
+        if not query or len(query) < 2:
+            return []
+        return self.repository.autocomplete_search(query, limit)
+
+    def get_price_range(self) -> dict:
+        """Get min and max prices from all products"""
+        return self.repository.get_price_range()
+
     async def upload_product_image(self, product_id: int, file: UploadFile) -> Product:
         """
         Upload an image for a product and generate optimized thumbnails

@@ -230,11 +230,97 @@
   background-color: #2563eb;
 }
 
+/* Stock Filter - Checkbox */
+.product-grid-stock-filter {
+  padding: 1rem;
+  background: var(--color-card-background);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.product-grid-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+}
+
+.product-grid-checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.product-grid-checkbox-label:hover {
+  color: var(--color-primary);
+}
+
+/* Header with Sort */
+.product-grid-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.product-grid-header-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.product-grid-sort {
+  flex-shrink: 0;
+}
+
+.product-grid-retry-button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.product-grid-retry-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
 /* Responsive */
 @media (max-width: 1023px) {
   .product-grid-filters {
     border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
     padding: 1.5rem;
+  }
+
+  .product-grid-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .product-grid-sort {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-grid-header-info h1 {
+    font-size: 1.5rem;
+  }
+
+  .product-grid-checkbox-label {
+    font-size: 0.9rem;
   }
 }

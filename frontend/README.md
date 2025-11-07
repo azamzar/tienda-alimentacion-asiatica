@@ -1672,21 +1672,101 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 - [x] Toast notifications para todas las operaciones
 - [x] Manejo de errores mejorado
 
-### 📋 Fase 18: Futuras Mejoras
-- [ ] Sistema de wishlist/favoritos
-- [ ] Product reviews y ratings
-- [ ] Reorder button en historial de pedidos
+### ✅ Fase 18 (Phase 19): Customer Features (Completado - 2025-11-06)
+
+**1. Product Reviews & Ratings System (~2,800 líneas, 22 archivos):**
+- [x] Backend: Review model con SQLAlchemy (ratings 1-5, title, comment)
+- [x] Backend: ReviewRepository con queries especializadas
+- [x] Backend: ReviewService con lógica de negocio y autorización
+- [x] Backend: 7 endpoints completos:
+  * GET /api/v1/reviews/products/{id} - Reviews del producto (público)
+  * GET /api/v1/reviews/products/{id}/stats - Estadísticas de reviews
+  * GET /api/v1/reviews/products/{id}/me - Review del usuario actual
+  * GET /api/v1/reviews/me - Todas las reviews del usuario
+  * POST /api/v1/reviews - Crear review
+  * PUT /api/v1/reviews/{id} - Actualizar review (owner/admin)
+  * DELETE /api/v1/reviews/{id} - Eliminar review (owner/admin)
+- [x] Backend: Estadísticas con distribución de ratings
+- [x] Backend: Constraint único (una review por usuario por producto)
+- [x] Backend: Migración de base de datos aplicada
+- [x] Frontend: reviewService.js con todos los métodos API
+- [x] Frontend: RatingStars component (modo interactivo y display)
+- [x] Frontend: ReviewCard component con info de usuario y acciones
+- [x] Frontend: ReviewForm component con validación completa
+- [x] Frontend: Integración completa en ProductDetailPage
+- [x] Frontend: Estadísticas con barras de distribución de ratings
+- [x] Frontend: Editar y eliminar propias reviews
+- [x] Frontend: CSS completo y dark mode
+- [x] Frontend: Toast notifications para todas las acciones
+
+**2. Reorder Button - Repeat Orders (~650 líneas, 11 archivos):**
+- [x] Backend: OrderService.reorder() method
+- [x] Backend: Verificación inteligente de stock
+- [x] Backend: Ajuste automático de cantidades si hay stock insuficiente
+- [x] Backend: POST /api/v1/orders/{id}/reorder endpoint
+- [x] Backend: Respuesta detallada (items agregados/agotados/insuficientes)
+- [x] Backend: Creación automática de carrito si no existe
+- [x] Frontend: orderService.reorder() método API
+- [x] Frontend: useOrderStore.reorderOrder() state management
+- [x] Frontend: Botón "Reordenar" en OrderDetailPage
+- [x] Frontend: Botón "Reordenar" en OrdersPage (vista de lista)
+- [x] Frontend: Toast notifications con advertencias de stock
+- [x] Frontend: Estados de loading y error handling
+
+**3. Wishlist/Favorites System (~2,100 líneas, 13 archivos):**
+- [x] Backend: WishlistItem model con relaciones user-product
+- [x] Backend: WishlistRepository con queries especializadas
+- [x] Backend: WishlistService con lógica de negocio
+- [x] Backend: 7 endpoints completos:
+  * GET /api/v1/wishlist/me - Wishlist del usuario
+  * GET /api/v1/wishlist/me/count - Contador de items
+  * GET /api/v1/wishlist/me/check/{id} - Verificar si producto está
+  * POST /api/v1/wishlist/me - Agregar producto
+  * POST /api/v1/wishlist/me/bulk - Agregar múltiples productos
+  * DELETE /api/v1/wishlist/me/{id} - Eliminar producto
+  * DELETE /api/v1/wishlist/me - Limpiar wishlist
+- [x] Backend: Constraint único (un producto por usuario)
+- [x] Backend: Cascade delete en eliminación de user/product
+- [x] Backend: Migración de base de datos aplicada
+- [x] Frontend: wishlistService.js con todos los métodos API
+- [x] Frontend: useWishlistStore con Zustand + persist
+- [x] Frontend: WishlistButton component con animación de corazón
+- [x] Frontend: Integración en ProductCard (esquina superior izquierda)
+- [x] Frontend: Efecto heartbeat animado al agregar
+- [x] Frontend: Toast notifications para todas las operaciones
+- [x] Frontend: CSS completo y dark mode
+
+**Phase 19 Summary:**
+- ✅ **Total: ~5,550 líneas de código en 46 archivos**
+- ✅ **3 features principales implementadas al 100%**
+- ✅ **21 endpoints nuevos en backend**
+- ✅ **3 nuevos modelos de base de datos**
+- ✅ **6 nuevos componentes de frontend**
+- ✅ **3 nuevos servicios y stores**
+
+---
+
+### 📋 Fase 19 (Future): Futuras Mejoras
 - [ ] Búsqueda con autocomplete
-- [ ] Filtros avanzados (precio, disponibilidad)
+- [ ] Filtros avanzados (precio, rating, disponibilidad)
+- [ ] Ordenar productos por: precio, nombre, rating, fecha
 - [ ] Paginación infinita en productos
+- [ ] Página de wishlist completa (además del botón)
 - [ ] Internacionalización (i18n)
 - [ ] PWA (Progressive Web App)
 - [ ] Animaciones con Framer Motion
 - [ ] Service Worker para caché offline
+
+### 📋 Fase 20 (Future): Payment & Deployment
 - [ ] Payment integration (Stripe/PayPal)
-- [ ] Email notifications
+- [ ] Real-time order tracking
+- [ ] Email notifications (confirmaciones, cambios de estado)
+- [ ] Password reset/recovery via email
 - [ ] Structured logging (backend)
 - [ ] Cloud storage para imágenes (S3/GCS)
+- [ ] CI/CD pipeline
+- [ ] Docker production configuration
+- [ ] Deployment to cloud (AWS/GCP/Azure)
 
 ## Cómo Continuar el Desarrollo
 

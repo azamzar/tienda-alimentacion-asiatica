@@ -1,0 +1,202 @@
+/* Rating Filter Styles */
+.rating-filter {
+  padding: 1.5rem;
+  background: var(--color-card-background);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  transition: var(--transition-theme);
+}
+
+.rating-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.rating-filter-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.rating-filter-clear {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating-filter-clear:hover {
+  background: var(--color-background-secondary);
+  color: var(--color-danger);
+}
+
+.rating-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rating-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  text-align: left;
+}
+
+.rating-option:hover {
+  background: var(--color-background-secondary);
+  border-color: var(--color-primary);
+  transform: translateX(4px);
+}
+
+.rating-option.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.rating-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.rating-star {
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.rating-star.filled {
+  color: #fbbf24;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.rating-star.empty {
+  color: var(--color-border);
+}
+
+.rating-option:hover .rating-star {
+  transform: scale(1.1);
+}
+
+.rating-text {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-left: auto;
+}
+
+.rating-option.active .rating-text {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.rating-filter-selected {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid var(--color-primary);
+  border-radius: 6px;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rating-filter-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Dark mode adjustments */
+.dark-theme .rating-filter {
+  background: var(--color-card-background);
+  border-color: var(--color-border);
+}
+
+.dark-theme .rating-option {
+  border-color: var(--color-border);
+}
+
+.dark-theme .rating-option:hover {
+  background: var(--color-background-secondary);
+  border-color: var(--color-primary);
+}
+
+.dark-theme .rating-option.active {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--color-primary);
+}
+
+.dark-theme .rating-star.empty {
+  color: var(--color-border);
+}
+
+.dark-theme .rating-filter-selected {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .rating-filter {
+    padding: 1rem;
+  }
+
+  .rating-star {
+    font-size: 1rem;
+  }
+
+  .rating-text {
+    font-size: 0.85rem;
+  }
+
+  .rating-option {
+    padding: 0.6rem 0.75rem;
+  }
+
+  .rating-filter-selected {
+    font-size: 0.85rem;
+    padding: 0.6rem;
+  }
+}
+
+/* Accessibility - Focus styles */
+.rating-option:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.rating-filter-clear:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

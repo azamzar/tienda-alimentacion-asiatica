@@ -147,5 +147,50 @@ export const productService = {
       responseType: 'blob'
     });
     return response.data;
+  },
+
+  /**
+   * Búsqueda avanzada de productos con filtros múltiples
+   * @param {Object} params - Parámetros de búsqueda
+   * @param {string} params.search_query - Buscar en nombre y descripción
+   * @param {number} params.category_id - Filtrar por categoría
+   * @param {number} params.min_price - Precio mínimo
+   * @param {number} params.max_price - Precio máximo
+   * @param {number} params.min_rating - Rating mínimo (1-5)
+   * @param {boolean} params.in_stock_only - Solo productos en stock
+   * @param {string} params.sort_by - Ordenar por: name, price, created_at, rating
+   * @param {string} params.sort_order - Orden: asc o desc
+   * @param {number} params.skip - Registros a omitir
+   * @param {number} params.limit - Límite de registros
+   * @returns {Promise<Array>} Lista de productos filtrados
+   */
+  advancedSearch: async (params = {}) => {
+    const { data } = await api.get('/products/advanced-search/', { params });
+    return data;
+  },
+
+  /**
+   * Autocompletado de búsqueda rápida
+   * @param {string} query - Consulta de búsqueda (mín 2 caracteres)
+   * @param {number} limit - Número máximo de sugerencias (default 5, max 10)
+   * @returns {Promise<Array>} Lista de sugerencias de productos
+   */
+  autocomplete: async (query, limit = 5) => {
+    if (!query || query.length < 2) {
+      return [];
+    }
+    const { data } = await api.get('/products/autocomplete/', {
+      params: { q: query, limit }
+    });
+    return data;
+  },
+
+  /**
+   * Obtener rango de precios (min y max) de todos los productos
+   * @returns {Promise<Object>} { min_price: number, max_price: number }
+   */
+  getPriceRange: async () => {
+    const { data } = await api.get('/products/price-range/');
+    return data;
   }
 };

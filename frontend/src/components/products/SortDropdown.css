@@ -1,0 +1,148 @@
+/* Sort Dropdown Styles */
+.sort-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sort-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sort-icon {
+  font-size: 1.1rem;
+}
+
+.sort-select-wrapper {
+  position: relative;
+  display: inline-block;
+  min-width: 200px;
+}
+
+.sort-select {
+  width: 100%;
+  padding: 0.6rem 2.5rem 0.6rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-input-background);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: var(--transition-theme);
+}
+
+.sort-select:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.sort-arrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+  font-size: 0.7rem;
+  transition: var(--transition-theme);
+}
+
+.sort-select:focus ~ .sort-arrow {
+  color: var(--color-primary);
+}
+
+/* Option styling (limited support across browsers) */
+.sort-select option {
+  padding: 0.5rem;
+  background: var(--color-card-background);
+  color: var(--color-text-primary);
+}
+
+/* Dark mode adjustments */
+.dark-theme .sort-select {
+  background: var(--color-input-background);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.dark-theme .sort-select:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.dark-theme .sort-select option {
+  background: var(--color-card-background);
+  color: var(--color-text-primary);
+}
+
+.dark-theme .sort-arrow {
+  color: var(--color-text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sort-dropdown {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .sort-label {
+    font-size: 0.9rem;
+  }
+
+  .sort-select-wrapper {
+    width: 100%;
+  }
+
+  .sort-select {
+    padding: 0.7rem 2.5rem 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sort-label .sort-icon {
+    display: none;
+  }
+
+  .sort-select {
+    font-size: 0.85rem;
+  }
+}
+
+/* Loading state (optional, for future use) */
+.sort-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sort-select:disabled:hover {
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+/* Animation for dropdown arrow on open (requires JS) */
+.sort-select-wrapper.open .sort-arrow {
+  transform: translateY(-50%) rotate(180deg);
+}

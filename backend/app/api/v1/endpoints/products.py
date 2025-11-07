@@ -58,6 +58,87 @@ def get_low_stock_products(
     return service.get_low_stock_products(threshold=threshold)
 
 
+@router.get("/advanced-search/", response_model=List[Product])
+def advanced_search_products(
+    search_query: Optional[str] = Query(None, description="Search in name and description"),
+    category_id: Optional[int] = Query(None, description="Filter by category"),
+    min_price: Optional[float] = Query(None, ge=0, description="Minimum price"),
+    max_price: Optional[float] = Query(None, ge=0, description="Maximum price"),
+    min_rating: Optional[float] = Query(None, ge=1, le=5, description="Minimum average rating (1-5)"),
+    in_stock_only: Optional[bool] = Query(None, description="Show only in-stock products"),
+    sort_by: Optional[str] = Query("created_at", description="Sort by: name, price, created_at, rating"),
+    sort_order: Optional[str] = Query("desc", description="Sort order: asc or desc"),
+    skip: int = Query(0, ge=0, description="Number of records to skip"),
+    limit: int = Query(100, ge=1, le=100, description="Max number of records to return"),
+    db: Session = Depends(get_db)
+):
+    """
+    Advanced product search with multiple filters and sorting.
+
+    **Filters:**
+    - **search_query**: Search text in product name and description
+    - **category_id**: Filter by category
+    - **min_price** / **max_price**: Price range filter
+    - **min_rating**: Minimum average rating (1-5 stars)
+    - **in_stock_only**: Show only products with stock > 0
+
+    **Sorting:**
+    - **sort_by**: Field to sort (name, price, created_at, rating)
+    - **sort_order**: asc (ascending) or desc (descending)
+    """
+    service = ProductService(db)
+    return service.search_products_advanced(
+        search_query=search_query,
+        category_id=category_id,
+        min_price=min_price,
+        max_price=max_price,
+        min_rating=min_rating,
+        in_stock_only=in_stock_only,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        skip=skip,
+        limit=limit
+    )
+
+
+@router.get("/autocomplete/", response_model=List[Product])
+def autocomplete_products(
+    q: str = Query(..., min_length=2, description="Search query (min 2 characters)"),
+    limit: int = Query(5, ge=1, le=10, description="Max suggestions to return"),
+    db: Session = Depends(get_db)
+):
+    """
+    Quick autocomplete search for product suggestions.
+
+    Returns a limited number of products matching the query.
+    Ideal for real-time search suggestions.
+
+    - **q**: Search query string (minimum 2 characters)
+    - **limit**: Maximum number of suggestions (default 5, max 10)
+    """
+    service = ProductService(db)
+    return service.autocomplete_search(query=q, limit=limit)
+
+
+@router.get("/price-range/")
+def get_price_range(db: Session = Depends(get_db)):
+    """
+    Get the minimum and maximum prices from all products.
+
+    Useful for setting up price range sliders in the frontend.
+
+    **Returns:**
+    ```json
+    {
+        "min_price": 0.99,
+        "max_price": 99.99
+    }
+    ```
+    """
+    service = ProductService(db)
+    return service.get_price_range()
+
+
 @router.get("/{product_id}", response_model=Product)
 def get_product(product_id: int, db: Session = Depends(get_db)):
     """
