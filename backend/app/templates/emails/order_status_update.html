@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualización de Pedido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .email-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .email-body {
+            padding: 30px 20px;
+        }
+        .email-footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #3b82f6;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #2563eb;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+        .status-badge.confirmed {
+            background-color: #10b981;
+        }
+        .status-badge.processing {
+            background-color: #f59e0b;
+        }
+        .status-badge.shipped {
+            background-color: #3b82f6;
+        }
+        .status-badge.delivered {
+            background-color: #8b5cf6;
+        }
+        .status-badge.cancelled {
+            background-color: #ef4444;
+        }
+        .info-box {
+            background-color: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>{{ app_name }}</h1>
+        </div>
+        <div class="email-body">
+            <h2>Actualización de tu Pedido</h2>
+            <p>Hola {{ customer_name }},</p>
+            <p>
+                Tu pedido <strong>#{{ order_id }}</strong> ha sido actualizado.
+            </p>
+
+            <div class="text-center">
+                <div class="status-badge {{ new_status }}">
+                    {{ status_label }}
+                </div>
+            </div>
+
+            <div class="info-box">
+                <p style="margin-bottom: 0;">
+                    {% if new_status == 'confirmed' %}
+                        ✓ Tu pedido ha sido confirmado y está siendo preparado.
+                    {% elif new_status == 'processing' %}
+                        📦 Tu pedido está siendo procesado en nuestro almacén.
+                    {% elif new_status == 'shipped' %}
+                        🚚 Tu pedido ha sido enviado y está en camino.
+                    {% elif new_status == 'delivered' %}
+                        ✓ ¡Tu pedido ha sido entregado! Esperamos que disfrutes tus productos.
+                    {% elif new_status == 'cancelled' %}
+                        ✗ Tu pedido ha sido cancelado.
+                    {% else %}
+                        El estado de tu pedido ha cambiado.
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="text-center">
+                <a href="{{ frontend_url }}/orders/{{ order_id }}" class="button">
+                    Ver Detalles del Pedido
+                </a>
+            </div>
+
+            <p class="text-muted">
+                Puedes seguir el estado de tu pedido en cualquier momento desde tu cuenta.
+            </p>
+        </div>
+        <div class="email-footer">
+            <p>{{ app_name }}</p>
+            <p class="text-muted">
+                Este es un correo electrónico automático, por favor no responder.
+            </p>
+            <p class="text-muted">
+                <a href="{{ frontend_url }}">Visitar nuestra tienda</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -4,6 +4,11 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db, get_current_user
 from app.schemas.user import UserCreate, UserLogin, UserResponse
 from app.schemas.refresh_token import TokenResponse, RefreshTokenRequest
+from app.schemas.password_reset import (
+    PasswordResetRequest,
+    PasswordResetConfirm,
+    PasswordResetResponse
+)
 from app.services.auth_service import AuthService
 from app.models.user import User
 from app.core.rate_limiter import rate_limiter
@@ -154,3 +159,65 @@ def logout_all_sessions(
     count = auth_service.logout_all_sessions(current_user.id)
 
     return {"message": f"Logout exitoso. {count} sesiones cerradas."}
+
+
+@router.post("/password-reset/request", response_model=PasswordResetResponse)
+def request_password_reset(
+    request: Request,
+    reset_request: PasswordResetRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Request password reset by email
+
+    - **email**: User email address
+
+    Sends an email with password reset link (if email exists)
+    Always returns success to prevent email enumeration
+
+    Rate Limit: 3 requests per hour per IP
+    """
+    # Rate limiting: 3 intentos de reset por hora
+    client_ip = rate_limiter.get_client_ip(request)
+    endpoint = f"{request.method}:{request.url.path}"
+
+    if rate_limiter.is_rate_limited(
+        client_ip, endpoint, 3, 3600
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Demasiados intentos de recuperación. Límite: 3 por hora.",
+            headers={
+                "Retry-After": "3600",
+                "X-RateLimit-Limit": "3",
+                "X-RateLimit-Window": "3600"
+            }
+        )
+
+    auth_service = AuthService(db)
+    auth_service.request_password_reset(reset_request.email)
+
+    return PasswordResetResponse(
+        message="Si el email existe en nuestro sistema, recibirás un correo con instrucciones para restablecer tu contraseña."
+    )
+
+
+@router.post("/password-reset/confirm", response_model=PasswordResetResponse)
+def confirm_password_reset(
+    reset_confirm: PasswordResetConfirm,
+    db: Session = Depends(get_db)
+):
+    """
+    Confirm password reset with token
+
+    - **token**: Password reset token from email
+    - **new_password**: New password (minimum 6 characters)
+
+    Resets password and logs out all sessions
+    """
+    auth_service = AuthService(db)
+    auth_service.reset_password(reset_confirm.token, reset_confirm.new_password)
+
+    return PasswordResetResponse(
+        message="Contraseña restablecida exitosamente. Por favor, inicia sesión con tu nueva contraseña."
+    )

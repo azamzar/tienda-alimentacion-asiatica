@@ -2,12 +2,14 @@ from typing import Optional
 from datetime import timedelta, datetime
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+import secrets
 
 from app.models.user import User, UserRole
 from app.schemas.user import UserCreate, UserResponse
 from app.schemas.refresh_token import TokenResponse, RefreshTokenRequest
 from app.repositories.user_repository import UserRepository
 from app.repositories.refresh_token_repository import RefreshTokenRepository
+from app.repositories.password_reset_token_repository import PasswordResetTokenRepository
 from app.core.security import (
     verify_password,
     get_password_hash,
@@ -16,6 +18,7 @@ from app.core.security import (
     decode_refresh_token
 )
 from app.config.settings import settings
+from app.utils.email_service import email_service
 
 
 class AuthService:
@@ -25,6 +28,7 @@ class AuthService:
         self.db = db
         self.repository = UserRepository(db)
         self.refresh_token_repository = RefreshTokenRepository(db)
+        self.password_reset_repository = PasswordResetTokenRepository(db)
 
     def register(self, user_data: UserCreate) -> UserResponse:
         """
@@ -59,6 +63,19 @@ class AuthService:
         }
 
         user = self.repository.create(user_dict)
+
+        # Send welcome email
+        try:
+            email_service.send_welcome_email(
+                to_email=user.email,
+                user_name=user.full_name or user.email.split("@")[0]
+            )
+        except Exception as e:
+            # Log error but don't fail the registration
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to send welcome email to {user.email}: {str(e)}")
+
         return UserResponse.model_validate(user)
 
     def authenticate(self, email: str, password: str) -> Optional[User]:
@@ -265,3 +282,101 @@ class AuthService:
             Número de tokens revocados
         """
         return self.refresh_token_repository.revoke_all_user_tokens(user_id)
+
+    def request_password_reset(self, email: str) -> bool:
+        """
+        Request password reset by email.
+        Generates a token and sends email with reset link.
+
+        Args:
+            email: User email address
+
+        Returns:
+            True if request was processed (always returns True for security)
+
+        Note:
+            Always returns True even if email doesn't exist to prevent email enumeration
+        """
+        # Get user by email
+        user = self.repository.get_by_email(email)
+
+        # Si el usuario no existe, retornar True sin enviar email (seguridad)
+        # Esto previene que atacantes puedan enumerar emails válidos
+        if not user or not user.is_active:
+            return True
+
+        # Delete any existing tokens for this user
+        self.password_reset_repository.delete_user_tokens(user.id)
+
+        # Generate secure random token (32 bytes = 64 hex chars)
+        reset_token = secrets.token_urlsafe(32)
+
+        # Calculate expiration time
+        expires_at = datetime.utcnow() + timedelta(
+            minutes=settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES
+        )
+
+        # Save token to database
+        token_data = {
+            "user_id": user.id,
+            "token": reset_token,
+            "expires_at": expires_at,
+            "used": False
+        }
+        self.password_reset_repository.create(token_data)
+
+        # Send password reset email
+        email_service.send_password_reset_email(
+            to_email=user.email,
+            reset_token=reset_token,
+            user_name=user.full_name
+        )
+
+        return True
+
+    def reset_password(self, token: str, new_password: str) -> bool:
+        """
+        Reset password using a valid token.
+
+        Args:
+            token: Password reset token
+            new_password: New password (plain text)
+
+        Returns:
+            True if password was reset successfully
+
+        Raises:
+            HTTPException: If token is invalid, expired, or already used
+        """
+        # Get valid token from database
+        reset_token = self.password_reset_repository.get_valid_token(token)
+
+        if not reset_token:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token de recuperación inválido o expirado"
+            )
+
+        # Get user
+        user = self.repository.get_by_id(reset_token.user_id)
+
+        if not user or not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Usuario no encontrado"
+            )
+
+        # Hash new password
+        hashed_password = get_password_hash(new_password)
+
+        # Update user password
+        user.hashed_password = hashed_password
+        self.db.commit()
+
+        # Mark token as used
+        self.password_reset_repository.mark_as_used(reset_token.id)
+
+        # Revoke all refresh tokens (logout all sessions for security)
+        self.refresh_token_repository.revoke_all_user_tokens(user.id)
+
+        return True

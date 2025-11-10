@@ -1746,23 +1746,90 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 ---
 
-### 📋 Fase 19 (Future): Futuras Mejoras
-- [ ] Búsqueda con autocomplete
-- [ ] Filtros avanzados (precio, rating, disponibilidad)
-- [ ] Ordenar productos por: precio, nombre, rating, fecha
-- [ ] Paginación infinita en productos
+### ✅ Fase 20: Enhanced Product Discovery (Completado - 2025-11-07)
+
+**Backend (~400 líneas, 4 archivos):**
+- [x] ProductRepository.search_products_advanced() - Búsqueda multi-filtro
+- [x] ProductRepository.autocomplete_search() - Autocompletado rápido (5 sugerencias)
+- [x] ProductRepository.get_price_range() - Rango min/max de precios
+- [x] 3 nuevos endpoints API:
+  * GET /api/v1/products/advanced-search/ - Búsqueda con filtros
+  * GET /api/v1/products/autocomplete/ - Sugerencias en tiempo real
+  * GET /api/v1/products/price-range/ - Rango de precios dinámico
+
+**Frontend (~1,580 líneas, 13 archivos):**
+
+**SearchAutocomplete** (~250 líneas + 150 CSS):
+- [x] Búsqueda en tiempo real con debounce 300ms
+- [x] Dropdown con sugerencias de productos
+- [x] Navegación con teclado (↑↓, Enter, Esc)
+- [x] Highlight de texto coincidente
+- [x] Preview de imagen y precio
+- [x] Badge "Agotado" para productos sin stock
+- [x] Click outside para cerrar
+- [x] Responsive + Dark mode
+
+**PriceRangeSlider** (~150 líneas + 180 CSS):
+- [x] Dual range slider (mínimo y máximo)
+- [x] Visualización de track activo
+- [x] Valores en tiempo real
+- [x] Botón reset
+- [x] Responsive + Dark mode
+
+**RatingFilter** (~90 líneas + 150 CSS):
+- [x] Filtro por rating mínimo (1-5 estrellas)
+- [x] Visualización con estrellas animadas
+- [x] Indicador de filtro activo
+- [x] Texto "X+ estrellas"
+- [x] Responsive + Dark mode
+
+**SortDropdown** (~60 líneas + 100 CSS):
+- [x] 8 opciones de ordenamiento:
+  * 🆕 Más recientes / 📅 Más antiguos
+  * 🔤 Nombre (A-Z) / 🔠 Nombre (Z-A)
+  * 💰 Precio: Menor a Mayor / 💎 Mayor a Menor
+  * ⭐ Mejor valorados / 📉 Peor valorados
+- [x] Iconos visuales
+- [x] Responsive + Dark mode
+
+**ProductGridAdvanced** (~300 líneas):
+- [x] Integración completa de todos los filtros
+- [x] Sidebar con filtros colapsable
+- [x] Header con sort dropdown
+- [x] Checkbox "Solo productos disponibles"
+- [x] Botón "Limpiar filtros"
+- [x] Estados: loading (skeleton), error, empty
+- [x] Contador de productos filtrados
+- [x] Responsive design completo
+
+**Phase 20 Summary:**
+- ✅ **Total: ~1,980 líneas de código en 17 archivos**
+- ✅ **3 nuevos endpoints backend**
+- ✅ **4 nuevos componentes frontend + 1 integración**
+- ✅ **Full responsive design + dark mode**
+- ✅ **Probado y funcionando al 100%**
+
+---
+
+### 📋 Fase 21 (Future): Futuras Mejoras
 - [ ] Página de wishlist completa (además del botón)
+- [ ] Paginación infinita en productos
 - [ ] Internacionalización (i18n)
 - [ ] PWA (Progressive Web App)
 - [ ] Animaciones con Framer Motion
 - [ ] Service Worker para caché offline
 
-### 📋 Fase 20 (Future): Payment & Deployment
+### ✅ Fase 21 (Completed 2025-11-10): Email System & Password Reset
+- [x] Email notifications (welcome, order confirmation, status updates) ✅
+- [x] Password reset/recovery via email ✅
+- [x] ForgotPasswordPage with email form ✅
+- [x] ResetPasswordPage with password confirmation ✅
+- [x] Email templates (HTML responsive) ✅
+- [x] Full security implementation (tokens, expiration, rate limits) ✅
+
+### 📋 Fase 22 (Future): Payment & Deployment
 - [ ] Payment integration (Stripe/PayPal)
 - [ ] Real-time order tracking
-- [ ] Email notifications (confirmaciones, cambios de estado)
-- [ ] Password reset/recovery via email
-- [ ] Structured logging (backend)
 - [ ] Cloud storage para imágenes (S3/GCS)
 - [ ] CI/CD pipeline
 - [ ] Docker production configuration

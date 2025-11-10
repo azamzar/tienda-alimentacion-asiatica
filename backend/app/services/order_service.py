@@ -1,6 +1,7 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
+import logging
 
 from app.repositories.order_repository import OrderRepository, OrderItemRepository
 from app.repositories.cart_repository import CartRepository, CartItemRepository
@@ -14,6 +15,9 @@ from app.schemas.order import (
     CreateOrderFromCartRequest,
     OrderStatusEnum
 )
+from app.utils.email_service import email_service
+
+logger = logging.getLogger(__name__)
 
 
 class OrderService:
@@ -117,6 +121,29 @@ class OrderService:
 
         # Obtener el pedido completo con items
         order = self.order_repo.get_with_items(order.id)
+
+        # Send order confirmation email
+        try:
+            order_items_for_email = [
+                {
+                    "product_name": item.product.name,
+                    "quantity": item.quantity,
+                    "subtotal": item.subtotal
+                }
+                for item in order.items
+            ]
+
+            email_service.send_order_confirmation_email(
+                to_email=order.customer_email,
+                order_id=order.id,
+                customer_name=order.customer_name,
+                order_total=order.total_amount,
+                order_items=order_items_for_email
+            )
+        except Exception as e:
+            # Log error but don't fail the order creation
+            logger.error(f"Failed to send order confirmation email for order {order.id}: {str(e)}")
+
         return self._build_order_response(order)
 
     def get_order(self, order_id: int, user_id: Optional[str] = None) -> OrderResponse:
@@ -244,7 +271,12 @@ class OrderService:
                     detail="No se puede cambiar el estado de un pedido ya entregado"
                 )
 
+            # Store old status for email notification
+            old_status = order.status
             order.status = new_status
+            status_changed = old_status != new_status
+        else:
+            status_changed = False
 
         # Actualizar otros campos
         update_data = request.model_dump(exclude_unset=True, exclude={"status"})
@@ -255,6 +287,31 @@ class OrderService:
         self.db.refresh(order)
 
         order = self.order_repo.get_with_items(order_id)
+
+        # Send status update email if status changed
+        if status_changed and request.status:
+            try:
+                # Map status to Spanish labels
+                status_labels = {
+                    "pending": "Pendiente",
+                    "confirmed": "Confirmado",
+                    "processing": "En Proceso",
+                    "shipped": "Enviado",
+                    "delivered": "Entregado",
+                    "cancelled": "Cancelado"
+                }
+
+                email_service.send_order_status_update_email(
+                    to_email=order.customer_email,
+                    order_id=order.id,
+                    customer_name=order.customer_name,
+                    new_status=request.status.value,
+                    status_label=status_labels.get(request.status.value, request.status.value)
+                )
+            except Exception as e:
+                # Log error but don't fail the update
+                logger.error(f"Failed to send order status update email for order {order.id}: {str(e)}")
+
         return self._build_order_response(order)
 
     def cancel_order(self, order_id: int, user_id: Optional[str] = None) -> OrderResponse:

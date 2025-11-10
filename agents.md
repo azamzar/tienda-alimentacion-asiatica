@@ -938,30 +938,85 @@ RATE_LIMIT_REGISTER_PER_HOUR=3
 - ✅ Wishlist/Favorites (~2,100 lines)
 - **Total: ~5,550 lines of code across 46 files**
 
+### ✅ Recently Completed (2025-11-10)
+
+**Phase 21 - Email System & Password Reset (Part 2 - 85% Complete):**
+
+**1. Email Service System (~500 lines, 5 archivos):**
+- [x] Backend: EmailService class with SMTP configuration
+- [x] Backend: Support for HTML templates with Jinja2
+- [x] Backend: Template system in `app/templates/emails/`:
+  * welcome.html - Welcome email for new users
+  * password_reset.html - Password reset link
+  * order_confirmation.html - Order confirmation with details
+  * order_status_update.html - Order status change notifications
+- [x] Backend: Email configuration in settings.py (SMTP, TLS/SSL, credentials)
+- [x] Backend: Methods: send_email(), send_template_email(), send_password_reset_email()
+- [x] Backend: Automatic email sending on:
+  * User registration (welcome email)
+  * Order creation (confirmation email)
+  * Order status update (notification email)
+- [x] Backend: Error handling and logging
+- [x] Backend: Email enabled/disabled flag for development
+
+**2. Password Reset System (~800 lines, 8 archivos):**
+- [x] Backend: PasswordResetToken model with expiration
+- [x] Backend: PasswordResetTokenRepository with CRUD operations
+- [x] Backend: password_reset schemas (Request, Confirm, Response)
+- [x] Backend: Database migration for password_reset_tokens table
+- [x] Backend: AuthService methods:
+  * request_password_reset() - Generate token and send email
+  * reset_password() - Validate token and update password
+- [x] Backend: 2 new endpoints:
+  * POST /api/v1/auth/password-reset/request (rate limited: 3/hour)
+  * POST /api/v1/auth/password-reset/confirm
+- [x] Backend: Security features:
+  * One-time use tokens (marked as 'used')
+  * 30-minute expiration (configurable)
+  * Rate limiting to prevent abuse
+  * Generic responses (prevent email enumeration)
+  * Automatic logout from all sessions after reset
+- [x] Frontend: ForgotPasswordPage with email form
+- [x] Frontend: ResetPasswordPage with password confirmation
+- [x] Frontend: authService methods (requestPasswordReset, confirmPasswordReset)
+- [x] Frontend: Routes added to AppRouter (/forgot-password, /reset-password)
+- [x] Frontend: Link "¿Olvidaste tu contraseña?" in LoginPage
+- [x] Frontend: Complete validation and error handling
+- [x] Frontend: Success messages and redirects
+
+**Phase 21 Summary:**
+- ✅ **Email System** (~500 lines, 5 files)
+- ✅ **Password Reset System** (~800 lines, 8 files)
+- ✅ **Total: ~1,300 lines of code across 13 files**
+- ✅ **4 email templates** (HTML responsive)
+- ✅ **2 new API endpoints** with rate limiting
+- ✅ **2 new frontend pages** (Forgot/Reset Password)
+- ✅ **Full security implementation** (tokens, expiration, rate limits)
+
 ### 🔄 In Progress
 
-- None currently
+**Phase 21 - Backend Improvements (85% Complete):**
+- [x] Structured logging (JSON format for production) ✅
+- [x] Password reset/recovery via email ✅ **NEW**
+- [x] Email notifications (order confirmations, status updates) ✅ **NEW**
+- [ ] Database query optimization and indexing (Next)
+- [ ] Cloud storage integration (S3, Google Cloud Storage) - Optional
 
 ### 📋 Planned Features
 
-**Phase 20 - Enhanced Product Discovery:**
-- [ ] Product search with autocomplete (predictive search)
-- [ ] Advanced filtering system:
-  - [ ] Price range slider
-  - [ ] Filter by rating (reviews)
-  - [ ] Filter by availability (in stock/out of stock)
-  - [ ] Sort by: price, name, rating, date
-- [ ] Wishlist page (dedicated page beyond the button)
-- [ ] Pagination/Infinite scroll for products
-
-**Phase 21 - Backend Improvements:**
-- [ ] Structured logging (JSON format for production)
-- [ ] Password reset/recovery via email
-- [ ] Email notifications (order confirmations, status updates)
-- [ ] Cloud storage integration (S3, Google Cloud Storage) for images
-- [ ] Redis for distributed rate limiting
-- [ ] Database query optimization and indexing
-- [ ] API response caching improvements
+**Phase 20 - Enhanced Product Discovery:** ✅ **COMPLETED** (2025-11-07)
+- [x] Product search with autocomplete (predictive search) ⭐
+- [x] Advanced filtering system:
+  - [x] Price range slider (dual range)
+  - [x] Filter by rating (1-5 stars with reviews)
+  - [x] Filter by availability (in stock checkbox)
+  - [x] Sort by: price, name, rating, created_at (8 options)
+- [x] Backend: 3 new endpoints (advanced-search, autocomplete, price-range)
+- [x] Frontend: 4 new components (SearchAutocomplete, PriceRangeSlider, RatingFilter, SortDropdown)
+- [x] Full responsive design + dark mode
+- [x] ~1,980 lines implemented
+- [ ] Wishlist page (dedicated page beyond the button) - Optional future
+- [ ] Pagination/Infinite scroll for products - Optional future
 
 **Phase 22 - Payment & Deployment:**
 - [ ] Payment integration (Stripe/PayPal)
@@ -1111,10 +1166,12 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 20. ~~Product reviews and ratings system~~ ✅ DONE
 21. ~~Wishlist/favorites functionality~~ ✅ DONE
 22. ~~Reorder button for past orders~~ ✅ DONE
-23. Product search with autocomplete
-24. Advanced filtering (price range, rating, availability)
-25. Payment integration (Stripe/PayPal)
-26. Deployment to production
+23. ~~Product search with autocomplete~~ ✅ DONE
+24. ~~Advanced filtering (price range, rating, availability, sorting)~~ ✅ DONE
+25. ~~Structured logging system~~ ✅ DONE
+26. Email notifications and password reset (In Progress)
+27. Payment integration (Stripe/PayPal)
+28. Deployment to production
 
 ### Important Notes for AI Assistants
 
@@ -1138,7 +1195,7 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - This covers all Vite dev server port variations
 - Located in `backend/app/config/settings.py`
 
-**Current Status (Phase 19 Complete):**
+**Current Status (Phase 20 Complete + Phase 21 30%):**
 - ✅ Frontend: Product catalog fully functional
 - ✅ Frontend: Shopping cart fully functional
 - ✅ Frontend: Checkout flow complete with optimized UX
@@ -1153,6 +1210,9 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - ✅ Frontend: Product reviews and ratings system
 - ✅ Frontend: Wishlist/favorites functionality
 - ✅ Frontend: Reorder button for past orders
+- ✅ Frontend: **Search with autocomplete** (SearchAutocomplete component) ⭐ NEW
+- ✅ Frontend: **Advanced filtering** (PriceRangeSlider, RatingFilter, SortDropdown) ⭐ NEW
+- ✅ Frontend: **Product sorting** (8 options: price, name, rating, date) ⭐ NEW
 - ✅ Frontend: 99 tests implemented (100% passing)
 - ✅ Backend: All endpoints working with auth
 - ✅ Backend: Cart items include subtotal field
@@ -1165,7 +1225,12 @@ docker-compose -f docker-compose.dev.yml exec db psql -U tienda_user -d tienda_a
 - ✅ Backend: Product reviews and ratings (7 endpoints)
 - ✅ Backend: Wishlist system (7 endpoints)
 - ✅ Backend: Reorder functionality with stock verification
+- ✅ Backend: **Advanced search endpoint** with multi-filter support ⭐ NEW
+- ✅ Backend: **Autocomplete endpoint** for search suggestions ⭐ NEW
+- ✅ Backend: **Price range endpoint** for dynamic filters ⭐ NEW
+- ✅ Backend: **Structured JSON logging system** (production-ready) ⭐ NEW
+- ✅ Backend: **HTTP request logging middleware** with tracing ⭐ NEW
 - ✅ Backend: 104 tests implemented (100% passing)
-- ⏳ Next: Product search with autocomplete
-- ⏳ Next: Advanced filtering (price, rating, availability)
-- ⏳ Next: Payment integration (Stripe/PayPal)
+- ⏳ Next: Email service and password reset (Phase 21 - 70% remaining)
+- ⏳ Next: Payment integration (Stripe/PayPal) (Phase 22)
+- ⏳ Next: Deployment to production

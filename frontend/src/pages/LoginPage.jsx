@@ -105,6 +105,12 @@ function LoginPage() {
           >
             {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
+
+          <div style={styles.forgotPassword}>
+            <Link to="/forgot-password" style={styles.link}>
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
         </form>
 
         <p style={styles.footer}>
@@ -184,6 +190,11 @@ const styles = {
   buttonDisabled: {
     backgroundColor: '#6c757d',
     cursor: 'not-allowed'
+  },
+  forgotPassword: {
+    marginTop: '10px',
+    textAlign: 'center',
+    fontSize: '14px'
   },
   footer: {
     marginTop: '20px',

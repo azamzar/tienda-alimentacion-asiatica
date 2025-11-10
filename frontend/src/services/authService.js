@@ -94,6 +94,26 @@ const authService = {
     const user = authService.getStoredUser();
     return user?.role === 'admin';
   },
+
+  /**
+   * Solicitar recuperación de contraseña
+   * @param {string} email - Email del usuario
+   * @returns {Promise<Object>} Respuesta del servidor
+   */
+  requestPasswordReset: async (email) => {
+    const response = await api.post('/auth/password-reset/request', { email });
+    return response.data;
+  },
+
+  /**
+   * Confirmar recuperación de contraseña con token
+   * @param {Object} data - { token, new_password }
+   * @returns {Promise<Object>} Respuesta del servidor
+   */
+  confirmPasswordReset: async (data) => {
+    const response = await api.post('/auth/password-reset/confirm', data);
+    return response.data;
+  },
 };
 
 export default authService;

@@ -58,6 +58,23 @@ class Settings(BaseSettings):
     RATE_LIMIT_AUTH_PER_MINUTE: int = 5  # Login attempts por minuto
     RATE_LIMIT_REGISTER_PER_HOUR: int = 3  # Register attempts por hora
 
+    # Email Configuration
+    EMAIL_ENABLED: bool = True
+    EMAIL_HOST: str = "smtp.gmail.com"
+    EMAIL_PORT: int = 587
+    EMAIL_USERNAME: str = ""
+    EMAIL_PASSWORD: str = ""
+    EMAIL_FROM: str = "noreply@tienda-asiatica.com"
+    EMAIL_FROM_NAME: str = "Tienda Alimentación Asiática"
+    EMAIL_USE_TLS: bool = True
+    EMAIL_USE_SSL: bool = False
+
+    # Frontend URL (for email links)
+    FRONTEND_URL: str = "http://localhost:5173"
+
+    # Password Reset
+    PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int = 30
+
     class Config:
         env_file = ".env"
         case_sensitive = True

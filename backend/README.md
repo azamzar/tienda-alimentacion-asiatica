@@ -347,12 +347,14 @@ GET /health              # Health check
 
 #### Autenticación (Rate Limited)
 ```
-POST   /api/v1/auth/register         # Registrar nuevo usuario (role: customer) [⚠️ 3/hora]
-POST   /api/v1/auth/login            # Login (retorna access + refresh token) [⚠️ 5/min]
-POST   /api/v1/auth/refresh          # Renovar access token con refresh token
-POST   /api/v1/auth/logout           # Logout (revoca refresh token) (🔒 requiere refresh token)
-POST   /api/v1/auth/logout-all       # Logout de todas las sesiones (🔒 requiere auth)
-GET    /api/v1/auth/me               # Obtener información del usuario actual (🔒 requiere auth)
+POST   /api/v1/auth/register                    # Registrar nuevo usuario (role: customer) [⚠️ 3/hora]
+POST   /api/v1/auth/login                       # Login (retorna access + refresh token) [⚠️ 5/min]
+POST   /api/v1/auth/refresh                     # Renovar access token con refresh token
+POST   /api/v1/auth/logout                      # Logout (revoca refresh token) (🔒 requiere refresh token)
+POST   /api/v1/auth/logout-all                  # Logout de todas las sesiones (🔒 requiere auth)
+GET    /api/v1/auth/me                          # Obtener información del usuario actual (🔒 requiere auth)
+POST   /api/v1/auth/password-reset/request      # Solicitar recuperación de contraseña [⚠️ 3/hora]
+POST   /api/v1/auth/password-reset/confirm      # Confirmar reset con token
 ```
 
 **Notas:**
@@ -1084,6 +1086,118 @@ markers =
     categories: Category-related tests
 ```
 
+## Email System
+
+El backend incluye un sistema completo de email con templates HTML y notificaciones automáticas.
+
+### Configuración de Email
+
+**Variables de entorno en `.env`:**
+```bash
+# Email Configuration
+EMAIL_ENABLED=True
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USERNAME=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
+EMAIL_FROM=noreply@tienda-asiatica.com
+EMAIL_FROM_NAME=Tienda Alimentación Asiática
+EMAIL_USE_TLS=True
+EMAIL_USE_SSL=False
+
+# Frontend URL (for email links)
+FRONTEND_URL=http://localhost:5173
+
+# Password Reset
+PASSWORD_RESET_TOKEN_EXPIRE_MINUTES=30
+```
+
+**Opciones de configuración:**
+- **Gmail**: Requiere "App Password" (no la contraseña normal)
+- **Mailtrap**: Ideal para desarrollo/testing
+- **SendGrid/Mailgun**: Recomendado para producción
+
+### Email Service Features
+
+**Email Service (`app/utils/email_service.py`):**
+- Envío de emails con templates HTML
+- Soporte para attachments
+- Configuración SMTP/TLS/SSL
+- Logging de errores
+- Función global: `email_service`
+
+**Templates disponibles:**
+1. **welcome.html** - Email de bienvenida al registrarse
+2. **password_reset.html** - Link de recuperación de contraseña
+3. **order_confirmation.html** - Confirmación de pedido
+4. **order_status_update.html** - Actualización de estado de pedido
+
+### Password Reset Functionality
+
+**Endpoints:**
+- `POST /api/v1/auth/password-reset/request` - Solicitar reset (rate limited: 3/hora)
+- `POST /api/v1/auth/password-reset/confirm` - Confirmar reset con token
+
+**Flujo:**
+1. Usuario solicita reset con su email
+2. Sistema genera token seguro (32 bytes)
+3. Token se guarda en DB con expiración (30 min default)
+4. Email enviado con link al frontend
+5. Usuario usa link para crear nueva contraseña
+6. Token se marca como usado
+7. Todas las sesiones se cierran (logout all)
+
+**Seguridad:**
+- Tokens de un solo uso (se marcan como `used`)
+- Expiración configurable
+- Rate limiting (3 intentos por hora)
+- Respuesta genérica (previene email enumeration)
+- Logout automático de todas las sesiones
+
+### Email Notifications
+
+**Notificaciones automáticas:**
+
+1. **Welcome Email** - Al registrarse un nuevo usuario
+   - Template: `welcome.html`
+   - Trigger: `AuthService.register()`
+
+2. **Order Confirmation** - Al crear un pedido
+   - Template: `order_confirmation.html`
+   - Trigger: `OrderService.create_order_from_cart()`
+   - Contenido: Resumen de productos, total, número de pedido
+
+3. **Order Status Update** - Al cambiar estado del pedido
+   - Template: `order_status_update.html`
+   - Trigger: `OrderService.update_order()` (cuando cambia status)
+   - Estados: pending, confirmed, processing, shipped, delivered, cancelled
+
+**Características:**
+- Emails no bloquean operaciones críticas (try-catch)
+- Errores se registran en logs
+- Templates con diseño responsive
+- Soporte para modo oscuro en algunos clientes
+
+### Testing Email System
+
+**Opción 1: Mailtrap (Recomendado para desarrollo)**
+```bash
+EMAIL_HOST=sandbox.smtp.mailtrap.io
+EMAIL_PORT=2525
+EMAIL_USERNAME=your-mailtrap-username
+EMAIL_PASSWORD=your-mailtrap-password
+```
+
+**Opción 2: Gmail (con App Password)**
+1. Activar verificación en 2 pasos
+2. Generar App Password: https://myaccount.google.com/apppasswords
+3. Usar el password de 16 caracteres generado
+
+**Opción 3: Deshabilitar emails (desarrollo)**
+```bash
+EMAIL_ENABLED=False
+```
+
 ## Próximos Pasos
 
 ### ✅ Completado
@@ -1132,40 +1246,58 @@ markers =
   - Campo product_count calculado dinámicamente
   - Integrado en sistema de caché
 
+### ✅ Completado Recientemente (2025-11-07)
+
+**Phase 20 - Enhanced Product Discovery:**
+- [x] **Advanced Search System** - ProductRepository.search_products_advanced()
+  - Multi-filter search (query, category, price range, rating, stock)
+  - Dynamic sorting (name, price, created_at, rating)
+  - Pagination support
+- [x] **Autocomplete Endpoint** - GET /api/v1/products/autocomplete/
+  - Fast search suggestions (5 results)
+  - Returns: name, price, image, stock status
+- [x] **Price Range Endpoint** - GET /api/v1/products/price-range/
+  - Returns dynamic min/max prices from all products
+- [x] **Advanced Search Endpoint** - GET /api/v1/products/advanced-search/
+  - Supports all filters simultaneously
+  - Optimized queries with proper JOIN for ratings
+
+**Phase 21 - Structured Logging System (30% Complete):**
+- [x] **JSON Logging Configuration** - app/core/logging_config.py
+  - JSONFormatter for production (structured logs)
+  - ColoredFormatter for development
+  - Separate log files (app.log, error.log)
+  - Different log levels (INFO, WARNING, ERROR)
+- [x] **HTTP Request Logging Middleware** - app/middleware/logging_middleware.py
+  - Unique request_id for tracing
+  - Logs: method, path, status_code, duration_ms
+  - Client IP tracking
+  - User information (if authenticated)
+  - X-Request-ID header in responses
+  - Performance monitoring
+
 ### 📋 Pendiente
 
-**Backend Improvements:**
-- [x] Agregar tests (pytest)
-  - Tests unitarios para servicios
-  - Tests de integración para endpoints
-  - Tests para optimización de imágenes
-  - Tests para sistema de caché
-  - **104 tests implementados con 100% de éxito**
-- [x] Rate limiting para endpoints de autenticación
-- [x] Refresh tokens
-- [ ] Implementar logging estructurado
-- [ ] Paginación mejorada con cursores
-- [ ] Password reset/recovery via email
-- [ ] Email notifications (confirmaciones de pedido, cambios de estado)
-- [ ] Soporte para almacenamiento en cloud (S3, Google Cloud Storage)
-- [ ] Image CDN para servir imágenes optimizadas
+**Phase 21 - Backend Improvements (85% Complete):**
+- [x] **Structured JSON logging** (production-ready) ⭐ DONE
+- [x] **HTTP request logging middleware** with tracing ⭐ DONE
+- [x] **Email service configuration** (SMTP with template system) ⭐ NEW
+- [x] **Password reset/recovery via email** ⭐ NEW
+- [x] **Email notifications** (welcome, order confirmation, status updates) ⭐ NEW
+- [ ] Database optimization (indexes, query optimization) - Next
+- [ ] Soporte para almacenamiento en cloud (S3, Google Cloud Storage) - Optional
+- [ ] Image CDN para servir imágenes optimizadas - Optional
 
-**Frontend Implementation:**
-- [x] Catálogo de productos con filtros y búsqueda
-- [x] Página de detalle de producto
-- [x] UI del carrito de compras
-- [x] Flujo de checkout
-- [x] Gestión de órdenes para clientes
-- [x] Panel de gestión de productos (admin CRUD)
-- [x] Panel de administración (admin dashboard con estadísticas)
-- [x] Botón "Añadir al carrito" en página principal
-- [x] Panel de gestión de pedidos (admin - ver todos y cambiar estados)
-
-**DevOps:**
-- [ ] Configuración de CI/CD
+**Phase 22 - Payment & Deployment:**
+- [ ] Payment integration (Stripe/PayPal)
+- [ ] Real-time order tracking
+- [ ] Configuración de CI/CD (GitHub Actions/GitLab CI)
 - [ ] Docker Compose para producción
-- [x] Variables de entorno seguras (SECRET_KEY, DATABASE_URL, etc.)
 - [ ] Backup automático de base de datos
+- [ ] Deployment to cloud (AWS/GCP/Azure)
+- [ ] SSL/TLS certificates configuration
+- [ ] Domain configuration and DNS
+- [x] Variables de entorno seguras (SECRET_KEY, DATABASE_URL, etc.)
 
 ## Contribuir
 
