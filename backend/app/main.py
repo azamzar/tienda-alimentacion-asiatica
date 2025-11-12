@@ -8,6 +8,7 @@ from app.config.settings import settings
 from app.config.database import engine
 from app.models.base import Base
 from app.api.v1.router import api_router
+from app.api.health import router as health_router
 from app.core.logging_config import setup_logging
 from app.middleware import RequestLoggingMiddleware
 
@@ -49,6 +50,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include health check router (no prefix - at root level)
+app.include_router(health_router, tags=["Health"])
+
 # Include API v1 router
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
@@ -58,15 +62,11 @@ app.mount("/uploads", StaticFiles(directory=str(settings.UPLOAD_DIR)), name="upl
 
 @app.get("/")
 def read_root():
-    """Root endpoint - API health check"""
+    """Root endpoint - API information"""
     return {
         "message": f"Bienvenido a {settings.APP_NAME}",
         "version": settings.APP_VERSION,
         "docs": "/docs",
+        "health": "/health",
+        "health_detailed": "/health/detailed"
     }
-
-
-@app.get("/health")
-def health_check():
-    """Health check endpoint"""
-    return {"status": "healthy"}

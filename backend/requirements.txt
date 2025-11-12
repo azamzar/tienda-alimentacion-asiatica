@@ -16,6 +16,8 @@ Pillow==10.1.0
 pillow-heif==0.13.0
 # Caching with Redis
 redis==5.0.1
+# System metrics for health checks
+psutil==5.9.6
 # Testing
 pytest==7.4.3
 pytest-asyncio==0.21.1
