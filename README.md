@@ -2,9 +2,6 @@
 
 E-commerce completo para tienda de alimentación asiática con sistema de gestión de productos, pedidos, usuarios y más.
 
-[![Backend Tests](https://github.com/tu-usuario/tienda-alimentacion-asiatica/workflows/Backend%20Tests/badge.svg)](https://github.com/tu-usuario/tienda-alimentacion-asiatica/actions)
-[![Frontend Tests](https://github.com/tu-usuario/tienda-alimentacion-asiatica/workflows/Frontend%20Tests/badge.svg)](https://github.com/tu-usuario/tienda-alimentacion-asiatica/actions)
-
 ## 🌟 Características
 
 ### Para Clientes
